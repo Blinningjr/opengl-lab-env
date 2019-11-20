@@ -143,30 +143,7 @@ ImGuiExampleApp::RenderUI()
 {
 	if (this->window->IsOpen())
 	{
-		bool show = true;
-		// create a new window
-		ImGui::Begin("Shader Sources", &show, ImGuiWindowFlags_NoSavedSettings);
-
-		// create text editors for shader code
-		ImGui::InputTextMultiline("Vertex Shader", vsBuffer, STRING_BUFFER_SIZE, ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16),
-			ImGuiInputTextFlags_AllowTabInput);
-		
-		ImGui::InputTextMultiline("Pixel Shader", fsBuffer, STRING_BUFFER_SIZE, ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16),
-			ImGuiInputTextFlags_AllowTabInput);
-
-		// apply button
-		if (ImGui::Button("Apply"))
-		{
-			// if pressed we compile the shaders
-			this->CompileShaders();
-		}
-		if (this->compilerLog.length())
-		{
-			// if compilation produced any output we display it here
-			ImGui::TextWrapped(this->compilerLog.c_str());
-		}
-		// close window
-		ImGui::End();
+		ImGui::ShowTestWindow();
 	}
 }
 

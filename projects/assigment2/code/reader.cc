@@ -12,6 +12,7 @@ namespace Triangulation3d {
     Reader::Reader() {
         this->pointsLength = 0;
         this->points = new GLfloat[this->pointsLength];
+        this->filePath = "";
     }
 
 
@@ -27,8 +28,9 @@ namespace Triangulation3d {
      *  Reads points from file and updates the class variables with the read data.
      *  file_path: is the path to the file.
      */
-    void Reader::readPoints(std::string file_path) {
-        std::ifstream infile(file_path);
+    void Reader::readPoints(std::string filePath) {
+        this->filePath = filePath;
+        std::ifstream infile(filePath);
         int numCords;
         infile >> numCords;
         // std::cout << numCords;
@@ -63,5 +65,12 @@ namespace Triangulation3d {
      */
     GLfloat* Reader::getPoints() {
         return this->points;
+    }
+
+    /**
+     *  Gets the last used file path.
+     */
+    std::string Reader::getFilePath() {
+        return this->filePath;
     }
 }

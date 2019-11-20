@@ -43,8 +43,10 @@ namespace Triangulation3d {
 			Triangulation3d::Reader reader;
 
 			// Funcs
-			void updateBuf(char* filePath);
+			void UpdateBuf();
+			
 			void RenderUI();
+			void ReaderUI(bool* open);
 
 	};
 } // namespace Triangulation3d
