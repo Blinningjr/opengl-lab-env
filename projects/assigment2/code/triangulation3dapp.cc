@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <math.h>
 #include <iostream>
+#include <string>
 
 #include "imgui.h"
 
@@ -48,9 +49,9 @@ namespace Triangulation3d {
     bool Triangulation3dApp::Open() {
         App::Open();
         this->window = new Display::Window;
-        window->SetKeyPressFunction([this](int32 a, int32 b, int32 c, int32 d) {
-            this->window->Close();
-        });
+        // window->SetKeyPressFunction([this](int32 a, int32 b, int32 c, int32 d) {
+        //     this->window->Close();--
+        // });
 
         if (this->window->Open()) {
             // set clear color to gray
@@ -112,8 +113,6 @@ namespace Triangulation3d {
                 delete[] buf;
             }
 
-            this->updateBuf("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment2/code/test1.txt");
-
             // set ui rendering function
             this->window->SetUiRender([this]()
             {
@@ -132,6 +131,8 @@ namespace Triangulation3d {
             this->window->Update();
 
             // do stuff
+            UpdateBuf();
+
             glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
             glUseProgram(this->program);
             glEnableVertexAttribArray(0);
@@ -146,8 +147,7 @@ namespace Triangulation3d {
     }
 
 
-    void Triangulation3dApp::updateBuf(char* filePath) {
-        this->reader.readPoints(filePath);
+    void Triangulation3dApp::UpdateBuf() {
         int numCords = this->reader.getPointsLength()/2;
         GLfloat* tBuf = this->reader.getPoints();
 
@@ -173,18 +173,41 @@ namespace Triangulation3d {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
+    
+    /**
+     *  Handels the GUI.
+     */
     void Triangulation3dApp::RenderUI() {
-        if (this->window->IsOpen()) {
-            char* filePath = new char[100];
-            ImGui::Begin("Demo window");
-            ImGui::InputText("string", filePath, IM_ARRAYSIZE(filePath));
-            if (ImGui::Button("Read file")) {
-                this->updateBuf(filePath);
-            }
-            ImGui::End();
+        static bool showRead = false;
 
-            delete[] filePath;
+        if (this->window->IsOpen()) {
+            if (ImGui::BeginMainMenuBar()) {
+                if (ImGui::BeginMenu("File")) {
+                    ImGui::MenuItem("read file", NULL, &showRead);
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMainMenuBar();
+            }
 	    }
+
+        if (showRead) ReaderUI(&showRead);
+    }
+
+
+    /**
+     *  GUI for reading file. 
+     */
+    void Triangulation3dApp::ReaderUI(bool* open) {
+        if (ImGui::Begin("File reader", open, ImGuiWindowFlags_AlwaysAutoResize)) {
+            static char buf[100] = "";
+            ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
+            if (ImGui::Button("Read file")) {
+                std::string filePath(buf);
+                this->reader.readPoints(filePath);
+                *open = false;
+            }
+        }
+        ImGui::End();
     }
 
 }
