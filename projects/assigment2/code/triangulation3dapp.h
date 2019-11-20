@@ -43,10 +43,15 @@ namespace Triangulation3d {
 			Triangulation3d::Reader reader;
 
 			// Funcs
-			void UpdateBuf();
+			void UpdateVBO();
+
+			void ReadPoints();
+			void GenRandomPoints(int numPoints);
 			
 			void RenderUI();
+
 			void ReaderUI(bool* open);
+			void GenRandPointsUI(bool* open);
 
 	};
 } // namespace Triangulation3d

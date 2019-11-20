@@ -9,6 +9,8 @@
 #include <math.h>
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 
 #include "imgui.h"
 
@@ -53,9 +55,11 @@ namespace Triangulation3d {
         //     this->window->Close();--
         // });
 
+        srand (static_cast <unsigned> (time(0)));
+
         if (this->window->Open()) {
             // set clear color to gray
-            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClearColor(1.0f, 1.0f, 0.3f, 1.0f);
 
             // setup vertex shader
             this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -131,15 +135,16 @@ namespace Triangulation3d {
             this->window->Update();
 
             // do stuff
-            UpdateBuf();
+            this->UpdateVBO();
 
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
             glUseProgram(this->program);
             glEnableVertexAttribArray(0);
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
-            glDrawArrays(GL_TRIANGLES, 0, this->bufLength/7);
+            glDrawArrays(GL_LINE_LOOP, 0, this->bufLength/7);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             this->window->SwapBuffers();
@@ -147,7 +152,16 @@ namespace Triangulation3d {
     }
 
 
-    void Triangulation3dApp::UpdateBuf() {
+    void Triangulation3dApp::UpdateVBO() {
+        // setup vbo
+		glGenBuffers(1, &this->triangle);
+		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength, this->buf, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+
+    void Triangulation3dApp::ReadPoints() {
         int numCords = this->reader.getPointsLength()/2;
         GLfloat* tBuf = this->reader.getPoints();
 
@@ -160,25 +174,40 @@ namespace Triangulation3d {
             this->buf[1 + i * 7] = tBuf[1 + i * 2];
             this->buf[2 + i * 7] = -1;
 
-            this->buf[3 + i * 7] = 1;
+            this->buf[3 + i * 7] = 0;
             this->buf[4 + i * 7] = 0;
             this->buf[5 + i * 7] = 0;
             this->buf[6 + i * 7] = 1;
         }
-
-        // setup vbo
-		glGenBuffers(1, &this->triangle);
-		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength, this->buf, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
+    void Triangulation3dApp::GenRandomPoints(int numPoints) {
+        if (numPoints < 3) {
+            numPoints = 3;
+        }
+
+        delete[] this->buf;
+        this->bufLength = numPoints * 7;
+        this->buf = new GLfloat[bufLength];
+
+        for (int i = 0; i < numPoints; i++) {
+            this->buf[0 + i * 7] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1.0f;
+            this->buf[1 + i * 7] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1.0f;
+            this->buf[2 + i * 7] = -1;
+
+            this->buf[3 + i * 7] = 0;
+            this->buf[4 + i * 7] = 0;
+            this->buf[5 + i * 7] = 0;
+            this->buf[6 + i * 7] = 1;
+        }
+    }
     
     /**
      *  Handels the GUI.
      */
     void Triangulation3dApp::RenderUI() {
         static bool showRead = false;
+        static bool genPoints = false;
 
         if (this->window->IsOpen()) {
             if (ImGui::BeginMainMenuBar()) {
@@ -186,11 +215,17 @@ namespace Triangulation3d {
                     ImGui::MenuItem("read file", NULL, &showRead);
                     ImGui::EndMenu();
                 }
+                if (ImGui::BeginMenu("Gen Points")) {
+                    ImGui::MenuItem("read file", NULL, &showRead);
+                    ImGui::MenuItem("Random Points", NULL, &genPoints);
+                    ImGui::EndMenu();
+                }
                 ImGui::EndMainMenuBar();
             }
 	    }
 
-        if (showRead) ReaderUI(&showRead);
+        if (showRead) this->ReaderUI(&showRead);
+        if (genPoints) this->GenRandPointsUI(&genPoints);
     }
 
 
@@ -203,11 +238,28 @@ namespace Triangulation3d {
             ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
             if (ImGui::Button("Read file")) {
                 std::string filePath(buf);
-                this->reader.readPoints(filePath);
+                this->reader.ReadPoints(filePath);
+                this->ReadPoints();
                 *open = false;
             }
+            ImGui::End();
         }
-        ImGui::End();
+    }
+
+
+    /**
+     *  GUI for generating points. 
+     */
+    void Triangulation3dApp::GenRandPointsUI(bool* open) {
+        if (ImGui::Begin("Rand point gen", open, ImGuiWindowFlags_AlwaysAutoResize)) {
+            static int i0=3;
+            ImGui::InputInt("input int", &i0, 1, 5);
+            if (ImGui::Button("Gen Points")) {
+                this->GenRandomPoints(i0);
+                *open = false;
+            }
+            ImGui::End();
+        }
     }
 
 }

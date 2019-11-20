@@ -14,7 +14,7 @@ namespace Triangulation3d {
 
 
             // funcs
-            void readPoints(std::string filePath);
+            void ReadPoints(std::string filePath);
 			
 			int getPointsLength();
 			GLfloat* getPoints();

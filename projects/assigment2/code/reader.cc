@@ -28,7 +28,7 @@ namespace Triangulation3d {
      *  Reads points from file and updates the class variables with the read data.
      *  file_path: is the path to the file.
      */
-    void Reader::readPoints(std::string filePath) {
+    void Reader::ReadPoints(std::string filePath) {
         this->filePath = filePath;
         std::ifstream infile(filePath);
         int numCords;
