@@ -1,13 +1,13 @@
 #--------------------------------------------------------------------------
-# 3dtriangulation project
+# triangulation3d project
 #--------------------------------------------------------------------------
 
-FILE(GLOB 3dtriangulation_headers code/*.h)
-FILE(GLOB 3dtriangulation_sources code/*.cc)
+FILE(GLOB triangulation3d_headers code/*.h)
+FILE(GLOB triangulation3d_sources code/*.cc)
 
-SET(files_3dtriangulation ${3dtriangulation_headers} ${3dtriangulation_sources})
-SOURCE_GROUP("3dtriangulation" FILES ${files_3dtriangulation})
+SET(files_triangulation3d ${triangulation3d_headers} ${triangulation3d_sources})
+SOURCE_GROUP("triangulation3d" FILES ${files_triangulation3d})
 
-ADD_EXECUTABLE(3dtriangulation ${files_3dtriangulation})
-TARGET_LINK_LIBRARIES(3dtriangulation core render)
-ADD_DEPENDENCIES(3dtriangulation core render)
+ADD_EXECUTABLE(triangulation3d ${files_triangulation3d})
+TARGET_LINK_LIBRARIES(triangulation3d core render)
+ADD_DEPENDENCIES(triangulation3d core render)

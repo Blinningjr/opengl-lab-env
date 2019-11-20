@@ -25,3 +25,15 @@ This is done by assigning a lambda function to a callback matching the input you
 
 # CMake instructions
 Put your laboration in the folder titled 'projects'. It must be accompanied with its own CMakeLists.txt which is used to generate a project/solution. Then run CMake in the root of the project, there should be a target in your project matching the name of your lab.
+
+
+# Problem
+If this message
+´´´
+Error: [OPENGL DEBUG MESSAGE] <High severity> 0:1(10): error: GLSL 3.30 is not supported. Supported versions are: 1.10, 1.20, 1.30, 1.00 ES, 3.00 ES, 3.10 ES, and 3.20 ES
+´´´
+Run this
+´´´
+export MESA_GL_VERSION_OVERRIDE=3.3
+´´´
+

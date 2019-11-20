@@ -36,6 +36,7 @@ private:
 	GLuint pixelShader;
 	GLuint triangle;
 	Display::Window* window;
+	
 	GLchar *vsBuffer;
 	GLchar *fsBuffer;
 	std::string compilerLog;

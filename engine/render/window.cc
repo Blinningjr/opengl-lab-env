@@ -197,6 +197,7 @@ Window::Open()
 	glfwWindowHint(GLFW_BLUE_BITS, 8);
 	glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, 8);
+	
 
 	// open window
 	this->window = glfwCreateWindow(this->width, this->height, this->title.c_str(), nullptr, nullptr);
