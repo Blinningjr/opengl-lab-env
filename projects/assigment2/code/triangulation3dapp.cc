@@ -240,7 +240,6 @@ namespace Triangulation3d {
                     ImGui::MenuItem("Random Points", NULL, &genPoints);
                     ImGui::EndMenu();
                 }
-                this->CalcUI();
                 if (ImGui::BeginMenu("Show")) {
                     ImGui::MenuItem("Points", NULL, &this->showPoints);
                     ImGui::MenuItem("Convex Hull", NULL, &this->showConvexHull);
@@ -286,23 +285,5 @@ namespace Triangulation3d {
             }
             ImGui::End();
         }
-    }
-
-
-    /**
-     *  GUI for doing calculations on a set of points. 
-     */
-    void Triangulation3dApp::CalcUI() {
-        // static bool calcConvexHull = false;
-
-        // if (ImGui::BeginMenu("Calc")) {
-        //     ImGui::MenuItem("Convex Hull", NULL, &calcConvexHull);
-        //     ImGui::EndMenu();
-        // }
-
-        // if (calcConvexHull) {
-        //     this->vertexcalc.calcConvexHull();
-        //     calcConvexHull = false;
-        // } 
     }
 }

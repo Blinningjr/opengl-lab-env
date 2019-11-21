@@ -83,6 +83,7 @@ namespace Triangulation3d {
 
     /**
      * Calculates the convex hull of the array points and stores it in convexHull.
+     * Andrew's algorithm.
      */
     void VertexCalc::calcConvexHull() {
         delete[]  this->convexHull;
@@ -131,6 +132,10 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Calculates the cross product of bxc relative to the point a.
+     *  In other words (b-a)x(c-a).
+     */
     float VertexCalc::crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c) {
         return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
     }
