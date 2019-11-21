@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <GL/glew.h>
+#include <algorithm>
 
 namespace Triangulation3d {
 
@@ -46,6 +47,8 @@ namespace Triangulation3d {
             this->points[i].b = 0;
             this->points[i].a = 1;
         }
+        std::sort(this->points, this->points + this->pointsLength);
+        this->calcConvexHull();
     }
 
 
@@ -60,7 +63,7 @@ namespace Triangulation3d {
 
         delete[] this->points;
         this->pointsLength = numPoints;
-        this->points = new Point[pointsLength];
+        this->points = new VertexCalc::Point[pointsLength];
 
         for (int i = 0; i < numPoints; i++) {
             this->points[i].x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1.0f;
@@ -72,6 +75,9 @@ namespace Triangulation3d {
             this->points[i].b = 0;
             this->points[i].a = 1;
         }
+        std::sort(this->points, this->points + this->pointsLength);
+
+        this->calcConvexHull();
     }
 
 
@@ -79,35 +85,54 @@ namespace Triangulation3d {
      * Calculates the convex hull of the array points and stores it in convexHull.
      */
     void VertexCalc::calcConvexHull() {
-        // delete[]  this->convexHull;
-        // this->convexHullLength = 0;
+        delete[]  this->convexHull;
+        this->convexHullLength = 0;
 
-        // int numPoints = this->pointsLength/7;
-        // if (numPoints == 3) {
-        //     this->convexHullLength = this->pointsLength;
-        //     this->convexHull = new GLfloat[this->convexHullLength];
-        //     for (int i = 0; i <  this->pointsLength; i++) {
-        //         this->convexHull[i] = this->points[i];
-        //     }
-        //     return;
-        // }
+        if (this->pointsLength == 3) {
+            this->convexHullLength = this->pointsLength;
+            this->convexHull = new VertexCalc::Point[this->convexHullLength];
+            for (int i = 0; i <  this->pointsLength; i++) {
+                this->convexHull[i] = this->points[i];
+            }
+            return;
+        }
 
+        int lLen = 0;
+        VertexCalc::Point l[this->pointsLength];
+
+        for (int i = 0; i < this->pointsLength; i++) {
+            while (lLen >= 2 && this->crossProduct(l[lLen-2], l[lLen-1], this->points[i]) <= 0) {
+                lLen--;
+            }
+            l[lLen] = this->points[i];
+            lLen += 1;
+	    }
+
+        int uLen = 0;
+        VertexCalc::Point u[this->pointsLength];
+
+        for (int i = this->pointsLength - 1; i >= 0; i--) {
+            while (uLen >= 2 && this->crossProduct(u[uLen-2], u[uLen-1], this->points[i]) <= 0) {
+                uLen--;
+            }
+            u[uLen] = this->points[i];
+            uLen += 1;
+	    }
+
+        this->convexHullLength = lLen + uLen - 2;
+        this->convexHull = new Point[this->convexHullLength];
+        
+        for (int i = 0; i < lLen - 1; i++) {
+            this->convexHull[i] = l[i];
+        }
+        for (int i = 0; i < uLen - 1 ; i++) {
+            this->convexHull[i + lLen - 1] = u[i];
+        }
     }
 
 
-    void VertexCalc::sort(VertexCalc::Point* points, int length) {
-        // VertexCalc::Point ps[length/7];
-        // for (int i = 0; i < length/7; i++) {
-        //     VertexCalc::Point p;
-        //     p.x = points[0 + i * 7];
-        //     p.y = points[1 + i * 7];
-        //     p.z = points[2 + i * 7];
-            
-        //     p.r = points[3 + i * 7];
-        //     p.g = points[4 + i * 7];
-        //     p.b = points[5 + i * 7];
-        //     p.a = points[6 + i * 7];
-        // }
+    float VertexCalc::crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c) {
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
     }
 
 

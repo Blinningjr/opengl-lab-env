@@ -42,6 +42,8 @@ namespace Triangulation3d {
     Triangulation3dApp::Triangulation3dApp() {
         this->bufLength = 0;
         this->buf = new GLfloat[this->bufLength];
+        this->showPoints = true;
+        this->showConvexHull = false;
     }
     
 
@@ -143,15 +145,28 @@ namespace Triangulation3d {
             glClear(GL_COLOR_BUFFER_BIT);
             this->window->Update();
 
+            this->UpdateVBO();
+
             // do stuff
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
             glUseProgram(this->program);
+            glLineWidth(3);
+            glPointSize(6);
             glEnableVertexAttribArray(0);
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
-            glDrawArrays(GL_LINE_LOOP, 0, this->bufLength/7);
+
+            if (this->showConvexHull) {
+                glDrawArrays(GL_POLYGON, this->vertexcalc.getPointsLength(), this->vertexcalc.getConvexHullLength());
+            }
+            
+            if (this->showPoints) {
+                glDrawArrays(GL_POINTS, 0, this->vertexcalc.getPointsLength());
+            }
+            
+            
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             this->window->SwapBuffers();
@@ -163,6 +178,40 @@ namespace Triangulation3d {
      *  Updates the VBO with this->buf.
      */
     void Triangulation3dApp::UpdateVBO() {
+        delete[] this->buf;
+        int lengthPoints = this->vertexcalc.getPointsLength();
+        int lengthConvexHull = this->vertexcalc.getConvexHullLength();
+        int prev = 0;
+
+        this->bufLength = (lengthPoints + lengthConvexHull) * 7;
+        this->buf = new GLfloat[this->bufLength];
+
+        VertexCalc::Point* points = this->vertexcalc.getPoints();
+        for (int i = 0; i < lengthPoints; i++) {
+            this->buf[0 + i * 7 + prev] = points[i].x;
+            this->buf[1 + i * 7 + prev] = points[i].y;
+            this->buf[2 + i * 7 + prev] = points[i].z;
+
+            this->buf[3 + i * 7 + prev] = points[i].r;
+            this->buf[4 + i * 7 + prev] = points[i].g;
+            this->buf[5 + i * 7 + prev] = points[i].b;
+            this->buf[6 + i * 7 + prev] = points[i].a;
+        }
+        prev += lengthPoints * 7;
+
+        VertexCalc::Point* convexHull = this->vertexcalc.getConvexHull();
+        for (int i = 0; i < lengthConvexHull; i++) {
+            this->buf[0 + i * 7 + prev] = convexHull[i].x;
+            this->buf[1 + i * 7 + prev] = convexHull[i].y;
+            this->buf[2 + i * 7 + prev] = convexHull[i].z;
+
+            this->buf[3 + i * 7 + prev] = 1;
+            this->buf[4 + i * 7 + prev] = convexHull[i].g;
+            this->buf[5 + i * 7 + prev] = convexHull[i].b;
+            this->buf[6 + i * 7 + prev] = convexHull[i].a;
+        }
+
+
         // setup vbo
 		glGenBuffers(1, &this->triangle);
 		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
@@ -170,28 +219,6 @@ namespace Triangulation3d {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     
-
-    /**
-     *  Copys a vertex array into the VBO and updates the VBO.
-     */
-    void Triangulation3dApp::copyToVBO(VertexCalc::Point* points, int length) {
-        delete[] this->buf;
-        this->bufLength = length * 7;
-        this->buf = new GLfloat[this->bufLength];
-
-        for (int i = 0; i < length; i++) {
-            this->buf[0 + i * 7] = points[i].x;
-            this->buf[1 + i * 7] = points[i].y;
-            this->buf[2 + i * 7] = points[i].z;
-
-            this->buf[3 + i * 7] = points[i].r;
-            this->buf[4 + i * 7] = points[i].g;
-            this->buf[5 + i * 7] = points[i].b;
-            this->buf[6 + i * 7] = points[i].a;
-        }
-        this->UpdateVBO();
-    }
-
     
     /**
      *  Handels the GUI.
@@ -214,6 +241,11 @@ namespace Triangulation3d {
                     ImGui::EndMenu();
                 }
                 this->CalcUI();
+                if (ImGui::BeginMenu("Show")) {
+                    ImGui::MenuItem("Points", NULL, &this->showPoints);
+                    ImGui::MenuItem("Convex Hull", NULL, &this->showConvexHull);
+                    ImGui::EndMenu();
+                }
                 ImGui::EndMainMenuBar();
             }
 	    }
@@ -234,7 +266,6 @@ namespace Triangulation3d {
             if (ImGui::Button("Read file")) {
                 std::string filePath(buf);
                 this->vertexcalc.ReadPoints(filePath);
-                this->copyToVBO(this->vertexcalc.getPoints(), this->vertexcalc.getPointsLength());
                 *open = false;
             }
             ImGui::End();
@@ -251,7 +282,6 @@ namespace Triangulation3d {
             ImGui::InputInt("input int", &i0, 1, 5);
             if (ImGui::Button("Gen Points")) {
                 this->vertexcalc.GenRandomPoints(i0);
-                this->copyToVBO(this->vertexcalc.getPoints(), this->vertexcalc.getPointsLength());
                 *open = false;
             }
             ImGui::End();
@@ -263,17 +293,16 @@ namespace Triangulation3d {
      *  GUI for doing calculations on a set of points. 
      */
     void Triangulation3dApp::CalcUI() {
-        static bool calcConvexHull = false;
+        // static bool calcConvexHull = false;
 
-        if (ImGui::BeginMenu("Calc")) {
-            ImGui::MenuItem("Convex Hull", NULL, &calcConvexHull);
-            ImGui::EndMenu();
-        }
+        // if (ImGui::BeginMenu("Calc")) {
+        //     ImGui::MenuItem("Convex Hull", NULL, &calcConvexHull);
+        //     ImGui::EndMenu();
+        // }
 
-        if (calcConvexHull) {
-            this->vertexcalc.calcConvexHull();
-            this->copyToVBO(this->vertexcalc.getConvexHull(), this->vertexcalc.getConvexHullLength());
-            calcConvexHull = false;
-        } 
+        // if (calcConvexHull) {
+        //     this->vertexcalc.calcConvexHull();
+        //     calcConvexHull = false;
+        // } 
     }
 }

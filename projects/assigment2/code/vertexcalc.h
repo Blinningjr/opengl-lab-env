@@ -25,8 +25,6 @@ namespace Triangulation3d {
 			void GenRandomPoints(int numPoints);
 
 			void calcConvexHull();
-
-			void sort(VertexCalc::Point* points, int length);
 			
 			int getPointsLength();
 			VertexCalc::Point* getPoints();
@@ -48,6 +46,7 @@ namespace Triangulation3d {
 			// GLfloat* triangulation;
 
             // Funcs
+			GLfloat crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c);
             
 
 	};

@@ -42,10 +42,12 @@ namespace Triangulation3d {
 
 			Triangulation3d::VertexCalc vertexcalc;
 
+			bool showPoints;
+			bool showConvexHull;
+			// bool showPoints;
+
 			// Funcs
 			void UpdateVBO();
-
-			void copyToVBO(VertexCalc::Point* points, int length);
 			
 			void RenderUI();
 
