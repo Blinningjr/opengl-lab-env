@@ -12,13 +12,21 @@ namespace Triangulation3d {
 			~VertexCalc();
         
             // Var
+			struct Point {
+				GLfloat x, y, z, r, g, b, a;
 
+				bool operator <(const Point &p) const {
+					return x < p.x || (x == p.x && y < p.y);
+				}
+			};
 
             // funcs
             void ReadPoints(std::string filePath);
 			void GenRandomPoints(int numPoints);
 
 			void calcConvexHull();
+
+			void sort(GLfloat* points, int length);
 			
 			int getPointsLength();
 			GLfloat* getPoints();

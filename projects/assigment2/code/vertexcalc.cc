@@ -11,6 +11,8 @@ namespace Triangulation3d {
     VertexCalc::VertexCalc() {
         this->pointsLength = 0;
         this->points = new GLfloat[this->pointsLength];
+        this->convexHullLength = 0;
+        this->convexHull = new GLfloat[this->convexHullLength];
     }
 
 
@@ -77,7 +79,35 @@ namespace Triangulation3d {
      * Calculates the convex hull of the array points and stores it in convexHull.
      */
     void VertexCalc::calcConvexHull() {
+        delete[]  this->convexHull;
+        this->convexHullLength = 0;
 
+        int numPoints = this->pointsLength/7;
+        if (numPoints == 3) {
+            this->convexHullLength = this->pointsLength;
+            this->convexHull = new GLfloat[this->convexHullLength];
+            for (int i = 0; i <  this->pointsLength; i++) {
+                this->convexHull[i] = this->points[i];
+            }
+            return;
+        }
+
+    }
+
+
+    void VertexCalc::sort(GLfloat* points, int length) {
+        // Point ps[length/7];
+        // for (int i = 0; i < length/7; i++) {
+        //     Point p;
+        //     p.x = points[0 + i * 7];
+        //     p.y = points[1 + i * 7];
+        //     p.z = points[2 + i * 7];
+            
+        //     p.r = points[3 + i * 7];
+        //     p.g = points[4 + i * 7];
+        //     p.b = points[5 + i * 7];
+        //     p.a = points[6 + i * 7];
+        // }
     }
 
 
