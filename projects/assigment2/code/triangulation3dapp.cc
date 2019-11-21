@@ -159,48 +159,18 @@ namespace Triangulation3d {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength, this->buf, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+    
 
-
-    void Triangulation3dApp::ReadPoints() {
-        int numCords = this->reader.getPointsLength()/2;
-        GLfloat* tBuf = this->reader.getPoints();
-
+    void Triangulation3dApp::copyToVBO(GLfloat* points, int length) {
         delete[] this->buf;
-        this->bufLength = numCords * 7;
-        this->buf = new GLfloat[bufLength];
+        this->bufLength = length;
+        this->buf = new GLfloat[this->bufLength];
 
-        for (int i = 0; i < numCords; i++) {
-            this->buf[0 + i * 7] = tBuf[0 + i * 2];
-            this->buf[1 + i * 7] = tBuf[1 + i * 2];
-            this->buf[2 + i * 7] = -1;
-
-            this->buf[3 + i * 7] = 0;
-            this->buf[4 + i * 7] = 0;
-            this->buf[5 + i * 7] = 0;
-            this->buf[6 + i * 7] = 1;
+        for (int i = 0; i < length; i++) {
+            this->buf[i] = points[i];
         }
     }
 
-    void Triangulation3dApp::GenRandomPoints(int numPoints) {
-        if (numPoints < 3) {
-            numPoints = 3;
-        }
-
-        delete[] this->buf;
-        this->bufLength = numPoints * 7;
-        this->buf = new GLfloat[bufLength];
-
-        for (int i = 0; i < numPoints; i++) {
-            this->buf[0 + i * 7] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1.0f;
-            this->buf[1 + i * 7] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1.0f;
-            this->buf[2 + i * 7] = -1;
-
-            this->buf[3 + i * 7] = 0;
-            this->buf[4 + i * 7] = 0;
-            this->buf[5 + i * 7] = 0;
-            this->buf[6 + i * 7] = 1;
-        }
-    }
     
     /**
      *  Handels the GUI.
@@ -238,8 +208,8 @@ namespace Triangulation3d {
             ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
             if (ImGui::Button("Read file")) {
                 std::string filePath(buf);
-                this->reader.ReadPoints(filePath);
-                this->ReadPoints();
+                this->vertexcalc.ReadPoints(filePath);
+                this->copyToVBO(this->vertexcalc.getPoints(), this->vertexcalc.getPointsLength());
                 *open = false;
             }
             ImGui::End();
@@ -255,7 +225,8 @@ namespace Triangulation3d {
             static int i0=3;
             ImGui::InputInt("input int", &i0, 1, 5);
             if (ImGui::Button("Gen Points")) {
-                this->GenRandomPoints(i0);
+                this->vertexcalc.GenRandomPoints(i0);
+                this->copyToVBO(this->vertexcalc.getPoints(), this->vertexcalc.getPointsLength());
                 *open = false;
             }
             ImGui::End();

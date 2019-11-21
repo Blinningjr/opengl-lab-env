@@ -2,7 +2,7 @@
 
 #include "core/app.h"
 #include "render/window.h"
-#include "reader.h"
+#include "vertexcalc.h"
 
 namespace Triangulation3d {
 	class Triangulation3dApp : public Core::App {
@@ -40,13 +40,12 @@ namespace Triangulation3d {
 			int bufLength;
             GLfloat* buf;
 
-			Triangulation3d::Reader reader;
+			Triangulation3d::VertexCalc vertexcalc;
 
 			// Funcs
 			void UpdateVBO();
 
-			void ReadPoints();
-			void GenRandomPoints(int numPoints);
+			void copyToVBO(GLfloat* points, int length);
 			
 			void RenderUI();
 
