@@ -26,23 +26,23 @@ namespace Triangulation3d {
 
 			void calcConvexHull();
 
-			void sort(GLfloat* points, int length);
+			void sort(VertexCalc::Point* points, int length);
 			
 			int getPointsLength();
-			GLfloat* getPoints();
+			VertexCalc::Point* getPoints();
 
 			int getConvexHullLength();
-			GLfloat* getConvexHull();
+			VertexCalc::Point* getConvexHull();
 
 		private:
             // Var
             Triangulation3d::Reader reader;
 
 			int pointsLength;
-			GLfloat* points;
+			VertexCalc::Point* points;
 
             int convexHullLength;
-			GLfloat* convexHull;
+			VertexCalc::Point* convexHull;
 
             // int triangulationLength;
 			// GLfloat* triangulation;

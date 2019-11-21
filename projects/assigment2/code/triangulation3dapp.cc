@@ -166,7 +166,7 @@ namespace Triangulation3d {
         // setup vbo
 		glGenBuffers(1, &this->triangle);
 		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength, this->buf, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength * 7, this->buf, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     
@@ -174,13 +174,20 @@ namespace Triangulation3d {
     /**
      *  Copys a vertex array into the VBO and updates the VBO.
      */
-    void Triangulation3dApp::copyToVBO(GLfloat* points, int length) {
+    void Triangulation3dApp::copyToVBO(VertexCalc::Point* points, int length) {
         delete[] this->buf;
-        this->bufLength = length;
+        this->bufLength = length * 7;
         this->buf = new GLfloat[this->bufLength];
 
         for (int i = 0; i < length; i++) {
-            this->buf[i] = points[i];
+            this->buf[0 + i * 7] = points[i].x;
+            this->buf[1 + i * 7] = points[i].y;
+            this->buf[2 + i * 7] = points[i].z;
+
+            this->buf[3 + i * 7] = points[i].r;
+            this->buf[4 + i * 7] = points[i].g;
+            this->buf[5 + i * 7] = points[i].b;
+            this->buf[6 + i * 7] = points[i].a;
         }
         this->UpdateVBO();
     }

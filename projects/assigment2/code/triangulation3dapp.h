@@ -45,7 +45,7 @@ namespace Triangulation3d {
 			// Funcs
 			void UpdateVBO();
 
-			void copyToVBO(GLfloat* points, int length);
+			void copyToVBO(VertexCalc::Point* points, int length);
 			
 			void RenderUI();
 
