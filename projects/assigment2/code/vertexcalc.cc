@@ -71,8 +71,11 @@ namespace Triangulation3d {
             this->points[6 + i * 7] = 1;
         }
     }
-    
 
+
+    /**
+     * Calculates the convex hull of the array points and stores it in convexHull.
+     */
     void VertexCalc::calcConvexHull() {
 
     }

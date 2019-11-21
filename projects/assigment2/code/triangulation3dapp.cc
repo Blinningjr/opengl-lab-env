@@ -37,23 +37,27 @@ const GLchar* ps =
 "}\n";
 
 namespace Triangulation3d {
+
+
     Triangulation3dApp::Triangulation3dApp() {
         this->bufLength = 0;
         this->buf = new GLfloat[this->bufLength];
     }
     
+
     Triangulation3dApp::~Triangulation3dApp() {
         delete[] this->buf;
         delete[] this->vsBuffer;
         delete[] this->fsBuffer;
     }
 
+
+    /**
+     *   Initaial setup of the app.
+     */
     bool Triangulation3dApp::Open() {
         App::Open();
         this->window = new Display::Window;
-        // window->SetKeyPressFunction([this](int32 a, int32 b, int32 c, int32 d) {
-        //     this->window->Close();--
-        // });
 
         srand (static_cast <unsigned> (time(0)));
 
@@ -122,6 +126,8 @@ namespace Triangulation3d {
             {
                 this->RenderUI();
             });
+
+            this->UpdateVBO();
             
             return true;
         }
@@ -129,14 +135,15 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Main app loop. 
+     */
     void Triangulation3dApp::Run() {
        while (this->window->IsOpen()) {
             glClear(GL_COLOR_BUFFER_BIT);
             this->window->Update();
 
             // do stuff
-            this->UpdateVBO();
-
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
             glUseProgram(this->program);
@@ -152,6 +159,9 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Updates the VBO with this->buf.
+     */
     void Triangulation3dApp::UpdateVBO() {
         // setup vbo
 		glGenBuffers(1, &this->triangle);
@@ -161,6 +171,9 @@ namespace Triangulation3d {
     }
     
 
+    /**
+     *  Copys a vertex array into the VBO and updates the VBO.
+     */
     void Triangulation3dApp::copyToVBO(GLfloat* points, int length) {
         delete[] this->buf;
         this->bufLength = length;
@@ -169,6 +182,7 @@ namespace Triangulation3d {
         for (int i = 0; i < length; i++) {
             this->buf[i] = points[i];
         }
+        this->UpdateVBO();
     }
 
     
@@ -178,11 +192,13 @@ namespace Triangulation3d {
     void Triangulation3dApp::RenderUI() {
         static bool showRead = false;
         static bool genPoints = false;
+        static bool exit = false;
 
         if (this->window->IsOpen()) {
             if (ImGui::BeginMainMenuBar()) {
                 if (ImGui::BeginMenu("File")) {
                     ImGui::MenuItem("read file", NULL, &showRead);
+                    ImGui::MenuItem("Exit", NULL, &exit);
                     ImGui::EndMenu();
                 }
                 if (ImGui::BeginMenu("Gen Points")) {
@@ -197,6 +213,7 @@ namespace Triangulation3d {
 
         if (showRead) this->ReaderUI(&showRead);
         if (genPoints) this->GenRandPointsUI(&genPoints);
+        if (exit) this->window->Close();
     }
 
 
@@ -235,6 +252,9 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  GUI for doing calculations on a set of points. 
+     */
     void Triangulation3dApp::CalcUI() {
         static bool calcConvexHull = false;
 
@@ -249,5 +269,4 @@ namespace Triangulation3d {
             calcConvexHull = false;
         } 
     }
-
 }
