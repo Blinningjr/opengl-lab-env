@@ -18,9 +18,13 @@ namespace Triangulation3d {
             void ReadPoints(std::string filePath);
 			void GenRandomPoints(int numPoints);
 
+			void calcConvexHull();
 			
 			int getPointsLength();
 			GLfloat* getPoints();
+
+			int getConvexHullLength();
+			GLfloat* getConvexHull();
 
 		private:
             // Var
@@ -29,8 +33,8 @@ namespace Triangulation3d {
 			int pointsLength;
 			GLfloat* points;
 
-            // int convexHullLength;
-			// GLfloat* convexHull;
+            int convexHullLength;
+			GLfloat* convexHull;
 
             // int triangulationLength;
 			// GLfloat* triangulation;

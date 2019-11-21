@@ -22,6 +22,9 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Reads points form a file at the file path filePath. 
+     */
     void VertexCalc::ReadPoints(std::string filePath) {
         this->reader.ReadPoints(filePath);
         int numCords = this->reader.getPointsLength()/2;
@@ -43,6 +46,11 @@ namespace Triangulation3d {
         }
     }
 
+
+    /**
+     *  Generates random points of size numPoints.
+     *  NOTE: If (numPoints < 3) numPoints = 3;
+     */
     void VertexCalc::GenRandomPoints(int numPoints) {
         if (numPoints < 3) {
             numPoints = 3;
@@ -63,6 +71,11 @@ namespace Triangulation3d {
             this->points[6 + i * 7] = 1;
         }
     }
+    
+
+    void VertexCalc::calcConvexHull() {
+
+    }
 
 
     /**
@@ -78,5 +91,21 @@ namespace Triangulation3d {
      */
     GLfloat* VertexCalc::getPoints() {
         return this->points;
+    }
+
+
+    /**
+     *  Gets the length of the convecHull array.
+     */
+    int VertexCalc::getConvexHullLength() {
+        return this->convexHullLength;
+    }
+
+
+    /**
+     *  Gets a pointer to the array with the convex hull. 
+     */
+	GLfloat* VertexCalc::getConvexHull() {
+        return this->convexHull;
     }
 }

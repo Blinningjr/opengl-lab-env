@@ -52,5 +52,7 @@ namespace Triangulation3d {
 			void ReaderUI(bool* open);
 			void GenRandPointsUI(bool* open);
 
+			void CalcUI();
+
 	};
 } // namespace Triangulation3d

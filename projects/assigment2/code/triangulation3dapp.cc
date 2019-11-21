@@ -190,6 +190,7 @@ namespace Triangulation3d {
                     ImGui::MenuItem("Random Points", NULL, &genPoints);
                     ImGui::EndMenu();
                 }
+                this->CalcUI();
                 ImGui::EndMainMenuBar();
             }
 	    }
@@ -231,6 +232,22 @@ namespace Triangulation3d {
             }
             ImGui::End();
         }
+    }
+
+
+    void Triangulation3dApp::CalcUI() {
+        static bool calcConvexHull = false;
+
+        if (ImGui::BeginMenu("Calc")) {
+            ImGui::MenuItem("Convex Hull", NULL, &calcConvexHull);
+            ImGui::EndMenu();
+        }
+
+        if (calcConvexHull) {
+            this->vertexcalc.calcConvexHull();
+            this->copyToVBO(this->vertexcalc.getConvexHull(), this->vertexcalc.getConvexHullLength());
+            calcConvexHull = false;
+        } 
     }
 
 }
