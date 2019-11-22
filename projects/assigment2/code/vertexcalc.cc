@@ -14,6 +14,8 @@ namespace Triangulation3d {
         this->points = new VertexCalc::Point[this->pointsLength];
         this->convexHullLength = 0;
         this->convexHull = new VertexCalc::Point[this->convexHullLength];
+        this->triangulationLength = 0;
+        this->triangulation = new VertexCalc::Point[this->triangulationLength];
     }
 
 
@@ -22,6 +24,8 @@ namespace Triangulation3d {
      */
     VertexCalc::~VertexCalc() {
         delete[] this->points;
+        delete[] this->convexHull;
+        delete[] this->triangulation;
     }
 
 
@@ -95,6 +99,7 @@ namespace Triangulation3d {
             for (int i = 0; i <  this->pointsLength; i++) {
                 this->convexHull[i] = this->points[i];
             }
+            this->calcTriangulation();
             return;
         }
 
@@ -129,6 +134,7 @@ namespace Triangulation3d {
         for (int i = 0; i < uLen - 1 ; i++) {
             this->convexHull[i + lLen - 1] = u[i];
         }
+        this->calcTriangulation();
     }
 
 
@@ -139,6 +145,12 @@ namespace Triangulation3d {
     float VertexCalc::crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c) {
         return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
     }
+
+
+    void VertexCalc::calcTriangulation() {
+
+    }
+
 
 
     /**
@@ -170,5 +182,21 @@ namespace Triangulation3d {
      */
 	VertexCalc::Point* VertexCalc::getConvexHull() {
         return this->convexHull;
+    }
+
+
+    /**
+     *  Gets the length of the triangulation array.
+     */
+    int VertexCalc::getTriangulationLength() {
+        return this->triangulationLength;
+    }
+
+
+    /**
+     *  Gets a pointer to the array with the triangulation. 
+     */
+	VertexCalc::Point* VertexCalc::getTriangulation() {
+        return this->triangulation;
     }
 }
