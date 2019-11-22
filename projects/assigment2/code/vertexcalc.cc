@@ -16,7 +16,7 @@ namespace Triangulation3d {
         this->convexHullLength = 0;
         this->convexHull = new Point[this->convexHullLength];
         this->triangulationLength = 0;
-        this->triangulation = new Point[this->triangulationLength];
+        this->triangulation = new Triangle[this->triangulationLength];
         
         this->pickedC.x = 0;
         this->pickedC.y = 0;
@@ -176,8 +176,11 @@ namespace Triangulation3d {
         this->calcConvexHull();
         this->pickC();
         delete[] this->triangulation;
-        this->triangulationLength = 0;
-        this->triangulation = new Point[this->triangulationLength];
+        this->triangulationLength = 1;
+        this->triangulation = new Triangle[this->triangulationLength];
+        this->triangulation[0].p1 = this->points[0];
+        this->triangulation[0].p2 = this->points[1];
+        this->triangulation[0].p3 = this->points[2];
     }
 
 
@@ -255,7 +258,7 @@ namespace Triangulation3d {
     /**
      *  Gets a pointer to the array with the triangulation. 
      */
-	VertexCalc::Point* VertexCalc::getTriangulation() {
+	VertexCalc::Triangle* VertexCalc::getTriangulation() {
         return this->triangulation;
     }
 

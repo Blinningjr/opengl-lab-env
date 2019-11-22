@@ -163,9 +163,9 @@ namespace Triangulation3d {
 
             int start = 0;
             if (this->showTriangulation) {
-                glDrawArrays(GL_POINTS, start, this->vertexcalc.getTriangulationLength());
+                glDrawArrays(GL_POLYGON, start, this->vertexcalc.getTriangulationLength() * 3);
             }
-            start += this->vertexcalc.getTriangulationLength();
+            start += this->vertexcalc.getTriangulationLength() * 3;
 
             if (this->showConvexHull) {
                 glDrawArrays(GL_POLYGON, start, this->vertexcalc.getConvexHullLength());
@@ -195,7 +195,7 @@ namespace Triangulation3d {
      */
     void Triangulation3dApp::UpdateVBO() {
         delete[] this->buf;
-        int lengthTriangulation = this->vertexcalc.getTriangulationLength();
+        int lengthTriangulation = this->vertexcalc.getTriangulationLength() * 3;
         int lengthConvexHull = this->vertexcalc.getConvexHullLength();
         int lengthPoints = this->vertexcalc.getPointsLength();
         int lengthC = 1;
@@ -206,16 +206,39 @@ namespace Triangulation3d {
 
 
         // Adds triangulation.
-        VertexCalc::Point* triangulation = this->vertexcalc.getTriangulation();
-        for (int i = 0; i < lengthTriangulation; i++) {
-            this->buf[0 + i * 7 + prev] = triangulation[i].x;
-            this->buf[1 + i * 7 + prev] = triangulation[i].y;
-            this->buf[2 + i * 7 + prev] = triangulation[i].z;
+        VertexCalc::Triangle* triangulation = this->vertexcalc.getTriangulation();
+        for (int i = 0; i < this->vertexcalc.getTriangulationLength(); i++) {
+            VertexCalc::Point p1 = triangulation[i].p1;
+            VertexCalc::Point p2 = triangulation[i].p2;
+            VertexCalc::Point p3 = triangulation[i].p3;
+            this->buf[0 + i * 7 * 3 + prev] = p1.x;
+            this->buf[1 + i * 7 * 3 + prev] = p1.y;
+            this->buf[2 + i * 7 * 3 + prev] = p1.z;
 
-            this->buf[3 + i * 7 + prev] = 0;
-            this->buf[4 + i * 7 + prev] = 0;
-            this->buf[5 + i * 7 + prev] = 1;
-            this->buf[6 + i * 7 + prev] = triangulation[i].a;
+            this->buf[3 + i * 7 * 3 + prev] = 0;
+            this->buf[4 + i * 7 * 3 + prev] = 0;
+            this->buf[5 + i * 7 * 3 + prev] = 1;
+            this->buf[6 + i * 7 * 3 + prev] = p1.a;
+            
+            
+            this->buf[7 + i * 7 * 3 + prev] = p2.x;
+            this->buf[8 + i * 7 * 3 + prev] = p2.y;
+            this->buf[9 + i * 7 * 3 + prev] = p2.z;
+
+            this->buf[10 + i * 7 * 3 + prev] = 0;
+            this->buf[11 + i * 7 * 3 + prev] = 0;
+            this->buf[12 + i * 7 * 3 + prev] = 1;
+            this->buf[13 + i * 7 * 3 + prev] = p2.a;
+
+
+            this->buf[14 + i * 7 * 3 + prev] = p3.x;
+            this->buf[15 + i * 7 * 3 + prev] = p3.y;
+            this->buf[16 + i * 7 * 3 + prev] = p3.z;
+
+            this->buf[17 + i * 7 * 3 + prev] = 0;
+            this->buf[18 + i * 7 * 3 + prev] = 0;
+            this->buf[19 + i * 7 * 3 + prev] = 1;
+            this->buf[20 + i * 7 * 3 + prev] = p3.a;
         }
         prev += lengthTriangulation * 7;
 

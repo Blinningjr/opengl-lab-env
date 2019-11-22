@@ -63,7 +63,7 @@ namespace Triangulation3d {
 			Point* getConvexHull();
 
 			int getTriangulationLength();
-			Point* getTriangulation();
+			Triangle* getTriangulation();
 
 			Point getPickedC();
 
@@ -78,7 +78,7 @@ namespace Triangulation3d {
 			Point* convexHull;
 
             int triangulationLength;
-			Point* triangulation;
+			Triangle* triangulation;
 
 			Point pickedC;
 
