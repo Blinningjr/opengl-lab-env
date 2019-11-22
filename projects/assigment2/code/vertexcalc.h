@@ -27,31 +27,24 @@ namespace Triangulation3d {
 			struct Triangle {
 				Point p1, p2, p3;
 			};
-			enum NodeType {
-				LEAF,
-				BNODE,
-				TRENARY,
-			};
+
+			struct Node;
 			struct Leaf {
-				NodeType nType;
-				void* parent;
-				Triangle t;
+				int triangle;
 			};
 			struct BNode {
-				NodeType nType;
-				void* parent;
-				Edge e;
-				void* st1;
-				void* st2;
+				Edge* e;
+				Node *st1, *st2;
 			};
 			struct Trenary {
-				NodeType nType;
-				void* parent;
 				Point v;
-				Edge e1, e2, e3;
-				void* st1;
-				void* st2;
-				void* st3;
+				Edge *e1, *e2,* e3;
+				Node *st1, *st2, *st3;
+			};
+			struct Node {
+				Leaf* l;
+				BNode* bn;
+				Trenary* t;
 			};
 
 
@@ -64,35 +57,39 @@ namespace Triangulation3d {
 			void calcTriangulation();
 			
 			int getPointsLength();
-			VertexCalc::Point* getPoints();
+			Point* getPoints();
 
 			int getConvexHullLength();
-			VertexCalc::Point* getConvexHull();
+			Point* getConvexHull();
 
 			int getTriangulationLength();
-			VertexCalc::Point* getTriangulation();
+			Point* getTriangulation();
 
-			VertexCalc::Point getPickedC();
+			Point getPickedC();
 
 		private:
             // Var
             Triangulation3d::Reader reader;
 
 			int pointsLength;
-			VertexCalc::Point* points;
+			Point* points;
 
             int convexHullLength;
-			VertexCalc::Point* convexHull;
+			Point* convexHull;
 
             int triangulationLength;
-			VertexCalc::Point* triangulation;
+			Point* triangulation;
 
-			VertexCalc::Point pickedC;
+			Point pickedC;
+
+			Node* tree;
 
             // Funcs
-			GLfloat crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c);
+			GLfloat crossProduct(Point a, Point b, Point c);
 
 			void pickC(); 
+
+			Node* createTree(Point points[], int length);
             
 
 	};

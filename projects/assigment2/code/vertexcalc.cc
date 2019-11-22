@@ -12,11 +12,11 @@ namespace Triangulation3d {
      */
     VertexCalc::VertexCalc() {
         this->pointsLength = 0;
-        this->points = new VertexCalc::Point[this->pointsLength];
+        this->points = new Point[this->pointsLength];
         this->convexHullLength = 0;
-        this->convexHull = new VertexCalc::Point[this->convexHullLength];
+        this->convexHull = new Point[this->convexHullLength];
         this->triangulationLength = 0;
-        this->triangulation = new VertexCalc::Point[this->triangulationLength];
+        this->triangulation = new Point[this->triangulationLength];
         
         this->pickedC.x = 0;
         this->pickedC.y = 0;
@@ -77,7 +77,7 @@ namespace Triangulation3d {
 
         delete[] this->points;
         this->pointsLength = numPoints;
-        this->points = new VertexCalc::Point[this->pointsLength];
+        this->points = new Point[this->pointsLength];
 
         for (int i = 0; i < numPoints; i++) {
             this->points[i].x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
@@ -122,7 +122,7 @@ namespace Triangulation3d {
 
         if (this->pointsLength == 3) {
             this->convexHullLength = this->pointsLength;
-            this->convexHull = new VertexCalc::Point[this->convexHullLength];
+            this->convexHull = new Point[this->convexHullLength];
             for (int i = 0; i <  this->pointsLength; i++) {
                 this->convexHull[i] = this->points[i];
             }
@@ -130,7 +130,7 @@ namespace Triangulation3d {
         }
 
         int lLen = 0;
-        VertexCalc::Point l[this->pointsLength];
+        Point l[this->pointsLength];
 
         for (int i = 0; i < this->pointsLength; i++) {
             while (lLen >= 2 && this->crossProduct(l[lLen-2], l[lLen-1], this->points[i]) <= 0) {
@@ -141,7 +141,7 @@ namespace Triangulation3d {
 	    }
 
         int uLen = 0;
-        VertexCalc::Point u[this->pointsLength];
+        Point u[this->pointsLength];
 
         for (int i = this->pointsLength - 1; i >= 0; i--) {
             while (uLen >= 2 && this->crossProduct(u[uLen-2], u[uLen-1], this->points[i]) <= 0) {
@@ -167,7 +167,7 @@ namespace Triangulation3d {
      *  Calculates the cross product of bxc relative to the point a.
      *  In other words (b-a)x(c-a).
      */
-    float VertexCalc::crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c) {
+    float VertexCalc::crossProduct(Point a, Point b, Point c) {
         return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
     }
 
@@ -177,7 +177,7 @@ namespace Triangulation3d {
         this->pickC();
         delete[] this->triangulation;
         this->triangulationLength = 0;
-        this->triangulation = new VertexCalc::Point[this->triangulationLength];
+        this->triangulation = new Point[this->triangulationLength];
     }
 
 
