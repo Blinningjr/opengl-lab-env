@@ -71,8 +71,8 @@ namespace Triangulation3d {
         this->points = new VertexCalc::Point[pointsLength];
 
         for (int i = 0; i < numPoints; i++) {
-            this->points[i].x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1.0f;
-            this->points[i].y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2)) - 1.0f;
+            this->points[i].x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
+            this->points[i].y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
             this->points[i].z = -1;
 
             this->points[i].r = 0;
@@ -81,6 +81,23 @@ namespace Triangulation3d {
             this->points[i].a = 1;
         }
         std::sort(this->points, this->points + this->pointsLength);
+
+        GLfloat onLine = (this->points[numPoints - 1].x - this->points[0].x)/(this->points[numPoints - 1].y - this->points[0].y);
+        bool ok = false;
+        for (int i = 0; i < numPoints - 1; i++) {
+            if (this->points[i].x == this->points[i + 1].x && this->points[i].y == this->points[i + 1].y) {
+                this->GenRandomPoints(numPoints);
+                return;
+            } 
+            GLfloat line = (this->points[i + 1].x - this->points[0].x)/(this->points[i + 1].y - this->points[0].y);
+            if (line != onLine) {
+                ok = true;
+            }
+        }
+        if (!ok) {
+            this->GenRandomPoints(numPoints);
+            return;
+        }
 
         this->calcConvexHull();
     }
