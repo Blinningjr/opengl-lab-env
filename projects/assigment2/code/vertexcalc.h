@@ -20,6 +20,9 @@ namespace Triangulation3d {
 				bool operator <(const Point &p) const {
 					return x < p.x || (x == p.x && y < p.y);
 				}
+				bool operator ==(const Point& p){
+					return x == p.x && y == p.y;
+				}
 			};
 			struct Edge {
 				Point p1, p2;
@@ -89,7 +92,11 @@ namespace Triangulation3d {
 
 			void pickC(); 
 
+			Triangle* calcTriangles(Point* points, int length, Point v);
+
 			Node* createTree(Point points[], int length);
+
+			bool pickedCOnHull();
             
 
 	};

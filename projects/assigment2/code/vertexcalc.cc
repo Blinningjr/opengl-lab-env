@@ -175,12 +175,14 @@ namespace Triangulation3d {
     void VertexCalc::calcTriangulation() {
         this->calcConvexHull();
         this->pickC();
+
         delete[] this->triangulation;
-        this->triangulationLength = 1;
-        this->triangulation = new Triangle[this->triangulationLength];
-        this->triangulation[0].p1 = this->points[0];
-        this->triangulation[0].p2 = this->points[1];
-        this->triangulation[0].p3 = this->points[2];
+        int cLength = this->convexHullLength;
+        // if (this->pickedCOnHull()) {
+        //     cLength -= 1;
+        // }
+        this->triangulationLength = cLength;
+        this->triangulation = this->calcTriangles(this->convexHull, this->convexHullLength, this->pickedC);
     }
 
 
@@ -212,6 +214,32 @@ namespace Triangulation3d {
                 this->pickedC.y = this->points[i].y;
             }
         }
+    }
+
+
+    VertexCalc::Triangle* VertexCalc::calcTriangles(Point* ps, int length, Point v) {
+        Triangle* triangles = new Triangle[length];
+        for (int i = 0; i < length - 1; i++) {
+            triangles[i].p1 = ps[i];
+            triangles[i].p2 = v;
+            triangles[i].p3 = ps[i + 1];
+        }
+
+        triangles[length-1].p1 = ps[length-1];
+        triangles[length-1].p2 = v;
+        triangles[length-1].p3 = ps[0];
+
+        return triangles;
+    }
+
+
+    bool VertexCalc::pickedCOnHull() {
+        for (int i = 0; i < this->convexHullLength; i++) {
+            if (this->pickedC == this->convexHull[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

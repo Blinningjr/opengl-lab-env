@@ -163,9 +163,12 @@ namespace Triangulation3d {
 
             int start = 0;
             if (this->showTriangulation) {
-                glDrawArrays(GL_POLYGON, start, this->vertexcalc.getTriangulationLength() * 3);
+                glDrawArrays(GL_TRIANGLES, start, this->vertexcalc.getTriangulationLength() * 3);
             }
+            
             start += this->vertexcalc.getTriangulationLength() * 3;
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
             if (this->showConvexHull) {
                 glDrawArrays(GL_POLYGON, start, this->vertexcalc.getConvexHullLength());
@@ -216,8 +219,8 @@ namespace Triangulation3d {
             this->buf[2 + i * 7 * 3 + prev] = p1.z;
 
             this->buf[3 + i * 7 * 3 + prev] = 0;
-            this->buf[4 + i * 7 * 3 + prev] = 0;
-            this->buf[5 + i * 7 * 3 + prev] = 1;
+            this->buf[4 + i * 7 * 3 + prev] = 1;
+            this->buf[5 + i * 7 * 3 + prev] = 0;
             this->buf[6 + i * 7 * 3 + prev] = p1.a;
             
             
@@ -226,8 +229,8 @@ namespace Triangulation3d {
             this->buf[9 + i * 7 * 3 + prev] = p2.z;
 
             this->buf[10 + i * 7 * 3 + prev] = 0;
-            this->buf[11 + i * 7 * 3 + prev] = 0;
-            this->buf[12 + i * 7 * 3 + prev] = 1;
+            this->buf[11 + i * 7 * 3 + prev] = 1;
+            this->buf[12 + i * 7 * 3 + prev] = 0;
             this->buf[13 + i * 7 * 3 + prev] = p2.a;
 
 
@@ -236,8 +239,8 @@ namespace Triangulation3d {
             this->buf[16 + i * 7 * 3 + prev] = p3.z;
 
             this->buf[17 + i * 7 * 3 + prev] = 0;
-            this->buf[18 + i * 7 * 3 + prev] = 0;
-            this->buf[19 + i * 7 * 3 + prev] = 1;
+            this->buf[18 + i * 7 * 3 + prev] = 1;
+            this->buf[19 + i * 7 * 3 + prev] = 0;
             this->buf[20 + i * 7 * 3 + prev] = p3.a;
         }
         prev += lengthTriangulation * 7;
