@@ -33,16 +33,17 @@ namespace Triangulation3d {
 
 			struct Node;
 			struct Leaf {
-				int triangle;
+				Triangle triangle;
+				Leaf *ll, *rl;
 			};
 			struct BNode {
 				Edge* e;
-				Node *st1, *st2;
+				Node *lst, *rst;
 			};
 			struct Trenary {
 				Point v;
 				Edge *e1, *e2,* e3;
-				Node *st1, *st2, *st3;
+				Node *lst, *mst, *rst;
 			};
 			struct Node {
 				Leaf* l;
@@ -86,6 +87,7 @@ namespace Triangulation3d {
 			Point pickedC;
 
 			Node* tree;
+			Leaf* leaf;
 
             // Funcs
 			GLfloat crossProduct(Point a, Point b, Point c);
@@ -94,7 +96,11 @@ namespace Triangulation3d {
 
 			Triangle* calcTriangles(Point* points, int length, Point v);
 
-			Node* createTree(Point points[], int length);
+			Node* createTree(Point* points, int length);
+
+			Node* findTriangle(Edge* edge, bool left);
+
+			void deleteTree(Node* node);
 
 			bool pickedCOnHull();
             

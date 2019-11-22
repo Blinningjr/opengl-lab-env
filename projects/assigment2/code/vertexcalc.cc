@@ -26,6 +26,9 @@ namespace Triangulation3d {
         this->pickedC.g = 0;
         this->pickedC.b = 1;
         this->pickedC.a = 1;
+        Node* n = new Node();
+        this->tree = n;
+        this->leaf = new Leaf();
     }
 
 
@@ -35,6 +38,7 @@ namespace Triangulation3d {
     VertexCalc::~VertexCalc() {
         delete[] this->points;
         delete[] this->convexHull;
+        this->deleteTree(this->tree);
         delete[] this->triangulation;
     }
 
@@ -183,6 +187,9 @@ namespace Triangulation3d {
         // }
         this->triangulationLength = cLength;
         this->triangulation = this->calcTriangles(this->convexHull, this->convexHullLength, this->pickedC);
+
+        this->deleteTree(this->tree);
+        this->tree = this->createTree(this->convexHull, this->convexHullLength);
     }
 
 
@@ -217,6 +224,7 @@ namespace Triangulation3d {
     }
 
 
+    
     VertexCalc::Triangle* VertexCalc::calcTriangles(Point* ps, int length, Point v) {
         Triangle* triangles = new Triangle[length];
         for (int i = 0; i < length - 1; i++) {
@@ -229,9 +237,115 @@ namespace Triangulation3d {
         triangles[length-1].p2 = v;
         triangles[length-1].p3 = ps[0];
 
+        Leaf* pl = new Leaf();
+        pl->triangle = triangles[0];
+        this->leaf = pl;
+        for (int i = 1; i < length; i++) {
+            Leaf* l = new Leaf();
+            l->triangle = triangles[i];
+            pl->ll = l;
+            l->rl = pl;
+            pl = l;
+        }
+        pl->ll = this->leaf;
+        this->leaf->rl = pl;
+
         return triangles;
     }
 
+    VertexCalc::Node* VertexCalc::createTree(Point* ps, int length) {
+        Node* node = new Node();
+        Edge* edge = new Edge();
+        edge->p1 = this->pickedC;
+        edge->p2 = ps[length/2];
+        
+        Point tps[length-1];
+        int j = 0;
+        for (int i = 0; i < length; i++) {
+            if (i == length/2) {
+                j -= 1;
+            } else {
+                tps[j] = ps[i];
+            }
+            j += 1;
+        }
+
+        int lpsLength = 0;
+        Point* lps = new Point[length];
+
+        int rpsLength = 0;
+        Point* rps = new Point[length];
+
+        for (int i = 0; i < length-1; i++) {
+            if (this->crossProduct(edge->p1, edge->p2, tps[i]) <= 0) {
+                rps[rpsLength] = tps[i];
+                rpsLength += 1;
+            } else {
+                lps[lpsLength] = tps[i];
+                lpsLength += 1;
+            }
+        }
+
+        BNode* bNode = new BNode();
+        bNode->e = edge;
+
+        if (lpsLength == 0) {
+            bNode->lst = this->findTriangle(edge, true);
+        } else {
+            bNode->lst = createTree(lps, lpsLength);
+        }
+        
+        if (rpsLength == 0) {
+            bNode->rst = this->findTriangle(edge, false);
+        } else {
+            bNode->rst = createTree(rps, rpsLength);
+        }
+
+        delete[] lps;
+        delete[] rps;
+        
+        return node;
+    }
+
+    VertexCalc::Node* VertexCalc::findTriangle(Edge* edge, bool left) {
+        Node* node = new Node();
+
+        Leaf* l = this->leaf;
+        while (true) {
+            if (left && l->triangle.p1 == edge->p2) {
+                node->l = l;
+                return node;
+            } else if (!left && l->triangle.p3 == edge->p2) {
+                node->l = l;
+                return node;
+            }
+            l = l->ll;
+        }
+    }
+
+    void VertexCalc::deleteTree(Node* node) {
+        if (node->l != NULL) {
+            delete node->l;
+        }
+        if (node->bn != NULL) {
+            this->deleteTree(node->bn->lst);
+            this->deleteTree(node->bn->rst);
+            delete node->bn->e;
+            delete node->bn;
+        }
+        if (node->t != NULL) {
+            this->deleteTree(node->t->lst);
+            this->deleteTree(node->t->mst);
+            this->deleteTree(node->t->rst);
+            delete node->t->e1;
+            delete node->t->e2;
+            delete node->t->e3;
+        }
+        delete node->l;
+        delete node->bn;
+        delete node->t;
+        delete node;
+    }
 
     bool VertexCalc::pickedCOnHull() {
         for (int i = 0; i < this->convexHullLength; i++) {
