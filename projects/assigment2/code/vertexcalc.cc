@@ -56,9 +56,9 @@ namespace Triangulation3d {
             this->points[i].y = tBuf[1 + i * 2];
             this->points[i].z = -1;
 
-            this->points[i].r = 0;
-            this->points[i].g = 0;
-            this->points[i].b = 0;
+            this->points[i].r = 1;
+            this->points[i].g = 1;
+            this->points[i].b = 1;
             this->points[i].a = 1;
         }
         std::sort(this->points, this->points + this->pointsLength);
@@ -84,9 +84,9 @@ namespace Triangulation3d {
             this->points[i].y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
             this->points[i].z = -1;
 
-            this->points[i].r = 0;
-            this->points[i].g = 0;
-            this->points[i].b = 0;
+            this->points[i].r = 1;
+            this->points[i].g = 1;
+            this->points[i].b = 1;
             this->points[i].a = 1;
         }
         std::sort(this->points, this->points + this->pointsLength);

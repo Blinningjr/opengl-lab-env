@@ -67,7 +67,7 @@ namespace Triangulation3d {
 
         if (this->window->Open()) {
             // set clear color to gray
-            glClearColor(1.0f, 1.0f, 0.3f, 1.0f);
+            glClearColor(0, 0, 0, 1.0f);
 
             // setup vertex shader
             this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -154,7 +154,7 @@ namespace Triangulation3d {
             glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
             glUseProgram(this->program);
             glLineWidth(3);
-            glPointSize(6);
+            glPointSize(10);
             glEnableVertexAttribArray(0);
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
@@ -212,8 +212,8 @@ namespace Triangulation3d {
             this->buf[1 + i * 7 + prev] = triangulation[i].y;
             this->buf[2 + i * 7 + prev] = triangulation[i].z;
 
-            this->buf[3 + i * 7 + prev] = triangulation[i].r;
-            this->buf[4 + i * 7 + prev] = triangulation[i].g;
+            this->buf[3 + i * 7 + prev] = 0;
+            this->buf[4 + i * 7 + prev] = 0;
             this->buf[5 + i * 7 + prev] = 1;
             this->buf[6 + i * 7 + prev] = triangulation[i].a;
         }
@@ -227,8 +227,8 @@ namespace Triangulation3d {
             this->buf[2 + i * 7 + prev] = convexHull[i].z;
 
             this->buf[3 + i * 7 + prev] = 1;
-            this->buf[4 + i * 7 + prev] = convexHull[i].g;
-            this->buf[5 + i * 7 + prev] = convexHull[i].b;
+            this->buf[4 + i * 7 + prev] = 0;
+            this->buf[5 + i * 7 + prev] = 0;
             this->buf[6 + i * 7 + prev] = convexHull[i].a;
         }
         prev += lengthConvexHull * 7;
