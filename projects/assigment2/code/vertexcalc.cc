@@ -3,6 +3,7 @@
 #include <string>
 #include <GL/glew.h>
 #include <algorithm>
+#include <math.h>  
 
 namespace Triangulation3d {
 
@@ -148,9 +149,41 @@ namespace Triangulation3d {
 
 
     void VertexCalc::calcTriangulation() {
-
+        delete[] this->triangulation;
+        this->triangulationLength = 1;
+        this->triangulation = new VertexCalc::Point[this->triangulationLength];
+        this->triangulation[0] = this->pickC();
     }
 
+
+    /**
+     *  Picks the vertex closses to the center of the box created by the largest and smalles x and y value.
+     */
+    VertexCalc::Point VertexCalc::pickC() {
+        VertexCalc::Point c = this->points[0];
+        GLfloat cx = 0;
+        GLfloat cy = 0;
+
+        cx = this->points[0].x + (this->points[this->pointsLength - 1].x - this->points[0].x)/2;
+
+        GLfloat maxY = this->convexHull[0].y;
+        GLfloat minY = this->convexHull[0].y;
+        for (int i = 1; i < this->convexHullLength; i ++) {
+            if (maxY < this->convexHull[i].y) {
+                maxY = this->convexHull[i].y;
+            } else if (minY > this->convexHull[i].y) {
+                minY = this->convexHull[i].y;
+            }
+        }
+        cy = minY + (maxY - minY)/2;
+
+        for (int i = 1; i < this->pointsLength; i++) {
+            if (pow(c.x - cx, 2) + pow(c.y - cy, 2) > pow(this->points[i].x - cx, 2) + pow(this->points[i].y - cy, 2)) {
+                c = this->points[i];
+            }
+        }
+        return c;
+    }
 
 
     /**

@@ -161,7 +161,7 @@ namespace Triangulation3d {
 
             if (this->showTriangulation) {
                 GLint start = this->vertexcalc.getPointsLength() + this->vertexcalc.getConvexHullLength();
-                glDrawArrays(GL_POLYGON, start, this->vertexcalc.getTriangulationLength());
+                glDrawArrays(GL_POINTS, start, this->vertexcalc.getTriangulationLength());
             }
 
             if (this->showConvexHull) {

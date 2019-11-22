@@ -52,6 +52,8 @@ namespace Triangulation3d {
 
             // Funcs
 			GLfloat crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c);
+
+			VertexCalc::Point pickC(); 
             
 
 	};
