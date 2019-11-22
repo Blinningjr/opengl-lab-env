@@ -62,7 +62,7 @@ namespace Triangulation3d {
             this->points[i].a = 1;
         }
         std::sort(this->points, this->points + this->pointsLength);
-        this->calcConvexHull();
+        this->calcTriangulation();
     }
 
 
@@ -77,7 +77,7 @@ namespace Triangulation3d {
 
         delete[] this->points;
         this->pointsLength = numPoints;
-        this->points = new VertexCalc::Point[pointsLength];
+        this->points = new VertexCalc::Point[this->pointsLength];
 
         for (int i = 0; i < numPoints; i++) {
             this->points[i].x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
@@ -108,7 +108,7 @@ namespace Triangulation3d {
             return;
         }
 
-        this->calcConvexHull();
+        this->calcTriangulation();
     }
 
 
@@ -126,7 +126,6 @@ namespace Triangulation3d {
             for (int i = 0; i <  this->pointsLength; i++) {
                 this->convexHull[i] = this->points[i];
             }
-            this->calcTriangulation();
             return;
         }
 
@@ -161,7 +160,6 @@ namespace Triangulation3d {
         for (int i = 0; i < uLen - 1 ; i++) {
             this->convexHull[i + lLen - 1] = u[i];
         }
-        this->calcTriangulation();
     }
 
 
@@ -175,10 +173,11 @@ namespace Triangulation3d {
 
 
     void VertexCalc::calcTriangulation() {
+        this->calcConvexHull();
+        this->pickC();
         delete[] this->triangulation;
         this->triangulationLength = 0;
         this->triangulation = new VertexCalc::Point[this->triangulationLength];
-        this->pickC();
     }
 
 
@@ -187,7 +186,7 @@ namespace Triangulation3d {
      */
     void VertexCalc::pickC() {
         this->pickedC.x = this->points[0].x;
-        this->pickedC.x = this->points[0].y;
+        this->pickedC.y = this->points[0].y;
         GLfloat cx = 0;
         GLfloat cy = 0;
 
@@ -265,6 +264,6 @@ namespace Triangulation3d {
      *  Get the point picked as the center of the points 
      */
     VertexCalc::Point VertexCalc::getPickedC() {
-        return pickedC;
+        return this->pickedC;
     }
 }

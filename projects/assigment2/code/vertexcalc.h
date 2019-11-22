@@ -27,17 +27,25 @@ namespace Triangulation3d {
 			struct Triangle {
 				Point p1, p2, p3;
 			};
+			enum NodeType {
+				LEAF,
+				BNODE,
+				TRENARY,
+			};
 			struct Leaf {
+				NodeType nType;
 				void* parent;
 				Triangle t;
 			};
 			struct BNode {
+				NodeType nType;
 				void* parent;
 				Edge e;
 				void* st1;
 				void* st2;
 			};
 			struct Trenary {
+				NodeType nType;
 				void* parent;
 				Point v;
 				Edge e1, e2, e3;
