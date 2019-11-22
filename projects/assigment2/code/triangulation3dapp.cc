@@ -45,6 +45,7 @@ namespace Triangulation3d {
         this->showPoints = true;
         this->showConvexHull = false;
         this->showTriangulation = false;
+        this->showC = false;
     }
     
 
@@ -159,18 +160,27 @@ namespace Triangulation3d {
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
 
+
+            int start = 0;
             if (this->showTriangulation) {
-                GLint start = this->vertexcalc.getPointsLength() + this->vertexcalc.getConvexHullLength();
                 glDrawArrays(GL_POINTS, start, this->vertexcalc.getTriangulationLength());
             }
+            start += this->vertexcalc.getTriangulationLength();
 
             if (this->showConvexHull) {
-                glDrawArrays(GL_POLYGON, this->vertexcalc.getPointsLength(), this->vertexcalc.getConvexHullLength());
+                glDrawArrays(GL_POLYGON, start, this->vertexcalc.getConvexHullLength());
             }
+            start += this->vertexcalc.getConvexHullLength();
             
             if (this->showPoints) {
-                glDrawArrays(GL_POINTS, 0, this->vertexcalc.getPointsLength());
+                glDrawArrays(GL_POINTS, start, this->vertexcalc.getPointsLength());
             }
+            start += this->vertexcalc.getPointsLength();
+
+            if (this->showC) {
+                glDrawArrays(GL_POINTS, start, 1);
+            }
+            start += 1;
             
             
             glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -185,27 +195,31 @@ namespace Triangulation3d {
      */
     void Triangulation3dApp::UpdateVBO() {
         delete[] this->buf;
-        int lengthPoints = this->vertexcalc.getPointsLength();
-        int lengthConvexHull = this->vertexcalc.getConvexHullLength();
         int lengthTriangulation = this->vertexcalc.getTriangulationLength();
+        int lengthConvexHull = this->vertexcalc.getConvexHullLength();
+        int lengthPoints = this->vertexcalc.getPointsLength();
+        int lengthC = 1;
         int prev = 0;
 
-        this->bufLength = (lengthPoints + lengthConvexHull + lengthTriangulation) * 7;
+        this->bufLength = (lengthTriangulation + lengthConvexHull + lengthPoints + lengthC) * 7;
         this->buf = new GLfloat[this->bufLength];
 
-        VertexCalc::Point* points = this->vertexcalc.getPoints();
-        for (int i = 0; i < lengthPoints; i++) {
-            this->buf[0 + i * 7 + prev] = points[i].x;
-            this->buf[1 + i * 7 + prev] = points[i].y;
-            this->buf[2 + i * 7 + prev] = points[i].z;
 
-            this->buf[3 + i * 7 + prev] = points[i].r;
-            this->buf[4 + i * 7 + prev] = points[i].g;
-            this->buf[5 + i * 7 + prev] = points[i].b;
-            this->buf[6 + i * 7 + prev] = points[i].a;
+        // Adds triangulation.
+        VertexCalc::Point* triangulation = this->vertexcalc.getTriangulation();
+        for (int i = 0; i < lengthTriangulation; i++) {
+            this->buf[0 + i * 7 + prev] = triangulation[i].x;
+            this->buf[1 + i * 7 + prev] = triangulation[i].y;
+            this->buf[2 + i * 7 + prev] = triangulation[i].z;
+
+            this->buf[3 + i * 7 + prev] = triangulation[i].r;
+            this->buf[4 + i * 7 + prev] = triangulation[i].g;
+            this->buf[5 + i * 7 + prev] = 1;
+            this->buf[6 + i * 7 + prev] = triangulation[i].a;
         }
-        prev += lengthPoints * 7;
+        prev += lengthTriangulation * 7;
 
+        // Adds convexHull.
         VertexCalc::Point* convexHull = this->vertexcalc.getConvexHull();
         for (int i = 0; i < lengthConvexHull; i++) {
             this->buf[0 + i * 7 + prev] = convexHull[i].x;
@@ -219,17 +233,31 @@ namespace Triangulation3d {
         }
         prev += lengthConvexHull * 7;
 
-        VertexCalc::Point* triangulation = this->vertexcalc.getTriangulation();
-        for (int i = 0; i < lengthTriangulation; i++) {
-            this->buf[0 + i * 7 + prev] = triangulation[i].x;
-            this->buf[1 + i * 7 + prev] = triangulation[i].y;
-            this->buf[2 + i * 7 + prev] = triangulation[i].z;
+        // Adds all points
+        VertexCalc::Point* points = this->vertexcalc.getPoints();
+        for (int i = 0; i < lengthPoints; i++) {
+            this->buf[0 + i * 7 + prev] = points[i].x;
+            this->buf[1 + i * 7 + prev] = points[i].y;
+            this->buf[2 + i * 7 + prev] = points[i].z;
 
-            this->buf[3 + i * 7 + prev] = triangulation[i].r;
-            this->buf[4 + i * 7 + prev] = triangulation[i].g;
-            this->buf[5 + i * 7 + prev] = 1;
-            this->buf[6 + i * 7 + prev] = triangulation[i].a;
+            this->buf[3 + i * 7 + prev] = points[i].r;
+            this->buf[4 + i * 7 + prev] = points[i].g;
+            this->buf[5 + i * 7 + prev] = points[i].b;
+            this->buf[6 + i * 7 + prev] = points[i].a;
         }
+        prev += lengthPoints * 7;
+
+        // Adds point pickedC
+        VertexCalc::Point c = this->vertexcalc.getPickedC();
+        this->buf[0 + prev] = c.x;
+        this->buf[1 + prev] = c.y;
+        this->buf[2 + prev] = c.z;
+
+        this->buf[3 + prev] = c.r;
+        this->buf[4 + prev] = c.g;
+        this->buf[5 + prev] = c.b;
+        this->buf[6 + prev] = c.a;
+        prev += lengthC * 7;
 
         // setup vbo
 		glGenBuffers(1, &this->triangle);
@@ -262,6 +290,7 @@ namespace Triangulation3d {
                 if (ImGui::BeginMenu("Show")) {
                     ImGui::MenuItem("Points", NULL, &this->showPoints);
                     ImGui::MenuItem("Convex Hull", NULL, &this->showConvexHull);
+                    ImGui::MenuItem("C", NULL, &this->showC);
                     ImGui::MenuItem("Triangulation", NULL, &this->showTriangulation);
                     ImGui::EndMenu();
                 }

@@ -17,6 +17,15 @@ namespace Triangulation3d {
         this->convexHull = new VertexCalc::Point[this->convexHullLength];
         this->triangulationLength = 0;
         this->triangulation = new VertexCalc::Point[this->triangulationLength];
+        
+        this->pickedC.x = 0;
+        this->pickedC.y = 0;
+        this->pickedC.z = -1;
+
+        this->pickedC.r = 0;
+        this->pickedC.g = 0;
+        this->pickedC.b = 1;
+        this->pickedC.a = 1;
     }
 
 
@@ -167,17 +176,18 @@ namespace Triangulation3d {
 
     void VertexCalc::calcTriangulation() {
         delete[] this->triangulation;
-        this->triangulationLength = 1;
+        this->triangulationLength = 0;
         this->triangulation = new VertexCalc::Point[this->triangulationLength];
-        this->triangulation[0] = this->pickC();
+        this->pickC();
     }
 
 
     /**
      *  Picks the vertex closses to the center of the box created by the largest and smalles x and y value.
      */
-    VertexCalc::Point VertexCalc::pickC() {
-        VertexCalc::Point c = this->points[0];
+    void VertexCalc::pickC() {
+        this->pickedC.x = this->points[0].x;
+        this->pickedC.x = this->points[0].y;
         GLfloat cx = 0;
         GLfloat cy = 0;
 
@@ -195,11 +205,11 @@ namespace Triangulation3d {
         cy = minY + (maxY - minY)/2;
 
         for (int i = 1; i < this->pointsLength; i++) {
-            if (pow(c.x - cx, 2) + pow(c.y - cy, 2) > pow(this->points[i].x - cx, 2) + pow(this->points[i].y - cy, 2)) {
-                c = this->points[i];
+            if (pow(this->pickedC.x - cx, 2) + pow(this->pickedC.y - cy, 2) > pow(this->points[i].x - cx, 2) + pow(this->points[i].y - cy, 2)) {
+                this->pickedC.x = this->points[i].x;
+                this->pickedC.y = this->points[i].y;
             }
         }
-        return c;
     }
 
 
@@ -248,5 +258,13 @@ namespace Triangulation3d {
      */
 	VertexCalc::Point* VertexCalc::getTriangulation() {
         return this->triangulation;
+    }
+
+
+    /**
+     *  Get the point picked as the center of the points 
+     */
+    VertexCalc::Point VertexCalc::getPickedC() {
+        return pickedC;
     }
 }

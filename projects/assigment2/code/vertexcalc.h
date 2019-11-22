@@ -12,6 +12,8 @@ namespace Triangulation3d {
 			~VertexCalc();
         
             // Var
+
+			// structs
 			struct Point {
 				GLfloat x, y, z, r, g, b, a;
 
@@ -19,6 +21,31 @@ namespace Triangulation3d {
 					return x < p.x || (x == p.x && y < p.y);
 				}
 			};
+			struct Edge {
+				Point p1, p2;
+			};
+			struct Triangle {
+				Point p1, p2, p3;
+			};
+			struct Leaf {
+				void* parent;
+				Triangle t;
+			};
+			struct BNode {
+				void* parent;
+				Edge e;
+				void* st1;
+				void* st2;
+			};
+			struct Trenary {
+				void* parent;
+				Point v;
+				Edge e1, e2, e3;
+				void* st1;
+				void* st2;
+				void* st3;
+			};
+
 
             // funcs
             void ReadPoints(std::string filePath);
@@ -37,6 +64,8 @@ namespace Triangulation3d {
 			int getTriangulationLength();
 			VertexCalc::Point* getTriangulation();
 
+			VertexCalc::Point getPickedC();
+
 		private:
             // Var
             Triangulation3d::Reader reader;
@@ -50,10 +79,12 @@ namespace Triangulation3d {
             int triangulationLength;
 			VertexCalc::Point* triangulation;
 
+			VertexCalc::Point pickedC;
+
             // Funcs
 			GLfloat crossProduct(VertexCalc::Point a, VertexCalc::Point b, VertexCalc::Point c);
 
-			VertexCalc::Point pickC(); 
+			void pickC(); 
             
 
 	};

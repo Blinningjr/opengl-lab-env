@@ -44,6 +44,7 @@ namespace Triangulation3d {
 
 			bool showPoints;
 			bool showConvexHull;
+			bool showC;
 			bool showTriangulation;
 
 			// Funcs
