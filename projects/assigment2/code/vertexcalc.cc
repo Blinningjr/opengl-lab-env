@@ -207,10 +207,10 @@ namespace Triangulation3d {
                 pos += 1;
             }
         }
-        // for (int i = 0; i < this->pointsLength - this->convexHullLength; i++) {
-        //     this->insertPoint(rest[i], this->tree);
-        // }
-        this->insertPoint(rest[0], this->tree);
+        for (int i = 0; i < this->pointsLength - this->convexHullLength; i++) {
+            this->insertPoint(rest[i], this->tree);
+        }
+        // this->insertPoint(rest[0], this->tree);
     }
 
 
@@ -409,9 +409,9 @@ namespace Triangulation3d {
             trenary->rst->l->ml = l->rl;
             trenary->rst->l->rl = trenary->lst->l;
             
-            // this->insertLeafPointer(l->ll, l, trenary->lst->l);
-            // this->insertLeafPointer(l->ml, l, trenary->mst->l);
-            // this->insertLeafPointer(l->rl, l, trenary->rst->l);
+            this->insertLeafPointer(l->ll, l, trenary->lst->l);
+            this->insertLeafPointer(l->ml, l, trenary->mst->l);
+            this->insertLeafPointer(l->rl, l, trenary->rst->l);
 
             node->t = trenary;
 
@@ -432,7 +432,6 @@ namespace Triangulation3d {
             this->triangulationLength = length;
             this->triangulation = triangle;
             delete l;
-            return;
         } else if (node->bn != NULL) {
             if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < 0) {
                 this->insertPoint(p, node->bn->rst);
@@ -442,22 +441,45 @@ namespace Triangulation3d {
                 std::cout << "On line \n";
             }
         } else if (node->t != NULL) {
-            
+            Trenary* t = node->t;
+            if (this->isInsideEdges(t->e1, t->e2, p)) {
+                this->insertPoint(p, t->lst);
+            } else if (this->isInsideEdges(t->e3, t->e1, p)) {
+                this->insertPoint(p, t->mst);
+            } else if (this->isInsideEdges(t->e2, t->e3, p)) {
+                this->insertPoint(p, t->rst);
+            } else {
+                std::cout << "Error Trenary insertPoint \n";
+            }
         } else {
             std::cout << "Error Empty Node \n";
         }
     }
 
     void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
-        if (l0->ll == l1) {
-            // l0->ll = l2;
-        } else if (l0->ml == l1) {
-            // l0->ml = l2;
-        } else if (l0->rl == l1) {
-            // l0->rl = l2;
+        if (l0 == NULL) {
+            std::cout << "NULL insertLeafPointer \n";
+        } else if (&l0->ll == &l1) {
+            l0->ll = l2;
+            std::cout << "ok insertLeafPointer \n";
+        } else if (&l0->ml == &l1) {
+            l0->ml = l2;
+            std::cout << "ok insertLeafPointer \n";
+        } else if (&l0->rl == &l1) {
+            l0->rl = l2;
+            std::cout << "ok insertLeafPointer \n";
         } else {
             std::cout << "Error insertLeafPointer \n";
         }
+    }
+
+    bool VertexCalc::isInsideEdges(Edge* e0, Edge* e1, Point p) {
+        if (this->crossProduct(e0->p1, e0->p2, p) <= 0) {
+            if (this->crossProduct(e1->p1, e1->p2, p) >= 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void VertexCalc::deleteTree(Node* node) {

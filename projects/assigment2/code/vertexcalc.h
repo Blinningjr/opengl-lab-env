@@ -111,6 +111,8 @@ namespace Triangulation3d {
 
 			void insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2);
 
+			bool isInsideEdges(Edge* e0, Edge* e1, Point p);
+
 			void deleteTree(Node* node);
 
 			bool pickedCOnHull();
