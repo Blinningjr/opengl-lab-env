@@ -182,9 +182,9 @@ namespace Triangulation3d {
 
         delete[] this->triangulation;
         int cLength = this->convexHullLength;
-        // if (this->pickedCOnHull()) {
-        //     cLength -= 1;
-        // }
+        if (this->pickedCOnHull()) {
+            cLength -= 1;
+        }
         this->triangulationLength = cLength;
         this->triangulation = this->calcTriangles(this->convexHull, this->convexHullLength, this->pickedC);
 
@@ -210,7 +210,6 @@ namespace Triangulation3d {
         for (int i = 0; i < this->pointsLength - this->convexHullLength; i++) {
             this->insertPoint(rest[i], this->tree);
         }
-        // this->insertPoint(rest[0], this->tree);
     }
 
 
@@ -334,7 +333,7 @@ namespace Triangulation3d {
         Node* node = new Node();
 
         Leaf* l = this->leaf;
-        while (true) {
+        for (int i = 0; i < this->triangulationLength; i++) {
             if (left && l->triangle.p1 == edge->p2) {
                 node->l = l;
                 return node;
@@ -344,6 +343,8 @@ namespace Triangulation3d {
             }
             l = l->ll;
         }
+        std::cout << "error findLeaf \n";
+        return NULL;
     }
 
 
