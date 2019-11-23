@@ -502,6 +502,8 @@ namespace Triangulation3d {
             nodeArr[0]->l = NULL;
             nodeArr[1]->l = NULL;
 
+            int dirNode1 = this->findDiractionOfNeighbor(leaf1, leaf2);
+            int dirNode2 = this->findDiractionOfNeighbor(leaf1, leaf2);
 
             Leaf* l1 = new Leaf();
             l1->triangle.p2 = p;
@@ -512,7 +514,6 @@ namespace Triangulation3d {
             Edge* edge1 = new Edge();
             edge1->p1;
 
-            int dirNode1 = this->findDiractionOfNeighbor(leaf1, leaf2);
             if (dirNode1 == 1) {
                 edge1->p2 = leaf1->triangle.p3;
 
@@ -565,8 +566,7 @@ namespace Triangulation3d {
             
             Edge* edge2 = new Edge();
             edge2->p1 = p;
-            
-            int dirNode2 = this->findDiractionOfNeighbor(nodeArr[1]->l, nodeArr[0]->l);
+
             if (dirNode2 == 1) {
                 edge2->p2 = leaf2->triangle.p3;
 
@@ -607,7 +607,7 @@ namespace Triangulation3d {
                 this->insertLeafPointer(leaf2->ml, leaf2, l4);
 
             } else {
-                std::cout << "Error bnode 1 insertPoint \n";
+                std::cout << "Error bnode 2 insertPoint \n";
             }
 
             l1->ll = l4;
