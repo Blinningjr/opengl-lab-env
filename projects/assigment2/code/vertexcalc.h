@@ -109,6 +109,8 @@ namespace Triangulation3d {
 
 			void insertPoint(Point p, Node* node);
 
+			Node* getLeaf(Point p, Node* node);
+
 			void insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2);
 
 			bool isInsideEdges(Edge* e0, Edge* e1, Point p);

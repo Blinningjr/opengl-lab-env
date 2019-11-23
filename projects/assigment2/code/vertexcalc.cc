@@ -347,8 +347,10 @@ namespace Triangulation3d {
     }
 
 
-    void VertexCalc::insertPoint(Point p, Node* node) {
+    void VertexCalc::insertPoint(Point p, Node* node0) {
+        Node* node = this->getLeaf(p, node0);
         if (node->l != NULL) {
+            
             Leaf* l = node->l;
             if (l == this->leaf) {
                 this->leaf = l->ll;
@@ -432,28 +434,38 @@ namespace Triangulation3d {
             this->triangulationLength = length;
             this->triangulation = triangle;
             delete l;
+        } else {
+            std::cout << "Error insertPoint \n";
+        }
+    }
+
+    
+    VertexCalc::Node* VertexCalc::getLeaf(Point p, Node* node) {
+        if (node->l != NULL) {
+            return node;
         } else if (node->bn != NULL) {
-            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) <= 0) {
-                this->insertPoint(p, node->bn->rst);
-            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) >= 0) {
-                this->insertPoint(p, node->bn->lst);
+            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < 0) {
+                return this->getLeaf(p, node->bn->rst);
+            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) > 0) {
+                return this->getLeaf(p, node->bn->lst);
             } else {
                 std::cout << "On line \n";
             }
         } else if (node->t != NULL) {
             Trenary* t = node->t;
             if (this->isInsideEdges(t->e1, t->e2, p)) {
-                this->insertPoint(p, t->lst);
+                return this->getLeaf(p, t->lst);
             } else if (this->isInsideEdges(t->e3, t->e1, p)) {
-                this->insertPoint(p, t->mst);
+                return this->getLeaf(p, t->mst);
             } else if (this->isInsideEdges(t->e2, t->e3, p)) {
-                this->insertPoint(p, t->rst);
+                return this->getLeaf(p, t->rst);
             } else {
-                std::cout << "Error Trenary insertPoint \n";
+                std::cout << "Error Trenary getLeaf \n";
             }
         } else {
             std::cout << "Error Empty Node \n";
         }
+        return node;
     }
 
     void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
@@ -486,8 +498,8 @@ namespace Triangulation3d {
     }
 
     bool VertexCalc::isInsideEdges(Edge* e0, Edge* e1, Point p) {
-        if (this->crossProduct(e0->p1, e0->p2, p) <= 0) {
-            if (this->crossProduct(e1->p1, e1->p2, p) >= 0) {
+        if (this->crossProduct(e0->p1, e0->p2, p) < 0) {
+            if (this->crossProduct(e1->p1, e1->p2, p) > 0) {
                 return true;
             }
         }
