@@ -389,7 +389,7 @@ namespace Triangulation3d {
         Node* nodeArr[2];
         nodeArr[0] = NULL;
         nodeArr[1] = NULL;
-        int numLeafs = this->getLeaf(p, node0, nodeArr, true);
+        int numLeafs = this->getLeaf(p, node0, nodeArr);
         if (numLeafs == 1) {
             
             Leaf* l = nodeArr[0]->l;
@@ -484,7 +484,7 @@ namespace Triangulation3d {
             }
             
         } else if (numLeafs == 2) {
-            std::cout << "insertPoint numleafs=2 \n";
+            // std::cout << "insertPoint numleafs=2 \n";
             if (!nodeArr[0]) {
                 std::cout << "Error nodeArr[0] = null insertPoint \n";
             }
@@ -503,7 +503,7 @@ namespace Triangulation3d {
             nodeArr[1]->l = NULL;
 
             int dirNode1 = this->findDiractionOfNeighbor(leaf1, leaf2);
-            int dirNode2 = this->findDiractionOfNeighbor(leaf1, leaf2);
+            int dirNode2 = this->findDiractionOfNeighbor(leaf2, leaf1);
 
             Leaf* l1 = new Leaf();
             l1->triangle.p2 = p;
@@ -680,8 +680,7 @@ namespace Triangulation3d {
      *  Finds what leaf p is in and return that node in found.
      *  Note: there can be two nodes found if p is on a edge. 
     */
-    int VertexCalc::getLeaf(Point p, Node* node, Node* found[2], bool one) {
-        one = true;
+    int VertexCalc::getLeaf(Point p, Node* node, Node* found[2]) {
         if (node->l) {
             if (!found[0]) {
                 found[0] = node;
@@ -701,68 +700,62 @@ namespace Triangulation3d {
                     return 1;
                 }
             }
-            std::cout << "Error leaf already ocupied\n";
+            // std::cout << "Error leaf already ocupied\n";
             return 0;
 
         } else if (node->bn) {
             if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < 0) {
           
-                return this->getLeaf(p, node->bn->rst, found, one);
+                return this->getLeaf(p, node->bn->rst, found);
 
             } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) > 0) {
 
-                return this->getLeaf(p, node->bn->lst, found, one);
-
-            } else if (one) {
-
-                this->getLeaf(p, node->bn->lst, found, false);
-                this->getLeaf(p, node->bn->rst, found, false);
-                return 2;
+                return this->getLeaf(p, node->bn->lst, found);
 
             } else {
 
-                std::cout << "Error BNode getLeaf \n";
+                this->getLeaf(p, node->bn->lst, found);
+                this->getLeaf(p, node->bn->rst, found);
+                return 2;
 
-            }
+            } 
         } else if (node->t) {
 
             Trenary* t = node->t;
 
             if (this->isInsideEdges(t->e1, t->e2, p)) {
 
-                return this->getLeaf(p, t->lst, found, one);
+                return this->getLeaf(p, t->lst, found);
 
             } else if (this->isInsideEdges(t->e3, t->e1, p)) {
 
-                return this->getLeaf(p, t->mst, found, one);
+                return this->getLeaf(p, t->mst, found);
 
             } else if (this->isInsideEdges(t->e2, t->e3, p)) {
 
-                return this->getLeaf(p, t->rst, found, one);
+                return this->getLeaf(p, t->rst, found);
 
-            } else if (one && this->crossProduct(t->e1->p1, t->e1->p2, p) == 0) {
+            } else if (this->crossProduct(t->e1->p1, t->e1->p2, p) == 0) {
 
-                this->getLeaf(p, t->mst, found, false);
-                this->getLeaf(p, t->lst, found, false);
+                this->getLeaf(p, t->mst, found);
+                this->getLeaf(p, t->lst, found);
                 return 2;
 
-            } else if (one && this->crossProduct(t->e2->p1, t->e2->p2, p) == 0) {
+            } else if (this->crossProduct(t->e2->p1, t->e2->p2, p) == 0) {
 
-                this->getLeaf(p, t->lst, found, false);
-                this->getLeaf(p, t->rst, found, false);
+                this->getLeaf(p, t->lst, found);
+                this->getLeaf(p, t->rst, found);
                 return 2;
 
-            } else if (one && this->crossProduct(t->e3->p1, t->e3->p2, p) == 0) {
+            } else if (this->crossProduct(t->e3->p1, t->e3->p2, p) == 0) {
 
-                this->getLeaf(p, t->rst, found, false);
-                this->getLeaf(p, t->mst, found, false);
+                this->getLeaf(p, t->rst, found);
+                this->getLeaf(p, t->mst, found);
                 return 2;
 
             } else {
                 
-                std::cout << "Error Trenary getLeaf one =";
-                std::cout << one;
-                std::cout << "\n";
+                std::cout << "Error Trenary getLeaf \n";
             }
         } else {
             std::cout << "Error Empty Node \n";
@@ -775,7 +768,7 @@ namespace Triangulation3d {
      *  Finds which diraction l1 is pointing to l0 and switches that pointer to l2.
     */
     void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
-        if (!l0) {
+        if (!l0 || !l1 || !l2) {
             // std::cout << "NULL insertLeafPointer \n";
             return;
         }
@@ -810,6 +803,7 @@ namespace Triangulation3d {
     */
     int VertexCalc::findDiractionOfNeighbor(Leaf* l0, Leaf* l1) {
         if (!l0 || !l1) {
+            std::cout << "Error NULL findDiractionOfNeighbor \n";
             return 0;
         }
 

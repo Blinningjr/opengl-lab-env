@@ -109,7 +109,7 @@ namespace Triangulation3d {
 
 			void insertPoint(Point p, Node* node);
 
-			int getLeaf(Point p, Node* node, Node* found[2], bool one);
+			int getLeaf(Point p, Node* node, Node* found[2]);
 
 			void insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2);
 
