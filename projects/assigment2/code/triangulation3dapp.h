@@ -38,7 +38,7 @@ namespace Triangulation3d {
 			// std::string compilerLog;
 
 			int bufLength;
-            GLfloat* buf;
+            GLfloat* bufVBO;
 
 			Triangulation3d::VertexCalc vertexcalc;
 

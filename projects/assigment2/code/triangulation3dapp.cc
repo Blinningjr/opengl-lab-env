@@ -41,7 +41,7 @@ namespace Triangulation3d {
 
     Triangulation3dApp::Triangulation3dApp() {
         this->bufLength = 0;
-        this->buf = new GLfloat[this->bufLength];
+        this->bufVBO = new GLfloat[this->bufLength];
         this->showPoints = true;
         this->showConvexHull = false;
         this->showTriangulation = false;
@@ -50,9 +50,15 @@ namespace Triangulation3d {
     
 
     Triangulation3dApp::~Triangulation3dApp() {
-        delete[] this->buf;
-        delete[] this->vsBuffer;
-        delete[] this->fsBuffer;
+        if (this->bufVBO) {
+            delete[] this->bufVBO;
+        }
+        if (this->vsBuffer) {
+            delete[] this->vsBuffer;
+        }
+        if (this->fsBuffer) {
+            delete[] this->fsBuffer;
+        }
     }
 
 
@@ -197,7 +203,9 @@ namespace Triangulation3d {
      *  Updates the VBO with this->buf.
      */
     void Triangulation3dApp::UpdateVBO() {
-        delete[] this->buf;
+        if (this->bufVBO) {
+            delete[] this->bufVBO;
+        }
         int lengthTriangulation = this->vertexcalc.getTriangulationLength() * 3;
         int lengthConvexHull = this->vertexcalc.getConvexHullLength();
         int lengthPoints = this->vertexcalc.getPointsLength();
@@ -205,7 +213,7 @@ namespace Triangulation3d {
         int prev = 0;
 
         this->bufLength = (lengthTriangulation + lengthConvexHull + lengthPoints + lengthC) * 7;
-        this->buf = new GLfloat[this->bufLength];
+        this->bufVBO = new GLfloat[this->bufLength];
 
 
         // Adds triangulation.
@@ -214,81 +222,81 @@ namespace Triangulation3d {
             VertexCalc::Point p1 = triangulation[i].p1;
             VertexCalc::Point p2 = triangulation[i].p2;
             VertexCalc::Point p3 = triangulation[i].p3;
-            this->buf[0 + i * 7 * 3 + prev] = p1.x;
-            this->buf[1 + i * 7 * 3 + prev] = p1.y;
-            this->buf[2 + i * 7 * 3 + prev] = p1.z;
+            this->bufVBO[0 + i * 7 * 3 + prev] = p1.x;
+            this->bufVBO[1 + i * 7 * 3 + prev] = p1.y;
+            this->bufVBO[2 + i * 7 * 3 + prev] = p1.z;
 
-            this->buf[3 + i * 7 * 3 + prev] = 0;
-            this->buf[4 + i * 7 * 3 + prev] = 1;
-            this->buf[5 + i * 7 * 3 + prev] = 0;
-            this->buf[6 + i * 7 * 3 + prev] = p1.a;
+            this->bufVBO[3 + i * 7 * 3 + prev] = 0;
+            this->bufVBO[4 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[5 + i * 7 * 3 + prev] = 0;
+            this->bufVBO[6 + i * 7 * 3 + prev] = p1.a;
             
             
-            this->buf[7 + i * 7 * 3 + prev] = p2.x;
-            this->buf[8 + i * 7 * 3 + prev] = p2.y;
-            this->buf[9 + i * 7 * 3 + prev] = p2.z;
+            this->bufVBO[7 + i * 7 * 3 + prev] = p2.x;
+            this->bufVBO[8 + i * 7 * 3 + prev] = p2.y;
+            this->bufVBO[9 + i * 7 * 3 + prev] = p2.z;
 
-            this->buf[10 + i * 7 * 3 + prev] = 0;
-            this->buf[11 + i * 7 * 3 + prev] = 1;
-            this->buf[12 + i * 7 * 3 + prev] = 0;
-            this->buf[13 + i * 7 * 3 + prev] = p2.a;
+            this->bufVBO[10 + i * 7 * 3 + prev] = 0;
+            this->bufVBO[11 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[12 + i * 7 * 3 + prev] = 0;
+            this->bufVBO[13 + i * 7 * 3 + prev] = p2.a;
 
 
-            this->buf[14 + i * 7 * 3 + prev] = p3.x;
-            this->buf[15 + i * 7 * 3 + prev] = p3.y;
-            this->buf[16 + i * 7 * 3 + prev] = p3.z;
+            this->bufVBO[14 + i * 7 * 3 + prev] = p3.x;
+            this->bufVBO[15 + i * 7 * 3 + prev] = p3.y;
+            this->bufVBO[16 + i * 7 * 3 + prev] = p3.z;
 
-            this->buf[17 + i * 7 * 3 + prev] = 0;
-            this->buf[18 + i * 7 * 3 + prev] = 1;
-            this->buf[19 + i * 7 * 3 + prev] = 0;
-            this->buf[20 + i * 7 * 3 + prev] = p3.a;
+            this->bufVBO[17 + i * 7 * 3 + prev] = 0;
+            this->bufVBO[18 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[19 + i * 7 * 3 + prev] = 0;
+            this->bufVBO[20 + i * 7 * 3 + prev] = p3.a;
         }
         prev += lengthTriangulation * 7;
 
         // Adds convexHull.
         VertexCalc::Point* convexHull = this->vertexcalc.getConvexHull();
         for (int i = 0; i < lengthConvexHull; i++) {
-            this->buf[0 + i * 7 + prev] = convexHull[i].x;
-            this->buf[1 + i * 7 + prev] = convexHull[i].y;
-            this->buf[2 + i * 7 + prev] = convexHull[i].z;
+            this->bufVBO[0 + i * 7 + prev] = convexHull[i].x;
+            this->bufVBO[1 + i * 7 + prev] = convexHull[i].y;
+            this->bufVBO[2 + i * 7 + prev] = convexHull[i].z;
 
-            this->buf[3 + i * 7 + prev] = 1;
-            this->buf[4 + i * 7 + prev] = 0;
-            this->buf[5 + i * 7 + prev] = 0;
-            this->buf[6 + i * 7 + prev] = convexHull[i].a;
+            this->bufVBO[3 + i * 7 + prev] = 1;
+            this->bufVBO[4 + i * 7 + prev] = 0;
+            this->bufVBO[5 + i * 7 + prev] = 0;
+            this->bufVBO[6 + i * 7 + prev] = convexHull[i].a;
         }
         prev += lengthConvexHull * 7;
 
         // Adds all points
         VertexCalc::Point* points = this->vertexcalc.getPoints();
         for (int i = 0; i < lengthPoints; i++) {
-            this->buf[0 + i * 7 + prev] = points[i].x;
-            this->buf[1 + i * 7 + prev] = points[i].y;
-            this->buf[2 + i * 7 + prev] = points[i].z;
+            this->bufVBO[0 + i * 7 + prev] = points[i].x;
+            this->bufVBO[1 + i * 7 + prev] = points[i].y;
+            this->bufVBO[2 + i * 7 + prev] = points[i].z;
 
-            this->buf[3 + i * 7 + prev] = points[i].r;
-            this->buf[4 + i * 7 + prev] = points[i].g;
-            this->buf[5 + i * 7 + prev] = points[i].b;
-            this->buf[6 + i * 7 + prev] = points[i].a;
+            this->bufVBO[3 + i * 7 + prev] = points[i].r;
+            this->bufVBO[4 + i * 7 + prev] = points[i].g;
+            this->bufVBO[5 + i * 7 + prev] = points[i].b;
+            this->bufVBO[6 + i * 7 + prev] = points[i].a;
         }
         prev += lengthPoints * 7;
 
         // Adds point pickedC
         VertexCalc::Point c = this->vertexcalc.getPickedC();
-        this->buf[0 + prev] = c.x;
-        this->buf[1 + prev] = c.y;
-        this->buf[2 + prev] = c.z;
+        this->bufVBO[0 + prev] = c.x;
+        this->bufVBO[1 + prev] = c.y;
+        this->bufVBO[2 + prev] = c.z;
 
-        this->buf[3 + prev] = c.r;
-        this->buf[4 + prev] = c.g;
-        this->buf[5 + prev] = c.b;
-        this->buf[6 + prev] = c.a;
+        this->bufVBO[3 + prev] = c.r;
+        this->bufVBO[4 + prev] = c.g;
+        this->bufVBO[5 + prev] = c.b;
+        this->bufVBO[6 + prev] = c.a;
         prev += lengthC * 7;
 
         // setup vbo
 		glGenBuffers(1, &this->triangle);
 		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength * 7, this->buf, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength * 7, this->bufVBO, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     

@@ -36,10 +36,16 @@ namespace Triangulation3d {
      *  Deletes all values made by this class. 
      */
     VertexCalc::~VertexCalc() {
-        delete[] this->points;
-        delete[] this->convexHull;
+        if (this->points) {
+            delete[] this->points;
+        }
+        if (this->convexHull) {
+            delete[] this->convexHull;
+        }
         this->deleteTree(this->tree);
-        delete[] this->triangulation;
+        if (this->triangulation) {
+            delete[] this->triangulation;
+        }
     }
 
 
@@ -51,7 +57,9 @@ namespace Triangulation3d {
         int numCords = this->reader.getPointsLength()/2;
         GLfloat* tBuf = this->reader.getPoints();
 
-        delete[] this->points;
+        if (this->points) {
+            delete[] this->points;
+        }
         this->pointsLength = numCords;
         this->points = new Point[this->pointsLength];
 
@@ -79,7 +87,10 @@ namespace Triangulation3d {
             numPoints = 3;
         }
 
-        delete[] this->points;
+        if (this->points) {
+            delete[] this->points;
+        }
+
         this->pointsLength = numPoints;
         this->points = new Point[this->pointsLength];
 
@@ -121,7 +132,9 @@ namespace Triangulation3d {
      * Andrew's algorithm.
      */
     void VertexCalc::calcConvexHull() {
-        delete[]  this->convexHull;
+        if (this->convexHull) {
+            delete[] this->convexHull;
+        }
         this->convexHullLength = 0;
 
         if (this->pointsLength == 3) {
@@ -180,7 +193,9 @@ namespace Triangulation3d {
         this->calcConvexHull();
         this->pickC();
 
-        delete[] this->triangulation;
+        if (this->triangulation) {
+            delete[] this->triangulation;
+        }
         int cLength = this->convexHullLength;
         if (this->pickedCOnHull()) {
             cLength -= 1;
@@ -323,8 +338,13 @@ namespace Triangulation3d {
 
         node->bn = bNode;
 
-        delete[] lps;
-        delete[] rps;
+        if (lps) {
+            delete[] lps;
+        }
+        if (rps) {
+            delete[] rps;
+        }
+        
         
         return node;
     }
@@ -433,12 +453,18 @@ namespace Triangulation3d {
             triangle[pos + 1] = t2;
             triangle[pos + 2] = t3;
 
-            delete[] this->triangulation;
+            if (this->triangulation) {
+                delete[] this->triangulation;
+            }
             this->triangulationLength = length;
             this->triangulation = triangle;
-            delete l;
+            if (l) {
+                delete l;
+            }
         } else if (numLeafs == 2) {
             std::cout << "insertPoint numleafs=2 \n";
+
+
         } else {
             std::cout << "Error insertPoint numleafs=";
             std::cout <<  numLeafs;
@@ -448,9 +474,9 @@ namespace Triangulation3d {
 
     
     int VertexCalc::getLeaf(Point p, Node* node[2], int pos, bool one) {
-        if (node[pos]->l != NULL) {
+        if (node[pos]->l) {
             return 1;
-        } else if (node[pos]->bn != NULL) {
+        } else if (node[pos]->bn) {
             if (this->crossProduct(node[pos]->bn->e->p1, node[pos]->bn->e->p2, p) < 0) {
                 node[pos] = node[pos]->bn->rst;
                 return this->getLeaf(p, node, pos, one);
@@ -466,7 +492,7 @@ namespace Triangulation3d {
             } else {
                 std::cout << "Error BNode getLeaf \n";
             }
-        } else if (node[pos]->t != NULL) {
+        } else if (node[pos]->t) {
             Trenary* t = node[pos]->t;
             if (this->isInsideEdges(t->e1, t->e2, p)) {
                 node[pos] = t->lst;
@@ -507,25 +533,25 @@ namespace Triangulation3d {
     }
 
     void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
-        if (l0 == NULL) {
+        if (!l0) {
             // std::cout << "NULL insertLeafPointer \n";
             return;
         }
 
-        if (l0->ll != NULL) {
+        if (l0->ll) {
             if (l0->ll->triangle == l1->triangle) {
                 l0->ll = l2;
                 return;
             } 
         }
 
-        if (l0->ml != NULL) {
+        if (l0->ml) {
             if (l0->ml->triangle == l1->triangle) {
                 l0->ml = l2;
                 return;
             } 
         }
-        if (l0->rl != NULL) {
+        if (l0->rl) {
             if (l0->rl->triangle == l1->triangle) {
                 l0->rl = l2;
                 return;
@@ -545,25 +571,83 @@ namespace Triangulation3d {
     }
 
     void VertexCalc::deleteTree(Node* node) {
-        if (node->l != NULL) {
-            delete node->l;
+        // if (node) {
+        //     if (node->l) {
+        //         delete node->l;
+        //     }
+        // }
+
+        if (node) {
+            if (node->bn) {
+                if (node->bn->lst) {
+                    this->deleteTree(node->bn->lst);
+                }
+            }
         }
-        if (node->bn != NULL) {
-            
-            // this->deleteTree(node->bn->lst);
-            // this->deleteTree(node->bn->rst);
-            delete node->bn->e;
-            delete node->bn;
+        if (node) {
+            if (node->bn) {
+                if (node->bn->rst) {
+                    this->deleteTree(node->bn->rst);
+                }
+            }
         }
-        if (node->t != NULL) {
-            // this->deleteTree(node->t->lst);
-            // this->deleteTree(node->t->mst);
-            // this->deleteTree(node->t->rst);
-            delete node->t->e1;
-            delete node->t->e2;
-            delete node->t->e3;
+        if (node) {
+            if (node->bn) {
+                if (node->bn->e) {
+                    delete node->bn->e;
+                }
+            }
         }
-        delete node;
+        if (node) {
+            if (node->bn) {
+                delete node->bn;
+            }
+        }
+        if (node) {
+            if (node->t) {
+                if (node->t->lst) {
+                    this->deleteTree(node->t->lst);
+                }
+            }
+        }
+        if (node) {
+            if (node->t) {
+                if (node->t->mst) {
+                    this->deleteTree(node->t->mst);
+                }
+            }
+        }
+        if (node) {
+            if (node->t) {
+                if (node->t->rst) {
+                    this->deleteTree(node->t->rst);
+                }
+            }
+        }
+        if (node) {
+            if (node->t) {
+                if (node->t->e1) {
+                    delete node->t->e1;
+                }
+            }
+        }
+        if (node) {
+            if (node->t) {
+                if (node->t->e2) {
+                    delete node->t->e2;
+                }
+            }
+        }
+        if (node) {
+            if (node->t) {
+                if (node->t->e3) {
+                    delete node->t->e3;
+                }
+            }
+        }
+        if (node) {
+            delete node;
+        }
     }
 
     bool VertexCalc::pickedCOnHull() {
