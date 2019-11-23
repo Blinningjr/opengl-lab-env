@@ -189,6 +189,9 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Calculates the triangulation of all points.
+    */
     void VertexCalc::calcTriangulation() {
         this->calcConvexHull();
         this->pickC();
@@ -259,7 +262,9 @@ namespace Triangulation3d {
     }
 
 
-    
+    /**
+     *  Calculates the initial triangles where only the convex hull and point C.
+    */
     VertexCalc::Triangle* VertexCalc::calcTriangles(Point* ps, int length, Point v) {
         Triangle* triangles = new Triangle[length];
         for (int i = 0; i < length - 1; i++) {
@@ -288,6 +293,10 @@ namespace Triangulation3d {
         return triangles;
     }
 
+
+    /**
+     *  Creates the initial balanced tree with the convex hull and point c.
+    */
     VertexCalc::Node* VertexCalc::createTree(Point* ps, int length) {
         Node* node = new Node();
         Edge* edge = new Edge();
@@ -349,6 +358,11 @@ namespace Triangulation3d {
         return node;
     }
 
+
+    /**
+     *  Finds a leaf with edge edge and in position left/rigth.
+     *  Not only works when triangulation is a circle of triangles.
+    */
     VertexCalc::Node* VertexCalc::findLeaf(Edge* edge, bool left) {
         Node* node = new Node();
 
@@ -368,10 +382,14 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Finds which triangle p is in and triangulates it.
+    */
     void VertexCalc::insertPoint(Point p, Node* node0) {
         Node* nodeArr[2];
-        nodeArr[0] = node0;
-        int numLeafs = this->getLeaf(p, nodeArr, 0, true);
+        nodeArr[0] = NULL;
+        nodeArr[1] = NULL;
+        int numLeafs = this->getLeaf(p, node0, nodeArr, true);
         if (numLeafs == 1) {
             
             Leaf* l = nodeArr[0]->l;
@@ -440,6 +458,7 @@ namespace Triangulation3d {
 
             nodeArr[0]->t = trenary;
 
+
             int pos = 0;
             int length = this->triangulationLength + 2;
             Triangle* triangle = new Triangle[length];
@@ -458,13 +477,197 @@ namespace Triangulation3d {
             }
             this->triangulationLength = length;
             this->triangulation = triangle;
+
+
             if (l) {
                 delete l;
             }
+            
         } else if (numLeafs == 2) {
             std::cout << "insertPoint numleafs=2 \n";
+            if (!nodeArr[0]) {
+                std::cout << "Error nodeArr[0] = null insertPoint \n";
+            }
+            if (!nodeArr[1]) {
+                std::cout << "Error nodeArr[1] = null insertPoint \n";
+            }
+            if (!nodeArr[0]->l) {
+                std::cout << "Error leaf1 = null insertPoint \n";
+            }
+            if (!nodeArr[1]->l) {
+                std::cout << "Error leaf2 = null insertPoint \n";
+            }
+            Leaf* leaf1 = nodeArr[0]->l;
+            Leaf* leaf2 = nodeArr[1]->l;
+            nodeArr[0]->l = NULL;
+            nodeArr[1]->l = NULL;
 
 
+            Leaf* l1 = new Leaf();
+            l1->triangle.p2 = p;
+
+            Leaf* l2 = new Leaf();
+            l2->triangle.p2 = p;
+            
+            Edge* edge1 = new Edge();
+            edge1->p1;
+
+            int dirNode1 = this->findDiractionOfNeighbor(leaf1, leaf2);
+            if (dirNode1 == 1) {
+                edge1->p2 = leaf1->triangle.p3;
+
+                l1->triangle.p1 = leaf1->triangle.p1;
+                l1->triangle.p3 = leaf1->triangle.p3;
+                l1->ml = leaf1->ml;
+                this->insertLeafPointer(leaf1->ml, leaf1, l1);
+
+                l2->triangle.p1 = leaf1->triangle.p3;
+                l2->triangle.p3 = leaf1->triangle.p2;
+                l2->ml = leaf1->rl;
+                this->insertLeafPointer(leaf1->rl, leaf1, l2);
+
+            } else if (dirNode1 == 2) {
+                edge1->p2 = leaf1->triangle.p2;
+
+                l1->triangle.p1 = leaf1->triangle.p3;
+                l1->triangle.p3 = leaf1->triangle.p2;
+                l1->ml = leaf1->rl;
+                this->insertLeafPointer(leaf1->rl, leaf1, l1);
+
+                l2->triangle.p1 = leaf1->triangle.p2;
+                l2->triangle.p3 = leaf1->triangle.p1;
+                l2->ml = leaf1->ll;
+                this->insertLeafPointer(leaf1->ll, leaf1, l2);
+
+            } else if (dirNode1 == 3) {
+                edge1->p2 = leaf1->triangle.p1;
+
+                l1->triangle.p1 = leaf1->triangle.p2;
+                l1->triangle.p3 = leaf1->triangle.p1;
+                l1->ml = leaf1->ll;
+                this->insertLeafPointer(leaf1->ll, leaf1, l1);
+
+                l2->triangle.p1 = leaf1->triangle.p1;
+                l2->triangle.p3 = leaf1->triangle.p3;
+                l2->ml = leaf1->ml;
+                this->insertLeafPointer(leaf1->ml, leaf1, l2);
+
+            } else {
+                std::cout << "Error bnode 1 insertPoint \n";
+            }
+
+
+            Leaf* l3 = new Leaf();
+            l3->triangle.p2 = p;
+
+            Leaf* l4 = new Leaf();
+            l4->triangle.p2 = p;
+            
+            Edge* edge2 = new Edge();
+            edge2->p1 = p;
+            
+            int dirNode2 = this->findDiractionOfNeighbor(nodeArr[1]->l, nodeArr[0]->l);
+            if (dirNode2 == 1) {
+                edge2->p2 = leaf2->triangle.p3;
+
+                l3->triangle.p1 = leaf2->triangle.p1;
+                l3->triangle.p3 = leaf2->triangle.p3;
+                l3->ml = leaf2->ml;
+                this->insertLeafPointer(leaf2->ml, leaf2, l3);
+
+                l4->triangle.p1 = leaf2->triangle.p3;
+                l4->triangle.p3 = leaf2->triangle.p2;
+                l4->ml = leaf2->rl;
+                this->insertLeafPointer(leaf2->rl, leaf2, l4);
+
+            } else if (dirNode2 == 2) {
+                edge1->p2 = leaf2->triangle.p2;
+
+                l3->triangle.p1 = leaf2->triangle.p3;
+                l3->triangle.p3 = leaf2->triangle.p2;
+                l3->ml = leaf2->rl;
+                this->insertLeafPointer(leaf2->rl, leaf2, l3);
+
+                l4->triangle.p1 = leaf2->triangle.p2;
+                l4->triangle.p3 = leaf2->triangle.p1;
+                l4->ml = leaf2->ll;
+                this->insertLeafPointer(leaf2->ll, leaf2, l4);
+
+            } else if (dirNode2 == 3) {
+                edge1->p2 = leaf2->triangle.p1;
+
+                l3->triangle.p1 = leaf2->triangle.p2;
+                l3->triangle.p3 = leaf2->triangle.p1;
+                l3->ml = leaf2->ll;
+                this->insertLeafPointer(leaf2->ll, leaf2, l3);
+
+                l4->triangle.p1 = leaf2->triangle.p1;
+                l4->triangle.p3 = leaf2->triangle.p3;
+                l4->ml = leaf2->ml;
+                this->insertLeafPointer(leaf2->ml, leaf2, l4);
+
+            } else {
+                std::cout << "Error bnode 1 insertPoint \n";
+            }
+
+            l1->ll = l4;
+            l1->rl = l2;
+
+            l2->ll = l1;
+            l2->rl = l3;
+
+            l3->ll = l2;
+            l3->rl = l4;
+
+            l4->ll = l3;
+            l4->rl = l1;
+
+            BNode* bNode1 = new BNode();
+            bNode1->e = edge1;
+            bNode1->lst = new Node();
+            bNode1->lst->l = l2;
+            bNode1->rst = new Node();
+            bNode1->rst->l = l1;
+
+            nodeArr[0]->bn = bNode1;
+            
+            BNode* bNode2 = new BNode();
+            bNode2->e = edge2;
+            bNode2->lst = new Node();
+            bNode2->lst->l = l4;
+            bNode2->rst = new Node();
+            bNode2->rst->l = l3;
+
+            nodeArr[1]->bn = bNode2;
+
+
+            int pos = 0;
+            int length = this->triangulationLength + 2;
+            Triangle* triangle = new Triangle[length];
+            for (int i = 0; i < this->triangulationLength; i++) {
+                if (!(leaf1->triangle == this->triangulation[i]) && !(leaf2->triangle == this->triangulation[i])) {
+                    triangle[pos] = this->triangulation[i];
+                    pos += 1;
+                }
+            }
+            triangle[pos + 0] = l1->triangle;
+            triangle[pos + 1] = l2->triangle;
+            triangle[pos + 2] = l3->triangle;
+            triangle[pos + 3] = l4->triangle;
+
+            if (this->triangulation) {
+                delete[] this->triangulation;
+            }
+            this->triangulationLength = length;
+            this->triangulation = triangle;
+
+
+            if (leaf1) {
+                delete leaf1;
+            }
+            if (leaf2) {
+                delete leaf2;
+            }
         } else {
             std::cout << "Error insertPoint numleafs=";
             std::cout <<  numLeafs;
@@ -473,55 +676,90 @@ namespace Triangulation3d {
     }
 
     
-    int VertexCalc::getLeaf(Point p, Node* node[2], int pos, bool one) {
-        if (node[pos]->l) {
-            return 1;
-        } else if (node[pos]->bn) {
-            if (this->crossProduct(node[pos]->bn->e->p1, node[pos]->bn->e->p2, p) < 0) {
-                node[pos] = node[pos]->bn->rst;
-                return this->getLeaf(p, node, pos, one);
-            } else if (this->crossProduct(node[pos]->bn->e->p1, node[pos]->bn->e->p2, p) > 0) {
-                node[pos] = node[pos]->bn->lst;
-                return this->getLeaf(p, node, pos, one);
-            } else if (one) {
-                node[0] = node[pos]->bn->lst;
-                node[1] = node[pos]->bn->rst;
-                this->getLeaf(p, node, 0, false);
-                this->getLeaf(p, node, 1, false);
-                return 2;
+    /**
+     *  Finds what leaf p is in and return that node in found.
+     *  Note: there can be two nodes found if p is on a edge. 
+    */
+    int VertexCalc::getLeaf(Point p, Node* node, Node* found[2], bool one) {
+        one = true;
+        if (node->l) {
+            if (!found[0]) {
+                found[0] = node;
+                return 1;
             } else {
-                std::cout << "Error BNode getLeaf \n";
+                if (!found[0]->l) {
+                    found[0] = node;   
+                    return 1;
+                }
             }
-        } else if (node[pos]->t) {
-            Trenary* t = node[pos]->t;
-            if (this->isInsideEdges(t->e1, t->e2, p)) {
-                node[pos] = t->lst;
-                return this->getLeaf(p, node, pos, one);
-            } else if (this->isInsideEdges(t->e3, t->e1, p)) {
-                node[pos] = t->mst;
-                return this->getLeaf(p, node, pos, one);
-            } else if (this->isInsideEdges(t->e2, t->e3, p)) {
-                node[pos] = t->rst;
-                return this->getLeaf(p, node, pos, one);
-            } else if (one && this->crossProduct(t->e1->p1, t->e1->p2, p) == 0) {
-                node[0] = t->mst;
-                node[1] = t->lst;
-                this->getLeaf(p, node, 0, false);
-                this->getLeaf(p, node, 1, false);
-                return 2;
-            } else if (one && this->crossProduct(t->e2->p1, t->e2->p2, p) == 0) {
-                node[0] = t->lst;
-                node[1] = t->rst;
-                this->getLeaf(p, node, 0, false);
-                this->getLeaf(p, node, 1, false);
-                return 2;
-            } else if (one && this->crossProduct(t->e3->p1, t->e3->p2, p) == 0) {
-                node[0] = t->rst;
-                node[1] = t->mst;
-                this->getLeaf(p, node, 0, false);
-                this->getLeaf(p, node, 1, false);
-                return 2;
+            if (!found[1]) {
+                found[1] = node;
+                return 1;
             } else {
+                if (!found[1]->l) {
+                    found[1] = node;   
+                    return 1;
+                }
+            }
+            std::cout << "Error leaf already ocupied\n";
+            return 0;
+
+        } else if (node->bn) {
+            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < 0) {
+          
+                return this->getLeaf(p, node->bn->rst, found, one);
+
+            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) > 0) {
+
+                return this->getLeaf(p, node->bn->lst, found, one);
+
+            } else if (one) {
+
+                this->getLeaf(p, node->bn->lst, found, false);
+                this->getLeaf(p, node->bn->rst, found, false);
+                return 2;
+
+            } else {
+
+                std::cout << "Error BNode getLeaf \n";
+
+            }
+        } else if (node->t) {
+
+            Trenary* t = node->t;
+
+            if (this->isInsideEdges(t->e1, t->e2, p)) {
+
+                return this->getLeaf(p, t->lst, found, one);
+
+            } else if (this->isInsideEdges(t->e3, t->e1, p)) {
+
+                return this->getLeaf(p, t->mst, found, one);
+
+            } else if (this->isInsideEdges(t->e2, t->e3, p)) {
+
+                return this->getLeaf(p, t->rst, found, one);
+
+            } else if (one && this->crossProduct(t->e1->p1, t->e1->p2, p) == 0) {
+
+                this->getLeaf(p, t->mst, found, false);
+                this->getLeaf(p, t->lst, found, false);
+                return 2;
+
+            } else if (one && this->crossProduct(t->e2->p1, t->e2->p2, p) == 0) {
+
+                this->getLeaf(p, t->lst, found, false);
+                this->getLeaf(p, t->rst, found, false);
+                return 2;
+
+            } else if (one && this->crossProduct(t->e3->p1, t->e3->p2, p) == 0) {
+
+                this->getLeaf(p, t->rst, found, false);
+                this->getLeaf(p, t->mst, found, false);
+                return 2;
+
+            } else {
+                
                 std::cout << "Error Trenary getLeaf one =";
                 std::cout << one;
                 std::cout << "\n";
@@ -532,6 +770,10 @@ namespace Triangulation3d {
         return 0;
     }
 
+
+    /**
+     *  Finds which diraction l1 is pointing to l0 and switches that pointer to l2.
+    */
     void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
         if (!l0) {
             // std::cout << "NULL insertLeafPointer \n";
@@ -561,6 +803,41 @@ namespace Triangulation3d {
         std::cout << "Error insertLeafPointer \n";
     }
 
+
+    /**
+     *  Gets which direction l1 is to l0-
+     *  0 = l0 == null, 1 = left, 2 = midel, 3 = right
+    */
+    int VertexCalc::findDiractionOfNeighbor(Leaf* l0, Leaf* l1) {
+        if (!l0 || !l1) {
+            return 0;
+        }
+
+        if (l0->ll) {
+            if (l0->ll->triangle == l1->triangle) {
+                return 1;
+            } 
+        }
+
+        if (l0->ml) {
+            if (l0->ml->triangle == l1->triangle) {
+                return 2;
+            } 
+        }
+        if (l0->rl) {
+            if (l0->rl->triangle == l1->triangle) {
+                return 3;
+            } 
+        }
+
+        std::cout << "Error findDiractionOfNeighbor \n";
+        return 0;
+    }
+
+
+    /**
+     *  Checks if the point is to the right of e0 and to the left of e1.
+    */
     bool VertexCalc::isInsideEdges(Edge* e0, Edge* e1, Point p) {
         if (this->crossProduct(e0->p1, e0->p2, p) < 0) {
             if (this->crossProduct(e1->p1, e1->p2, p) > 0) {
@@ -570,6 +847,10 @@ namespace Triangulation3d {
         return false;
     }
 
+
+    /**
+     *  Delete all nodes in tree.
+    */
     void VertexCalc::deleteTree(Node* node) {
         // if (node) {
         //     if (node->l) {
@@ -650,6 +931,10 @@ namespace Triangulation3d {
         }
     }
 
+
+    /**
+     *  Checks if picked C is on the convex hull.
+    */
     bool VertexCalc::pickedCOnHull() {
         for (int i = 0; i < this->convexHullLength; i++) {
             if (this->pickedC == this->convexHull[i]) {
