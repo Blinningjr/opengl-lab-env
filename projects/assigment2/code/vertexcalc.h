@@ -29,12 +29,19 @@ namespace Triangulation3d {
 			};
 			struct Triangle {
 				Point p1, p2, p3;
+				bool operator ==(const Triangle& t){
+					return p1 == t.p1 && p2 == t.p2 && p3 == t.p3;
+				}
 			};
 
 			struct Node;
 			struct Leaf {
 				Triangle triangle;
-				Leaf *ll, *rl;
+				Leaf *ll, *ml, *rl;
+
+				bool operator ==(const Leaf& l){
+					return triangle == l.triangle;
+				}
 			};
 			struct BNode {
 				Edge* e;
@@ -98,7 +105,11 @@ namespace Triangulation3d {
 
 			Node* createTree(Point* points, int length);
 
-			Node* findTriangle(Edge* edge, bool left);
+			Node* findLeaf(Edge* edge, bool left);
+
+			void insertPoint(Point p, Node* node);
+
+			void insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2);
 
 			void deleteTree(Node* node);
 

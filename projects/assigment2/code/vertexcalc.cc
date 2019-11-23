@@ -190,6 +190,27 @@ namespace Triangulation3d {
 
         this->deleteTree(this->tree);
         this->tree = this->createTree(this->convexHull, this->convexHullLength);
+
+        int pos = 0;
+        Point rest[this->pointsLength - this->convexHullLength];
+
+        for (int i = 0; i < this->pointsLength; i++) {
+            bool add = true;
+            for (int j = 0; j < this->convexHullLength; j++) {
+                if (this->convexHull[j] == this->points[i]) {
+                    add = false;
+                    break;
+                }
+            }
+            if (add) {
+                rest[pos] = this->points[i];
+                pos += 1;
+            }
+        }
+        // for (int i = 0; i < this->pointsLength - this->convexHullLength; i++) {
+        //     this->insertPoint(rest[i], this->tree);
+        // }
+        this->insertPoint(rest[0], this->tree);
     }
 
 
@@ -290,16 +311,18 @@ namespace Triangulation3d {
         bNode->e = edge;
 
         if (lpsLength == 0) {
-            bNode->lst = this->findTriangle(edge, true);
+            bNode->lst = this->findLeaf(edge, true);
         } else {
             bNode->lst = createTree(lps, lpsLength);
         }
         
         if (rpsLength == 0) {
-            bNode->rst = this->findTriangle(edge, false);
+            bNode->rst = this->findLeaf(edge, false);
         } else {
             bNode->rst = createTree(rps, rpsLength);
         }
+
+        node->bn = bNode;
 
         delete[] lps;
         delete[] rps;
@@ -307,7 +330,7 @@ namespace Triangulation3d {
         return node;
     }
 
-    VertexCalc::Node* VertexCalc::findTriangle(Edge* edge, bool left) {
+    VertexCalc::Node* VertexCalc::findLeaf(Edge* edge, bool left) {
         Node* node = new Node();
 
         Leaf* l = this->leaf;
@@ -323,27 +346,139 @@ namespace Triangulation3d {
         }
     }
 
+
+    void VertexCalc::insertPoint(Point p, Node* node) {
+        if (node->l != NULL) {
+            Leaf* l = node->l;
+            if (l == this->leaf) {
+                this->leaf = l->ll;
+            }
+            node->l = NULL;
+   
+            Triangle t1;
+            t1.p1 = l->triangle.p2;
+            t1.p2 = p;
+            t1.p3 = l->triangle.p1;
+
+            Triangle t2;
+            t2.p1 = l->triangle.p1;
+            t2.p2 = p;
+            t2.p3 = l->triangle.p3;
+
+            Triangle t3;
+            t3.p1 = l->triangle.p3;
+            t3.p2 = p;
+            t3.p3 = l->triangle.p2;
+
+            
+            Trenary* trenary = new Trenary();
+            trenary->v = p;
+            trenary->e1 = new Edge();
+            trenary->e1->p1 = p;
+            trenary->e1->p2 = l->triangle.p1;
+
+            trenary->e2 = new Edge();
+            trenary->e2->p1 = p;
+            trenary->e2->p2 = l->triangle.p2;
+
+            trenary->e3 = new Edge();
+            trenary->e3->p1 = p;
+            trenary->e3->p2 = l->triangle.p3;
+
+            trenary->lst = new Node();
+            trenary->lst->l = new Leaf();
+            trenary->lst->l->triangle = t1;
+
+            trenary->mst = new Node();
+            trenary->mst->l = new Leaf();
+            trenary->mst->l->triangle = t2;
+
+            trenary->rst = new Node();
+            trenary->rst->l = new Leaf();
+            trenary->rst->l->triangle = t3;
+
+            trenary->lst->l->ll = trenary->rst->l;
+            trenary->lst->l->ml = l->ll;
+            trenary->lst->l->rl = trenary->mst->l;
+
+            trenary->mst->l->ll = trenary->lst->l;
+            trenary->mst->l->ml = l->ml;
+            trenary->mst->l->rl = trenary->rst->l;
+
+            trenary->rst->l->ll = trenary->mst->l;
+            trenary->rst->l->ml = l->rl;
+            trenary->rst->l->rl = trenary->lst->l;
+            
+            // this->insertLeafPointer(l->ll, l, trenary->lst->l);
+            // this->insertLeafPointer(l->ml, l, trenary->mst->l);
+            // this->insertLeafPointer(l->rl, l, trenary->rst->l);
+
+            node->t = trenary;
+
+            int pos = 0;
+            int length = this->triangulationLength + 2;
+            Triangle* triangle = new Triangle[length];
+            for (int i = 0; i < this->triangulationLength; i++) {
+                if (!(l->triangle == this->triangulation[i])) {
+                    triangle[pos] = this->triangulation[i];
+                    pos += 1;
+                }
+            }
+            triangle[pos + 0] = t1;
+            triangle[pos + 1] = t2;
+            triangle[pos + 2] = t3;
+
+            delete[] this->triangulation;
+            this->triangulationLength = length;
+            this->triangulation = triangle;
+            delete l;
+            return;
+        } else if (node->bn != NULL) {
+            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < 0) {
+                this->insertPoint(p, node->bn->rst);
+            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) > 0) {
+                this->insertPoint(p, node->bn->lst);
+            } else {
+                std::cout << "On line \n";
+            }
+        } else if (node->t != NULL) {
+            
+        } else {
+            std::cout << "Error Empty Node \n";
+        }
+    }
+
+    void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
+        if (l0->ll == l1) {
+            // l0->ll = l2;
+        } else if (l0->ml == l1) {
+            // l0->ml = l2;
+        } else if (l0->rl == l1) {
+            // l0->rl = l2;
+        } else {
+            std::cout << "Error insertLeafPointer \n";
+        }
+    }
+
     void VertexCalc::deleteTree(Node* node) {
         if (node->l != NULL) {
             delete node->l;
         }
         if (node->bn != NULL) {
-            this->deleteTree(node->bn->lst);
-            this->deleteTree(node->bn->rst);
+            
+            // this->deleteTree(node->bn->lst);
+            // this->deleteTree(node->bn->rst);
             delete node->bn->e;
             delete node->bn;
         }
         if (node->t != NULL) {
-            this->deleteTree(node->t->lst);
-            this->deleteTree(node->t->mst);
-            this->deleteTree(node->t->rst);
+            // this->deleteTree(node->t->lst);
+            // this->deleteTree(node->t->mst);
+            // this->deleteTree(node->t->rst);
             delete node->t->e1;
             delete node->t->e2;
             delete node->t->e3;
         }
-        delete node->l;
-        delete node->bn;
-        delete node->t;
         delete node;
     }
 
