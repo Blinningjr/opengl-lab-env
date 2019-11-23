@@ -433,9 +433,9 @@ namespace Triangulation3d {
             this->triangulation = triangle;
             delete l;
         } else if (node->bn != NULL) {
-            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < 0) {
+            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) <= 0) {
                 this->insertPoint(p, node->bn->rst);
-            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) > 0) {
+            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) >= 0) {
                 this->insertPoint(p, node->bn->lst);
             } else {
                 std::cout << "On line \n";
@@ -458,19 +458,31 @@ namespace Triangulation3d {
 
     void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
         if (l0 == NULL) {
-            std::cout << "NULL insertLeafPointer \n";
-        } else if (&l0->ll == &l1) {
-            l0->ll = l2;
-            std::cout << "ok insertLeafPointer \n";
-        } else if (&l0->ml == &l1) {
-            l0->ml = l2;
-            std::cout << "ok insertLeafPointer \n";
-        } else if (&l0->rl == &l1) {
-            l0->rl = l2;
-            std::cout << "ok insertLeafPointer \n";
-        } else {
-            std::cout << "Error insertLeafPointer \n";
+            // std::cout << "NULL insertLeafPointer \n";
+            return;
         }
+
+        if (l0->ll != NULL) {
+            if (l0->ll->triangle == l1->triangle) {
+                l0->ll = l2;
+                return;
+            } 
+        }
+
+        if (l0->ml != NULL) {
+            if (l0->ml->triangle == l1->triangle) {
+                l0->ml = l2;
+                return;
+            } 
+        }
+        if (l0->rl != NULL) {
+            if (l0->rl->triangle == l1->triangle) {
+                l0->rl = l2;
+                return;
+            } 
+        }
+
+        std::cout << "Error insertLeafPointer \n";
     }
 
     bool VertexCalc::isInsideEdges(Edge* e0, Edge* e1, Point p) {
