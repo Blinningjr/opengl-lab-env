@@ -27,6 +27,8 @@ namespace Triangulation3d {
         this->pickedC.b = 1;
         this->pickedC.a = 1;
         Node* n = new Node();
+        n->id = 0;
+        this->id = 1;
         this->tree = n;
         this->leaf = new Leaf();
     }
@@ -193,6 +195,8 @@ namespace Triangulation3d {
      *  Calculates the triangulation of all points.
     */
     void VertexCalc::calcTriangulation() {
+        this->id = 0;
+
         this->calcConvexHull();
         this->pickC();
 
@@ -232,6 +236,7 @@ namespace Triangulation3d {
         std::cout << "length =";
         std::cout << this->triangulationLength;
         std::cout << "\n";
+        this->debugTree(this->tree);
     }
 
 
@@ -303,6 +308,9 @@ namespace Triangulation3d {
     */
     VertexCalc::Node* VertexCalc::createTree(Point* ps, int length) {
         Node* node = new Node();
+        node->id = this->id;
+        this->id += 1;
+
         Edge* edge = new Edge();
         edge->p1 = this->pickedC;
         edge->p2 = ps[length/2];
@@ -375,6 +383,8 @@ namespace Triangulation3d {
     */
     VertexCalc::Node* VertexCalc::findLeaf(Edge* edge, bool left) {
         Node* node = new Node();
+        node->id = this->id;
+        this->id += 1;
 
         Leaf* l = this->leaf;
         for (int i = 0; i < this->triangulationLength; i++) {
@@ -439,14 +449,20 @@ namespace Triangulation3d {
             trenary->e3->p2 = l->triangle.p3;
 
             trenary->lst = new Node();
+            trenary->lst->id = this->id;
+            this->id += 1;
             trenary->lst->l = new Leaf();
             trenary->lst->l->triangle = t1;
 
             trenary->mst = new Node();
+            trenary->mst->id = this->id;
+            this->id += 1;
             trenary->mst->l = new Leaf();
             trenary->mst->l->triangle = t2;
 
             trenary->rst = new Node();
+            trenary->rst->id = this->id;
+            this->id += 1;
             trenary->rst->l = new Leaf();
             trenary->rst->l->triangle = t3;
 
@@ -635,8 +651,12 @@ namespace Triangulation3d {
             BNode* bNode1 = new BNode();
             bNode1->e = edge1;
             bNode1->lst = new Node();
+            bNode1->lst->id = this->id;
+            this->id += 1;
             bNode1->lst->l = l2;
             bNode1->rst = new Node();
+            bNode1->rst->id = this->id;
+            this->id += 1;
             bNode1->rst->l = l1;
 
             nodeArr[0]->bn = bNode1;
@@ -644,8 +664,12 @@ namespace Triangulation3d {
             BNode* bNode2 = new BNode();
             bNode2->e = edge2;
             bNode2->lst = new Node();
+            bNode2->lst->id = this->id;
+            this->id += 1;
             bNode2->lst->l = l4;
             bNode2->rst = new Node();
+            bNode2->rst->id = this->id;
+            this->id += 1;
             bNode2->rst->l = l3;
 
             nodeArr[1]->bn = bNode2;
@@ -946,6 +970,30 @@ namespace Triangulation3d {
             }
         }
         return false;
+    }
+
+
+    /**
+     *  Prints whole tree.
+    */
+    void VertexCalc::debugTree(Node* node) {
+        std::cout << "id : ";
+        std::cout << node->id;
+        std::cout << " type : ";
+        if (node->l) {
+            std::cout << "leaf\n";
+        } else if (node->bn) {
+            std::cout << "BNode\n";
+            this->debugTree(node->bn->lst);
+            this->debugTree(node->bn->rst);
+        } else if (node->t) {
+            std::cout << "Trenary\n";
+            this->debugTree(node->t->lst);
+            this->debugTree(node->t->mst);
+            this->debugTree(node->t->rst);
+        } else {
+            std::cout << "None\n";
+        }
     }
 
 
