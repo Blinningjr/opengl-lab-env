@@ -224,7 +224,7 @@ namespace Triangulation3d {
         this->tree = this->createTree(this->convexHull, this->convexHullLength, NULL, NULL);
 
         int pos = 0;
-        Point rest[this->pointsLength - this->convexHullLength - 1];
+        Point rest[this->pointsLength - this->convexHullLength];
 
         for (int i = 0; i < this->pointsLength; i++) {
             bool add = true;
@@ -234,7 +234,7 @@ namespace Triangulation3d {
                     break;
                 }
             }
-            if (add && this->points[i] != this->pickedC) {
+            if (add && (this->points[i] != this->pickedC)) {
                 rest[pos] = this->points[i];
                 pos += 1;
             }
@@ -775,14 +775,14 @@ namespace Triangulation3d {
             this->triangulation = triangle;
 
 
-            if (leaf1) {
-                delete leaf1;
-                leaf1 = NULL;
-            }
-            if (leaf2) {
-                delete leaf2;
-                leaf2 = NULL;
-            }
+            // if (leaf1) {
+            //     delete leaf1;
+            //     leaf1 = NULL;
+            // }
+            // if (leaf2) {
+            //     delete leaf2;
+            //     leaf2 = NULL;
+            // }
         } else {
             std::cout << "Error insertPoint numleafs=";
             std::cout <<  numLeafs;
@@ -827,13 +827,15 @@ namespace Triangulation3d {
 
                 return this->getLeaf(p, node->bn->lst, found);
 
-            } else {
+            } else if (this->onLineSeg(node->bn->e, &p)) {
 
                 this->getLeaf(p, node->bn->lst, found);
                 this->getLeaf(p, node->bn->rst, found);
                 return 2;
 
-            } 
+            } else {
+                return this->getLeaf(p, node->bn->rst, found);
+            }
         } else if (node->t) {
 
             Trenary* t = node->t;
@@ -851,25 +853,36 @@ namespace Triangulation3d {
                 return this->getLeaf(p, t->rst, found);
 
             } else if (this->crossProduct(t->e1->p1, t->e1->p2, p) == 0) {
-
-                this->getLeaf(p, t->mst, found);
-                this->getLeaf(p, t->lst, found);
-                return 2;
+                
+                if (this->onLineSeg(t->e1, &p)) {
+                    return this->getLeaf(p, t->mst, found);
+                } else {
+                    this->getLeaf(p, t->mst, found);
+                    this->getLeaf(p, t->lst, found);
+                    return 2;
+                }
 
             } else if (this->crossProduct(t->e2->p1, t->e2->p2, p) == 0) {
 
-                this->getLeaf(p, t->lst, found);
-                this->getLeaf(p, t->rst, found);
-                return 2;
+                if (this->onLineSeg(t->e2, &p)) {
+                    return this->getLeaf(p, t->lst, found);
+                } else {
+                    this->getLeaf(p, t->lst, found);
+                    this->getLeaf(p, t->rst, found);
+                    return 2;
+                }
 
             } else if (this->crossProduct(t->e3->p1, t->e3->p2, p) == 0) {
 
-                this->getLeaf(p, t->rst, found);
-                this->getLeaf(p, t->mst, found);
-                return 2;
+                if (this->onLineSeg(t->e3, &p)) {
+                    return this->getLeaf(p, t->rst, found);
+                } else {
+                    this->getLeaf(p, t->rst, found);
+                    this->getLeaf(p, t->mst, found);
+                    return 2;
+                }
 
             } else {
-                
                 std::cout << "Error Trenary getLeaf \n";
             }
         } else {
@@ -1057,6 +1070,28 @@ namespace Triangulation3d {
             }
         }
         return false;
+    }
+
+
+    /**
+     *  Cheack is p ins ond edge.
+    */
+    bool VertexCalc::onLineSeg(Edge* edge, Point* point) {
+        if (this->crossProduct(edge->p1, edge->p2, *point) != 0) {
+            return false;
+        }
+        
+        float dotproduct = (point->x - edge->p1.x) * (edge->p2.x - edge->p1.x) + (point->y - edge->p1.y)*(edge->p2.y - edge->p1.y);
+        if (dotproduct < 0) {
+            return false;
+        }
+
+        float squaredlengt = (edge->p2.x - edge->p1.x)*(edge->p2.x - edge->p1.x) + (edge->p2.y - edge->p1.y)*(edge->p2.y - edge->p1.y);
+        if (dotproduct > squaredlengt) {
+            return false;
+        }
+       
+        return true;
     }
 
 

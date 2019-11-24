@@ -132,6 +132,8 @@ namespace Triangulation3d {
 			void deleteTree(Node* node);
 
 			bool pickedCOnHull();
+
+			bool onLineSeg(Edge* e, Point* p);
             
 			void debugTree(Node* node);
 
