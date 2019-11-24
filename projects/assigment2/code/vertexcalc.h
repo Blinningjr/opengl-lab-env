@@ -98,7 +98,9 @@ namespace Triangulation3d {
 			Point pickedC;
 
 			Node* tree;
-			Leaf* leaf;
+			
+			int leafsLength;
+			Node** leafs;
 
 			int id;
 

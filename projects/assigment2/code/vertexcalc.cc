@@ -30,7 +30,8 @@ namespace Triangulation3d {
         n->id = 0;
         this->id = 1;
         this->tree = n;
-        this->leaf = new Leaf();
+        this->leafsLength = 0;
+        this->leafs = new Node*[this->leafsLength];
     }
 
 
@@ -40,13 +41,16 @@ namespace Triangulation3d {
     VertexCalc::~VertexCalc() {
         if (this->points) {
             delete[] this->points;
+            this->points = NULL;
         }
         if (this->convexHull) {
             delete[] this->convexHull;
+            this->convexHull = NULL;
         }
         this->deleteTree(this->tree);
         if (this->triangulation) {
             delete[] this->triangulation;
+            this->triangulation = NULL;
         }
     }
 
@@ -61,6 +65,7 @@ namespace Triangulation3d {
 
         if (this->points) {
             delete[] this->points;
+            this->points = NULL;
         }
         this->pointsLength = numCords;
         this->points = new Point[this->pointsLength];
@@ -91,6 +96,7 @@ namespace Triangulation3d {
 
         if (this->points) {
             delete[] this->points;
+            this->points = NULL;
         }
 
         this->pointsLength = numPoints;
@@ -136,6 +142,7 @@ namespace Triangulation3d {
     void VertexCalc::calcConvexHull() {
         if (this->convexHull) {
             delete[] this->convexHull;
+            this->convexHull = NULL;
         }
         this->convexHullLength = 0;
 
@@ -202,6 +209,7 @@ namespace Triangulation3d {
 
         if (this->triangulation) {
             delete[] this->triangulation;
+            this->triangulation = NULL;
         }
         int cLength = this->convexHullLength;
         // if (this->pickedCOnHull()) {
@@ -286,18 +294,29 @@ namespace Triangulation3d {
         triangles[length-1].p2 = v;
         triangles[length-1].p3 = ps[0];
 
-        Leaf* pl = new Leaf();
-        pl->triangle = triangles[0];
-        this->leaf = pl;
+        // delete this->leafs;
+        this->leafsLength = length;
+        this->leafs = new Node*[this->leafsLength];
+
+        Node* pl = new Node();
+        pl->id = this->id;
+        this->id += 1;
+        pl->l = new Leaf();
+        pl->l->triangle = triangles[0];
+        this->leafs[0] = pl;
         for (int i = 1; i < length; i++) {
-            Leaf* l = new Leaf();
-            l->triangle = triangles[i];
-            pl->rl = l;
-            l->ll = pl;
+            Node* l = new Node();
+            l->id = this->id;
+            this->id += 1;
+            l->l = new Leaf();
+            l->l->triangle = triangles[i];
+            pl->l->rl = l->l;
+            l->l->ll = pl->l;
             pl = l;
+            this->leafs[i] = l;
         }
-        pl->rl = this->leaf;
-        this->leaf->ll = pl;
+        pl->l->rl = this->leafs[0]->l;
+        this->leafs[0]->l->ll = pl->l;
 
         return triangles;
     }
@@ -367,9 +386,11 @@ namespace Triangulation3d {
 
         if (lps) {
             delete[] lps;
+            lps = NULL;
         }
         if (rps) {
             delete[] rps;
+            rps = NULL;
         }
         
         
@@ -382,20 +403,12 @@ namespace Triangulation3d {
      *  Not only works when triangulation is a circle of triangles.
     */
     VertexCalc::Node* VertexCalc::findLeaf(Edge* edge, bool left) {
-        Node* node = new Node();
-        node->id = this->id;
-        this->id += 1;
-
-        Leaf* l = this->leaf;
-        for (int i = 0; i < this->triangulationLength; i++) {
-            if (left && l->triangle.p1 == edge->p2) {
-                node->l = l;
-                return node;
-            } else if (!left && l->triangle.p3 == edge->p2) {
-                node->l = l;
-                return node;
+        for (int i = 0; i < this->leafsLength; i++) {
+            if (left && this->leafs[i]->l->triangle.p1 == edge->p2) {
+                return this->leafs[i];
+            } else if (!left && this->leafs[i]->l->triangle.p3 == edge->p2) {
+                return this->leafs[i];
             }
-            l = l->ll;
         }
         std::cout << "error findLeaf \n";
         return NULL;
@@ -413,9 +426,9 @@ namespace Triangulation3d {
         if (numLeafs == 1) {
             
             Leaf* l = nodeArr[0]->l;
-            if (l == this->leaf) {
-                this->leaf = l->ll;
-            }
+            // if (l == this->leaf) {
+            //     this->leaf = l->ll;
+            // }
             nodeArr[0]->l = NULL;
    
             Triangle t1;
@@ -500,6 +513,7 @@ namespace Triangulation3d {
 
             if (this->triangulation) {
                 delete[] this->triangulation;
+                this->triangulation = NULL;
             }
             this->triangulationLength = length;
             this->triangulation = triangle;
@@ -507,6 +521,7 @@ namespace Triangulation3d {
 
             if (l) {
                 delete l;
+                l = NULL;
             }
             
         } else if (numLeafs == 2) {
@@ -691,6 +706,7 @@ namespace Triangulation3d {
 
             if (this->triangulation) {
                 delete[] this->triangulation;
+                this->triangulation = NULL;
             }
             this->triangulationLength = length;
             this->triangulation = triangle;
@@ -698,9 +714,11 @@ namespace Triangulation3d {
 
             if (leaf1) {
                 delete leaf1;
+                leaf1 = NULL;
             }
             if (leaf2) {
                 delete leaf2;
+                leaf2 = NULL;
             }
         } else {
             std::cout << "Error insertPoint numleafs=";
@@ -886,57 +904,60 @@ namespace Triangulation3d {
         //     }
         // }
 
-        if (node) {
-            if (node->bn) {
-                if (node->bn->lst) {
-                    this->deleteTree(node->bn->lst);
-                }
-            }
-        }
-        if (node) {
-            if (node->bn) {
-                if (node->bn->rst) {
-                    this->deleteTree(node->bn->rst);
-                }
-            }
-        }
+        // if (node) {
+        //     if (node->bn) {
+        //         if (node->bn->lst) {
+        //             this->deleteTree(node->bn->lst);
+        //         }
+        //     }
+        // }
+        // if (node) {
+        //     if (node->bn) {
+        //         if (node->bn->rst) {
+        //             this->deleteTree(node->bn->rst);
+        //         }
+        //     }
+        // }
         if (node) {
             if (node->bn) {
                 if (node->bn->e) {
                     delete node->bn->e;
+                    node->bn->e = NULL;
                 }
             }
         }
         if (node) {
             if (node->bn) {
                 delete node->bn;
+                node->bn = NULL;
             }
         }
-        if (node) {
-            if (node->t) {
-                if (node->t->lst) {
-                    this->deleteTree(node->t->lst);
-                }
-            }
-        }
-        if (node) {
-            if (node->t) {
-                if (node->t->mst) {
-                    this->deleteTree(node->t->mst);
-                }
-            }
-        }
-        if (node) {
-            if (node->t) {
-                if (node->t->rst) {
-                    this->deleteTree(node->t->rst);
-                }
-            }
-        }
+        // if (node) {
+        //     if (node->t) {
+        //         if (node->t->lst) {
+        //             this->deleteTree(node->t->lst);
+        //         }
+        //     }
+        // }
+        // if (node) {
+        //     if (node->t) {
+        //         if (node->t->mst) {
+        //             this->deleteTree(node->t->mst);
+        //         }
+        //     }
+        // }
+        // if (node) {
+        //     if (node->t) {
+        //         if (node->t->rst) {
+        //             this->deleteTree(node->t->rst);
+        //         }
+        //     }
+        // }
         if (node) {
             if (node->t) {
                 if (node->t->e1) {
                     delete node->t->e1;
+                    node->t->e1 = NULL;
                 }
             }
         }
@@ -944,6 +965,7 @@ namespace Triangulation3d {
             if (node->t) {
                 if (node->t->e2) {
                     delete node->t->e2;
+                    node->t->e2 = NULL;
                 }
             }
         }
@@ -951,11 +973,13 @@ namespace Triangulation3d {
             if (node->t) {
                 if (node->t->e3) {
                     delete node->t->e3;
+                    node->t->e3 = NULL;
                 }
             }
         }
         if (node) {
             delete node;
+            node = NULL;
         }
     }
 
