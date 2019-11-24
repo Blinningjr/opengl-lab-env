@@ -228,6 +228,10 @@ namespace Triangulation3d {
         for (int i = 0; i < this->pointsLength - this->convexHullLength - 1; i++) {
             this->insertPoint(rest[i], this->tree);
         }
+
+        std::cout << "length =";
+        std::cout << this->triangulationLength;
+        std::cout << "\n";
     }
 
 
@@ -321,13 +325,19 @@ namespace Triangulation3d {
         Point* rps = new Point[length];
 
         for (int i = 0; i < length-1; i++) {
-            if (this->crossProduct(edge->p1, edge->p2, tps[i]) <= 0) {
+            if (this->crossProduct(edge->p1, edge->p2, tps[i]) < 0) {
                 rps[rpsLength] = tps[i];
                 rpsLength += 1;
-            } else {
+            } else if (this->crossProduct(edge->p1, edge->p2, tps[i]) > 0) {
                 lps[lpsLength] = tps[i];
                 lpsLength += 1;
-            } 
+            } else {
+                rps[rpsLength] = tps[i];
+                rpsLength += 1;
+
+                lps[lpsLength] = tps[i];
+                lpsLength += 1;
+            }
         }
 
         BNode* bNode = new BNode();
@@ -514,48 +524,48 @@ namespace Triangulation3d {
             Edge* edge1 = new Edge();
             edge1->p1;
 
-            // if (dirNode1 == 1) {
-            //     edge1->p2 = leaf1->triangle.p3;
+            if (dirNode1 == 1) {
+                edge1->p2 = leaf1->triangle.p3;
 
-            //     l1->triangle.p1 = leaf1->triangle.p1;
-            //     l1->triangle.p3 = leaf1->triangle.p3;
-            //     l1->ml = leaf1->ml;
-            //     this->insertLeafPointer(leaf1->ml, leaf1, l1);
+                l1->triangle.p1 = leaf1->triangle.p1;
+                l1->triangle.p3 = leaf1->triangle.p3;
+                l1->ml = leaf1->ml;
+                this->insertLeafPointer(leaf1->ml, leaf1, l1);
 
-            //     l2->triangle.p1 = leaf1->triangle.p3;
-            //     l2->triangle.p3 = leaf1->triangle.p2;
-            //     l2->ml = leaf1->rl;
-            //     this->insertLeafPointer(leaf1->rl, leaf1, l2);
+                l2->triangle.p1 = leaf1->triangle.p3;
+                l2->triangle.p3 = leaf1->triangle.p2;
+                l2->ml = leaf1->rl;
+                this->insertLeafPointer(leaf1->rl, leaf1, l2);
 
-            // } else if (dirNode1 == 2) {
-            //     edge1->p2 = leaf1->triangle.p2;
+            } else if (dirNode1 == 2) {
+                edge1->p2 = leaf1->triangle.p2;
 
-            //     l1->triangle.p1 = leaf1->triangle.p3;
-            //     l1->triangle.p3 = leaf1->triangle.p2;
-            //     l1->ml = leaf1->rl;
-            //     this->insertLeafPointer(leaf1->rl, leaf1, l1);
+                l1->triangle.p1 = leaf1->triangle.p3;
+                l1->triangle.p3 = leaf1->triangle.p2;
+                l1->ml = leaf1->rl;
+                this->insertLeafPointer(leaf1->rl, leaf1, l1);
 
-            //     l2->triangle.p1 = leaf1->triangle.p2;
-            //     l2->triangle.p3 = leaf1->triangle.p1;
-            //     l2->ml = leaf1->ll;
-            //     this->insertLeafPointer(leaf1->ll, leaf1, l2);
+                l2->triangle.p1 = leaf1->triangle.p2;
+                l2->triangle.p3 = leaf1->triangle.p1;
+                l2->ml = leaf1->ll;
+                this->insertLeafPointer(leaf1->ll, leaf1, l2);
 
-            // } else if (dirNode1 == 3) {
-            //     edge1->p2 = leaf1->triangle.p1;
+            } else if (dirNode1 == 3) {
+                edge1->p2 = leaf1->triangle.p1;
 
-            //     l1->triangle.p1 = leaf1->triangle.p2;
-            //     l1->triangle.p3 = leaf1->triangle.p1;
-            //     l1->ml = leaf1->ll;
-            //     this->insertLeafPointer(leaf1->ll, leaf1, l1);
+                l1->triangle.p1 = leaf1->triangle.p2;
+                l1->triangle.p3 = leaf1->triangle.p1;
+                l1->ml = leaf1->ll;
+                this->insertLeafPointer(leaf1->ll, leaf1, l1);
 
-            //     l2->triangle.p1 = leaf1->triangle.p1;
-            //     l2->triangle.p3 = leaf1->triangle.p3;
-            //     l2->ml = leaf1->ml;
-            //     this->insertLeafPointer(leaf1->ml, leaf1, l2);
+                l2->triangle.p1 = leaf1->triangle.p1;
+                l2->triangle.p3 = leaf1->triangle.p3;
+                l2->ml = leaf1->ml;
+                this->insertLeafPointer(leaf1->ml, leaf1, l2);
 
-            // } else {
-            //     std::cout << "Error bnode 1 insertPoint \n";
-            // }
+            } else {
+                std::cout << "Error bnode 1 insertPoint \n";
+            }
 
 
             Leaf* l3 = new Leaf();
@@ -581,7 +591,7 @@ namespace Triangulation3d {
                 this->insertLeafPointer(leaf2->rl, leaf2, l4);
 
             } else if (dirNode2 == 2) {
-                edge1->p2 = leaf2->triangle.p2;
+                edge2->p2 = leaf2->triangle.p2;
 
                 l3->triangle.p1 = leaf2->triangle.p3;
                 l3->triangle.p3 = leaf2->triangle.p2;
@@ -594,7 +604,7 @@ namespace Triangulation3d {
                 this->insertLeafPointer(leaf2->ll, leaf2, l4);
 
             } else if (dirNode2 == 3) {
-                edge1->p2 = leaf2->triangle.p1;
+                edge2->p2 = leaf2->triangle.p1;
 
                 l3->triangle.p1 = leaf2->triangle.p2;
                 l3->triangle.p3 = leaf2->triangle.p1;
