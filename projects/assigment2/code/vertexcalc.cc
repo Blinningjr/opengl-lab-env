@@ -243,20 +243,20 @@ namespace Triangulation3d {
             this->insertPoint(rest[i], this->tree);
         }
 
-        std::cout << "length =";
-        std::cout << this->triangulationLength;
-        std::cout << "\n";
-        std::cout << "\nDebug Tree \n";
-        this->debugTree(this->tree);
-        Point p;
-        p.x = 0;
-        p.y = 0;
-        Node* nodeArr[2];
-        nodeArr[0] = NULL;
-        nodeArr[1] = NULL;
-        this->getLeaf(p, this->tree, nodeArr);
-        std::cout << "\nDebug Leafs \n";
-        this->debugLeafs(nodeArr[0]->l);
+        // std::cout << "length =";
+        // std::cout << this->triangulationLength;
+        // std::cout << "\n";
+        // std::cout << "\nDebug Tree \n";
+        // this->debugTree(this->tree);
+        // Point p;
+        // p.x = 0;
+        // p.y = 0;
+        // Node* nodeArr[2];
+        // nodeArr[0] = NULL;
+        // nodeArr[1] = NULL;
+        // this->getLeaf(p, this->tree, nodeArr);
+        // std::cout << "\nDebug Leafs \n";
+        // this->debugLeafs(nodeArr[0]->l);
     }
 
 
@@ -384,28 +384,30 @@ namespace Triangulation3d {
             }
         }
 
-        if (*p == edge->p2) {
-            bn->bn = new BNode();
-            bn->bn->e = edge;
-            if (lpsLength == 0) {
-                bn->bn->lst = this->findLeaf(edge, true);
-            } else {
-                bn->bn->lst = createTree(lps, lpsLength, NULL, NULL);
-            }
-            
-            if (rpsLength == 0) {
-                bn->bn->rst = this->findLeaf(edge, false);
-            } else {
-                bn->bn->rst = createTree(rps, rpsLength, NULL, NULL);
-            }
+        if (p == &edge->p2) {
+            if (!bn->bn) {
+                bn->bn = new BNode();
+                bn->bn->e = edge;
+                if (lpsLength == 0) {
+                    bn->bn->lst = this->findLeaf(edge, true);
+                } else {
+                    bn->bn->lst = createTree(lps, lpsLength, p, bn);
+                }
+                
+                if (rpsLength == 0) {
+                    bn->bn->rst = this->findLeaf(edge, false);
+                } else {
+                    bn->bn->rst = createTree(rps, rpsLength, p, bn);
+                }
 
-            if (lps) {
-                delete[] lps;
-                lps = NULL;
-            }
-            if (rps) {
-                delete[] rps;
-                rps = NULL;
+                if (lps) {
+                    delete[] lps;
+                    lps = NULL;
+                }
+                if (rps) {
+                    delete[] rps;
+                    rps = NULL;
+                }
             }
 
             return bn;
