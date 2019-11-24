@@ -39,6 +39,9 @@ namespace Triangulation3d {
 
 			struct Node;
 			struct Leaf {
+				int id;
+				bool debugde = false;
+
 				Triangle triangle;
 				Leaf *ll, *ml, *rl;
 
@@ -102,7 +105,8 @@ namespace Triangulation3d {
 			int leafsLength;
 			Node** leafs;
 
-			int id;
+			int nodeId;
+			int leafId;
 
             // Funcs
 			GLfloat crossProduct(Point a, Point b, Point c);
@@ -130,6 +134,8 @@ namespace Triangulation3d {
 			bool pickedCOnHull();
             
 			void debugTree(Node* node);
+
+			void debugLeafs(Leaf* leaf);
 
 	};
 } // namespace Triangulation3d
