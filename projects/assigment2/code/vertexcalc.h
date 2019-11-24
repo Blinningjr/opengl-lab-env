@@ -108,6 +108,8 @@ namespace Triangulation3d {
 			int nodeId;
 			int leafId;
 
+			float epsilon = 0.00f;
+
             // Funcs
 			GLfloat crossProduct(Point a, Point b, Point c);
 
@@ -133,7 +135,9 @@ namespace Triangulation3d {
 
 			bool pickedCOnHull();
 
-			bool onLineSeg(Edge* e, Point* p);
+			bool onLineSeg(Edge* edge, Point* point);
+
+			float calcEpsilon(Point p1, Point p2);
             
 			void debugTree(Node* node);
 

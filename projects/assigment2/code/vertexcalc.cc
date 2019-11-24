@@ -243,20 +243,20 @@ namespace Triangulation3d {
             this->insertPoint(rest[i], this->tree);
         }
 
-        // std::cout << "length =";
-        // std::cout << this->triangulationLength;
-        // std::cout << "\n";
-        // std::cout << "\nDebug Tree \n";
-        // this->debugTree(this->tree);
-        // Point p;
-        // p.x = 0;
-        // p.y = 0;
-        // Node* nodeArr[2];
-        // nodeArr[0] = NULL;
-        // nodeArr[1] = NULL;
-        // this->getLeaf(p, this->tree, nodeArr);
-        // std::cout << "\nDebug Leafs \n";
-        // this->debugLeafs(nodeArr[0]->l);
+        std::cout << "\nlength =";
+        std::cout << this->triangulationLength;
+        std::cout << "\n";
+        std::cout << "\nDebug Tree \n";
+        this->debugTree(this->tree);
+        Point p;
+        p.x = 0;
+        p.y = 0;
+        Node* nodeArr[2];
+        nodeArr[0] = NULL;
+        nodeArr[1] = NULL;
+        this->getLeaf(p, this->tree, nodeArr);
+        std::cout << "\nDebug Leafs \n";
+        this->debugLeafs(nodeArr[0]->l);
     }
 
 
@@ -364,10 +364,10 @@ namespace Triangulation3d {
         Point* rps = new Point[length];
 
         for (int i = 0; i < length-1; i++) {
-            if (this->crossProduct(edge->p1, edge->p2, tps[i]) < 0) {
+            if (this->crossProduct(edge->p1, edge->p2, tps[i]) < -this->calcEpsilon(edge->p1, tps[i])) {
                 rps[rpsLength] = tps[i];
                 rpsLength += 1;
-            } else if (this->crossProduct(edge->p1, edge->p2, tps[i]) > 0) {
+            } else if (this->crossProduct(edge->p1, edge->p2, tps[i]) > this->calcEpsilon(edge->p1, tps[i])) {
                 lps[lpsLength] = tps[i];
                 lpsLength += 1;
             } else {
@@ -473,7 +473,7 @@ namespace Triangulation3d {
         nodeArr[1] = NULL;
         int numLeafs = this->getLeaf(p, node0, nodeArr);
         if (numLeafs == 1) {
-            
+            // std::cout << "insertPoint numleafs=1 \n";
             Leaf* l = nodeArr[0]->l;
             // if (l == this->leaf) {
             //     this->leaf = l->ll;
@@ -612,7 +612,7 @@ namespace Triangulation3d {
             l2->triangle.p2 = p;
             
             Edge* edge1 = new Edge();
-            edge1->p1;
+            edge1->p1 = p;
 
             if (dirNode1 == 1) {
                 edge1->p2 = leaf1->triangle.p3;
@@ -819,21 +819,31 @@ namespace Triangulation3d {
             return 0;
 
         } else if (node->bn) {
-            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < 0) {
-          
+            if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) < -this->calcEpsilon(node->bn->e->p1, p)) {
+                // std::cout << "bn right \n";
+                // std::cout << node->bn->e->p1.x;
+                // std::cout << " ";
+                // std::cout << node->bn->e->p1.y;
+                // std::cout << "\n";
+                // std::cout << node->bn->e->p2.x;
+                // std::cout << " ";
+                // std::cout << node->bn->e->p2.y;
+                // std::cout << "\n";
                 return this->getLeaf(p, node->bn->rst, found);
 
-            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) > 0) {
-
+            } else if (this->crossProduct(node->bn->e->p1, node->bn->e->p2, p) > this->calcEpsilon(node->bn->e->p1, p)) {
+                // std::cout << "bn left \n";
                 return this->getLeaf(p, node->bn->lst, found);
 
             } else if (this->onLineSeg(node->bn->e, &p)) {
 
+                // std::cout << "bn both \n";
                 this->getLeaf(p, node->bn->lst, found);
                 this->getLeaf(p, node->bn->rst, found);
                 return 2;
 
             } else {
+                // std::cout << "Not on lineseg\n";
                 return this->getLeaf(p, node->bn->rst, found);
             }
         } else if (node->t) {
@@ -842,44 +852,53 @@ namespace Triangulation3d {
 
             if (this->isInsideEdges(t->e1, t->e2, p)) {
 
+                // std::cout << "t left \n";
                 return this->getLeaf(p, t->lst, found);
 
             } else if (this->isInsideEdges(t->e3, t->e1, p)) {
 
+                // std::cout << "t middle \n";
                 return this->getLeaf(p, t->mst, found);
 
             } else if (this->isInsideEdges(t->e2, t->e3, p)) {
 
+                // std::cout << "t right \n";
                 return this->getLeaf(p, t->rst, found);
 
-            } else if (this->crossProduct(t->e1->p1, t->e1->p2, p) == 0) {
+            } else if (abs(this->crossProduct(t->e1->p1, t->e1->p2, p)) <= this->calcEpsilon(t->e1->p1, p)) {
                 
                 if (this->onLineSeg(t->e1, &p)) {
-                    return this->getLeaf(p, t->mst, found);
-                } else {
+                    // std::cout << "t middle and left \n";
                     this->getLeaf(p, t->mst, found);
                     this->getLeaf(p, t->lst, found);
                     return 2;
+                } else {
+                    std::cout << "error 1 \n";
+                    return this->getLeaf(p, t->rst, found);   
                 }
 
-            } else if (this->crossProduct(t->e2->p1, t->e2->p2, p) == 0) {
+            } else if (abs(this->crossProduct(t->e2->p1, t->e2->p2, p)) <= this->calcEpsilon(t->e2->p1, p)) {
 
                 if (this->onLineSeg(t->e2, &p)) {
-                    return this->getLeaf(p, t->lst, found);
-                } else {
+                    // std::cout << "t left and right \n";
                     this->getLeaf(p, t->lst, found);
                     this->getLeaf(p, t->rst, found);
                     return 2;
+                } else {
+                    std::cout << "error 2 \n";
+                    return this->getLeaf(p, t->mst, found);
                 }
 
-            } else if (this->crossProduct(t->e3->p1, t->e3->p2, p) == 0) {
+            } else if (abs(this->crossProduct(t->e3->p1, t->e3->p2, p)) <= this->calcEpsilon(t->e3->p1, p)) {
 
                 if (this->onLineSeg(t->e3, &p)) {
-                    return this->getLeaf(p, t->rst, found);
-                } else {
+                    // std::cout << "t middle and right \n";
                     this->getLeaf(p, t->rst, found);
                     this->getLeaf(p, t->mst, found);
                     return 2;
+                } else {
+                    std::cout << "error 3 \n";
+                    return this->getLeaf(p, t->lst, found);
                 }
 
             } else {
@@ -961,8 +980,8 @@ namespace Triangulation3d {
      *  Checks if the point is to the right of e0 and to the left of e1.
     */
     bool VertexCalc::isInsideEdges(Edge* e0, Edge* e1, Point p) {
-        if (this->crossProduct(e0->p1, e0->p2, p) < 0) {
-            if (this->crossProduct(e1->p1, e1->p2, p) > 0) {
+        if (this->crossProduct(e0->p1, e0->p2, p) < -this->calcEpsilon(e0->p1, p)) {
+            if (this->crossProduct(e1->p1, e1->p2, p) > this->calcEpsilon(e1->p1, p)) {
                 return true;
             }
         }
@@ -1077,7 +1096,7 @@ namespace Triangulation3d {
      *  Cheack is p ins ond edge.
     */
     bool VertexCalc::onLineSeg(Edge* edge, Point* point) {
-        if (this->crossProduct(edge->p1, edge->p2, *point) != 0) {
+        if (abs(this->crossProduct(edge->p1, edge->p2, *point)) > this->calcEpsilon(edge->p1, *point)) {
             return false;
         }
         
@@ -1092,6 +1111,14 @@ namespace Triangulation3d {
         }
        
         return true;
+    }
+
+
+    /**
+     *  Calculates the value that indicates if point is on line because floating point values inaccuracy.
+    */
+    float VertexCalc::calcEpsilon(Point p1, Point p2) {
+        return (this->epsilon * sqrt(pow(p2.x - p1.x, 2.0f) + pow(p2.y - p1.y, 2.0f)))/2.0f;
     }
 
 
