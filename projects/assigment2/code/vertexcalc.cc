@@ -224,7 +224,8 @@ namespace Triangulation3d {
         this->tree = this->createTree(this->convexHull, this->convexHullLength, NULL, NULL);
 
         int pos = 0;
-        Point rest[this->pointsLength - this->convexHullLength];
+        int restLength = this->pointsLength - this->convexHullLength - 1;
+        Point rest[restLength];
 
         for (int i = 0; i < this->pointsLength; i++) {
             bool add = true;
@@ -239,24 +240,29 @@ namespace Triangulation3d {
                 pos += 1;
             }
         }
-        for (int i = 0; i < this->pointsLength - this->convexHullLength - 1; i++) {
-            this->insertPoint(rest[i], this->tree);
+        for (int i = 0; i < restLength; i++) {
+            int r = rand() % pos;
+            Point p = rest[r];
+            rest[r] = rest[pos - 1];
+            rest[pos - 1] = p;
+            this->insertPoint(p, this->tree);
+            pos -= 1;
         }
 
-        std::cout << "\nlength =";
-        std::cout << this->triangulationLength;
-        std::cout << "\n";
-        std::cout << "\nDebug Tree \n";
-        this->debugTree(this->tree);
-        Point p;
-        p.x = 0;
-        p.y = 0;
-        Node* nodeArr[2];
-        nodeArr[0] = NULL;
-        nodeArr[1] = NULL;
-        this->getLeaf(p, this->tree, nodeArr);
-        std::cout << "\nDebug Leafs \n";
-        this->debugLeafs(nodeArr[0]->l);
+        // std::cout << "\nlength =";
+        // std::cout << this->triangulationLength;
+        // std::cout << "\n";
+        // std::cout << "\nDebug Tree \n";
+        // this->debugTree(this->tree);
+        // Point p;
+        // p.x = 0;
+        // p.y = 0;
+        // Node* nodeArr[2];
+        // nodeArr[0] = NULL;
+        // nodeArr[1] = NULL;
+        // this->getLeaf(p, this->tree, nodeArr);
+        // std::cout << "\nDebug Leafs \n";
+        // this->debugLeafs(nodeArr[0]->l);
     }
 
 
