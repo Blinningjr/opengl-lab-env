@@ -115,7 +115,7 @@ namespace Triangulation3d {
 
 			Triangle* calcTriangles(Point* points, int length, Point v);
 
-			Node* createTree(Point* points, int length);
+			Node* createTree(Point* points, int length, Point* p, Node* bn);
 
 			Node* findLeaf(Edge* edge, bool left);
 

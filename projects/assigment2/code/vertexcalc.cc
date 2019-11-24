@@ -204,6 +204,7 @@ namespace Triangulation3d {
     */
     void VertexCalc::calcTriangulation() {
         this->nodeId = 0;
+        this->leafId = 0;
 
         this->calcConvexHull();
         this->pickC();
@@ -220,7 +221,7 @@ namespace Triangulation3d {
         this->triangulation = this->calcTriangles(this->convexHull, this->convexHullLength, this->pickedC);
 
         this->deleteTree(this->tree);
-        this->tree = this->createTree(this->convexHull, this->convexHullLength);
+        this->tree = this->createTree(this->convexHull, this->convexHullLength, NULL, NULL);
 
         int pos = 0;
         Point rest[this->pointsLength - this->convexHullLength - 1];
@@ -340,11 +341,7 @@ namespace Triangulation3d {
     /**
      *  Creates the initial balanced tree with the convex hull and point c.
     */
-    VertexCalc::Node* VertexCalc::createTree(Point* ps, int length) {
-        Node* node = new Node();
-        node->id = this->nodeId;
-        this->nodeId += 1;
-
+    VertexCalc::Node* VertexCalc::createTree(Point* ps, int length, Point* p, Node* bn) {
         Edge* edge = new Edge();
         edge->p1 = this->pickedC;
         edge->p2 = ps[length/2];
@@ -379,37 +376,72 @@ namespace Triangulation3d {
 
                 lps[lpsLength] = tps[i];
                 lpsLength += 1;
+
+                p = &tps[i];
+                bn = new Node();
+                bn->id = this->nodeId;
+                this->nodeId += 1;
             }
         }
 
-        BNode* bNode = new BNode();
-        bNode->e = edge;
+        if (*p == edge->p2) {
+            bn->bn = new BNode();
+            bn->bn->e = edge;
+            if (lpsLength == 0) {
+                bn->bn->lst = this->findLeaf(edge, true);
+            } else {
+                bn->bn->lst = createTree(lps, lpsLength, NULL, NULL);
+            }
+            
+            if (rpsLength == 0) {
+                bn->bn->rst = this->findLeaf(edge, false);
+            } else {
+                bn->bn->rst = createTree(rps, rpsLength, NULL, NULL);
+            }
 
-        if (lpsLength == 0) {
-            bNode->lst = this->findLeaf(edge, true);
+            if (lps) {
+                delete[] lps;
+                lps = NULL;
+            }
+            if (rps) {
+                delete[] rps;
+                rps = NULL;
+            }
+
+            return bn;
         } else {
-            bNode->lst = createTree(lps, lpsLength);
-        }
-        
-        if (rpsLength == 0) {
-            bNode->rst = this->findLeaf(edge, false);
-        } else {
-            bNode->rst = createTree(rps, rpsLength);
-        }
+             Node* node = new Node();
+            node->id = this->nodeId;
+            this->nodeId += 1;
 
-        node->bn = bNode;
+            BNode* bNode = new BNode();
+            bNode->e = edge;
 
-        if (lps) {
-            delete[] lps;
-            lps = NULL;
+            if (lpsLength == 0) {
+                bNode->lst = this->findLeaf(edge, true);
+            } else {
+                bNode->lst = createTree(lps, lpsLength, p, bn);
+            }
+            
+            if (rpsLength == 0) {
+                bNode->rst = this->findLeaf(edge, false);
+            } else {
+                bNode->rst = createTree(rps, rpsLength, p, bn);
+            }
+
+            node->bn = bNode;
+
+            if (lps) {
+                delete[] lps;
+                lps = NULL;
+            }
+            if (rps) {
+                delete[] rps;
+                rps = NULL;
+            }
+
+            return node;
         }
-        if (rps) {
-            delete[] rps;
-            rps = NULL;
-        }
-        
-        
-        return node;
     }
 
 
