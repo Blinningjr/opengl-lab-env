@@ -20,18 +20,13 @@ const GLchar* vs =
 "layout(location=0) in vec3 pos;\n"
 "layout(location=1) in vec4 color;\n"
 "layout(location=0) out vec4 Color;\n"
-"uniform int moving;\n"
 "uniform float dist;\n"
 "uniform float angle;\n"
 "void main()\n"
 "{\n"
-"   float newAngle = angle + (1.0/2.0) * (pos.x + 1.0 + pos.y + 1.0) * (pos.x + 1.0 + pos.y + 1.0 + 1.0) + (pos.y + 1.0); \n" // Cantor pairing function https://en.wikipedia.org/wiki/Pairing_function
+"   float newAngle = angle * ((1.0/2.0) * (pos.x + 1.0 + pos.y + 1.0) * (pos.x + 1.0 + pos.y + 1.0 + 1.0) + (pos.y + 1.0)); \n" // Cantor pairing function https://en.wikipedia.org/wiki/Pairing_function
 "   vec4 vDist = vec4((cos(newAngle) -sin(newAngle)) * dist, (sin(newAngle) + cos(newAngle)) * dist, 0, 0);\n"
-"   if (moving == 1) {"
-"	    gl_Position = vec4(pos, 1) + vDist;\n"
-"   } else {\n"
-"	    gl_Position = vec4(pos, 1);\n"
-"   }\n"
+"	gl_Position = vec4(pos, 1) + vDist;\n"
 "	Color = color;\n"
 "}\n";
 
@@ -55,9 +50,8 @@ namespace Triangulation3d {
         this->showConvexHull = false;
         this->showTriangulation = true;
         this->showC = false;
-        this->isMoving = false;
         this->angle = 0;
-        this->dist = 0.01f;
+        this->dist = 0.0f;
     }
     
 
@@ -180,13 +174,13 @@ namespace Triangulation3d {
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
 
-            GLuint movingID = glGetUniformLocation(this->program, "moving");
+
             GLuint angleID = glGetUniformLocation(this->program, "angle");
             GLuint distID = glGetUniformLocation(this->program, "dist");
-
-            glUniform1i(movingID, this->isMoving);            
+ 
             glUniform1f(angleID, this->angle);
             glUniform1f(distID, this->dist);
+
 
             int start = 0;
             if (this->showTriangulation) {
@@ -394,7 +388,7 @@ namespace Triangulation3d {
                     ImGui::MenuItem("Convex Hull", NULL, &this->showConvexHull);
                     ImGui::MenuItem("C", NULL, &this->showC);
                     ImGui::MenuItem("Triangulation", NULL, &this->showTriangulation);
-                    ImGui::MenuItem("Moving", NULL, &this->isMoving);
+                    ImGui::SliderFloat("Distans", &this->dist, 0.0f, 0.5f);
                     ImGui::EndMenu();
                 }
                 if (ImGui::BeginMenu("Color")) {

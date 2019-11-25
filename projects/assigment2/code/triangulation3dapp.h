@@ -47,7 +47,6 @@ namespace Triangulation3d {
 			bool showC;
 			bool showTriangulation;
 
-			bool isMoving;
 			GLfloat angle;
 			GLfloat dist;
 
