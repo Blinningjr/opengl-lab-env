@@ -25,7 +25,7 @@ const GLchar* vs =
 "uniform float angle;\n"
 "void main()\n"
 "{\n"
-"   float newAngle = angle * (abs(pos.x) + abs(pos.y)); \n"
+"   float newAngle = angle + (1.0/2.0) * (pos.x + 1.0 + pos.y + 1.0) * (pos.x + 1.0 + pos.y + 1.0 + 1.0) + (pos.y + 1.0); \n" // Cantor pairing function https://en.wikipedia.org/wiki/Pairing_function
 "   vec4 vDist = vec4((cos(newAngle) -sin(newAngle)) * dist, (sin(newAngle) + cos(newAngle)) * dist, 0, 0);\n"
 "   if (moving == 1) {"
 "	    gl_Position = vec4(pos, 1) + vDist;\n"
