@@ -370,6 +370,7 @@ namespace Triangulation3d {
         static bool exit = false;
         static bool sameColor = false;
         static bool interpolationColor = false;
+        static bool fourColor = false;
 
         if (this->window->IsOpen()) {
             if (ImGui::BeginMainMenuBar()) {
@@ -394,6 +395,7 @@ namespace Triangulation3d {
                 if (ImGui::BeginMenu("Color")) {
                     ImGui::MenuItem("Same Color", NULL, &sameColor);
                     ImGui::MenuItem("Interpolation Color", NULL, &interpolationColor);
+                    ImGui::MenuItem("Four Color", NULL, &fourColor);
                     ImGui::EndMenu();
                 }
                 ImGui::EndMainMenuBar();
@@ -410,6 +412,10 @@ namespace Triangulation3d {
         if (interpolationColor) {
             this->vertexcalc.colorInterpolationColor();
             interpolationColor = false;
+        }
+        if (fourColor) {
+            this->vertexcalc.fourColor();
+            fourColor = false;
         }
     }
 

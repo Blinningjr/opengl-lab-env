@@ -40,6 +40,7 @@ namespace Triangulation3d {
 			struct Node;
 			struct Leaf {
 				int id;
+				int color = 0;
 				bool debugde = false;
 
 				Triangle triangle;
@@ -87,6 +88,7 @@ namespace Triangulation3d {
 
 			void colorSameColor(float r, float g, float b, float a);
 			void colorInterpolationColor();
+			void fourColor();
 
 		private:
             // Var
@@ -111,7 +113,7 @@ namespace Triangulation3d {
 			int nodeId;
 			int leafId;
 
-			float epsilon = 0.00f;
+			float epsilon = 0.01f;
 
             // Funcs
 			GLfloat crossProduct(Point a, Point b, Point c);
@@ -148,6 +150,8 @@ namespace Triangulation3d {
 
 			float calcColorForPoint(float x, float y);
 			float calcAlphaForPoint(Point r, Point b, Point g, Point p);
+
+			int fourColorHelper(Leaf* leaf, int pos, bool* colors);
 
 	};
 } // namespace Triangulation3d
