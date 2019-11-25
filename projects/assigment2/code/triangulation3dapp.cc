@@ -20,9 +20,18 @@ const GLchar* vs =
 "layout(location=0) in vec3 pos;\n"
 "layout(location=1) in vec4 color;\n"
 "layout(location=0) out vec4 Color;\n"
+"uniform int moving;\n"
+"uniform float dist;\n"
+"uniform float angle;\n"
 "void main()\n"
 "{\n"
-"	gl_Position = vec4(pos, 1);\n"
+"   float newAngle = angle * (abs(pos.x) + abs(pos.y)); \n"
+"   vec4 vDist = vec4((cos(newAngle) -sin(newAngle)) * dist, (sin(newAngle) + cos(newAngle)) * dist, 0, 0);\n"
+"   if (moving == 1) {"
+"	    gl_Position = vec4(pos, 1) + vDist;\n"
+"   } else {\n"
+"	    gl_Position = vec4(pos, 1);\n"
+"   }\n"
 "	Color = color;\n"
 "}\n";
 
@@ -46,6 +55,9 @@ namespace Triangulation3d {
         this->showConvexHull = false;
         this->showTriangulation = true;
         this->showC = false;
+        this->isMoving = false;
+        this->angle = 0;
+        this->dist = 0.01f;
     }
     
 
@@ -168,6 +180,14 @@ namespace Triangulation3d {
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
 
+            GLuint movingID = glGetUniformLocation(this->program, "moving");
+            GLuint angleID = glGetUniformLocation(this->program, "angle");
+            GLuint distID = glGetUniformLocation(this->program, "dist");
+
+            glUniform1i(movingID, this->isMoving);            
+            glUniform1f(angleID, this->angle);
+            glUniform1f(distID, this->dist);
+
             int start = 0;
             if (this->showTriangulation) {
                 glDrawArrays(GL_TRIANGLES, start, this->vertexcalc.getTriangulationLength() * 3);
@@ -213,6 +233,9 @@ namespace Triangulation3d {
         if (this->bufVBO) {
             delete[] this->bufVBO;
         }
+
+        this->angle += 0.01f;
+
         int lengthTriangulation = this->vertexcalc.getTriangulationLength() * 3;
         int lengthConvexHull = this->vertexcalc.getConvexHullLength();
         int lengthPoints = this->vertexcalc.getPointsLength();
@@ -366,16 +389,17 @@ namespace Triangulation3d {
                     ImGui::MenuItem("Random Points", NULL, &genPoints);
                     ImGui::EndMenu();
                 }
-                if (ImGui::BeginMenu("Color")) {
-                    ImGui::MenuItem("Same Color", NULL, &sameColor);
-                    ImGui::MenuItem("Interpolation Color", NULL, &interpolationColor);
-                    ImGui::EndMenu();
-                }
                 if (ImGui::BeginMenu("Show")) {
                     ImGui::MenuItem("Points", NULL, &this->showPoints);
                     ImGui::MenuItem("Convex Hull", NULL, &this->showConvexHull);
                     ImGui::MenuItem("C", NULL, &this->showC);
                     ImGui::MenuItem("Triangulation", NULL, &this->showTriangulation);
+                    ImGui::MenuItem("Moving", NULL, &this->isMoving);
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("Color")) {
+                    ImGui::MenuItem("Same Color", NULL, &sameColor);
+                    ImGui::MenuItem("Interpolation Color", NULL, &interpolationColor);
                     ImGui::EndMenu();
                 }
                 ImGui::EndMainMenuBar();
