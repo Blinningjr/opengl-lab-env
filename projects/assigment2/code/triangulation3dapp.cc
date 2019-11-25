@@ -44,7 +44,7 @@ namespace Triangulation3d {
         this->bufVBO = new GLfloat[this->bufLength];
         this->showPoints = true;
         this->showConvexHull = false;
-        this->showTriangulation = false;
+        this->showTriangulation = true;
         this->showC = false;
     }
     
@@ -74,6 +74,8 @@ namespace Triangulation3d {
         if (this->window->Open()) {
             // set clear color to gray
             glClearColor(0, 0, 0, 1.0f);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable( GL_BLEND );
 
             // setup vertex shader
             this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -156,7 +158,7 @@ namespace Triangulation3d {
             this->UpdateVBO();
 
             // do stuff
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
             glUseProgram(this->program);
             glLineWidth(3);
@@ -166,7 +168,6 @@ namespace Triangulation3d {
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
 
-
             int start = 0;
             if (this->showTriangulation) {
                 glDrawArrays(GL_TRIANGLES, start, this->vertexcalc.getTriangulationLength() * 3);
@@ -175,6 +176,12 @@ namespace Triangulation3d {
             start += this->vertexcalc.getTriangulationLength() * 3;
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+            if (this->showTriangulation) {
+                glDrawArrays(GL_TRIANGLES, start, this->vertexcalc.getTriangulationLength() * 3);
+            }
+            
+            start += this->vertexcalc.getTriangulationLength() * 3;
 
             if (this->showConvexHull) {
                 glDrawArrays(GL_POLYGON, start, this->vertexcalc.getConvexHullLength());
@@ -212,7 +219,7 @@ namespace Triangulation3d {
         int lengthC = 1;
         int prev = 0;
 
-        this->bufLength = (lengthTriangulation + lengthConvexHull + lengthPoints + lengthC) * 7;
+        this->bufLength = (lengthTriangulation * 2 + lengthConvexHull + lengthPoints + lengthC) * 7;
         this->bufVBO = new GLfloat[this->bufLength];
 
 
@@ -226,30 +233,66 @@ namespace Triangulation3d {
             this->bufVBO[1 + i * 7 * 3 + prev] = p1.y;
             this->bufVBO[2 + i * 7 * 3 + prev] = p1.z;
 
-            this->bufVBO[3 + i * 7 * 3 + prev] = 0;
-            this->bufVBO[4 + i * 7 * 3 + prev] = 1;
-            this->bufVBO[5 + i * 7 * 3 + prev] = 0;
-            this->bufVBO[6 + i * 7 * 3 + prev] = p1.a;
+            this->bufVBO[3 + i * 7 * 3 + prev] = p1.r;
+            this->bufVBO[4 + i * 7 * 3 + prev] = p1.g;
+            this->bufVBO[5 + i * 7 * 3 + prev] = p1.b;
+            this->bufVBO[6 + i * 7 * 3 + prev] = 1;
             
             
             this->bufVBO[7 + i * 7 * 3 + prev] = p2.x;
             this->bufVBO[8 + i * 7 * 3 + prev] = p2.y;
             this->bufVBO[9 + i * 7 * 3 + prev] = p2.z;
 
-            this->bufVBO[10 + i * 7 * 3 + prev] = 0;
-            this->bufVBO[11 + i * 7 * 3 + prev] = 1;
-            this->bufVBO[12 + i * 7 * 3 + prev] = 0;
-            this->bufVBO[13 + i * 7 * 3 + prev] = p2.a;
+            this->bufVBO[10 + i * 7 * 3 + prev] = p2.r;
+            this->bufVBO[11 + i * 7 * 3 + prev] = p2.g;
+            this->bufVBO[12 + i * 7 * 3 + prev] = p2.b;
+            this->bufVBO[13 + i * 7 * 3 + prev] = 1;
 
 
             this->bufVBO[14 + i * 7 * 3 + prev] = p3.x;
             this->bufVBO[15 + i * 7 * 3 + prev] = p3.y;
             this->bufVBO[16 + i * 7 * 3 + prev] = p3.z;
 
-            this->bufVBO[17 + i * 7 * 3 + prev] = 0;
+            this->bufVBO[17 + i * 7 * 3 + prev] = p3.r;
+            this->bufVBO[18 + i * 7 * 3 + prev] = p3.g;
+            this->bufVBO[19 + i * 7 * 3 + prev] = p3.b;
+            this->bufVBO[20 + i * 7 * 3 + prev] = 1;
+        }
+        prev += lengthTriangulation * 7;
+
+        // Adds triangulation outline.
+        for (int i = 0; i < this->vertexcalc.getTriangulationLength(); i++) {
+            VertexCalc::Point p1 = triangulation[i].p1;
+            VertexCalc::Point p2 = triangulation[i].p2;
+            VertexCalc::Point p3 = triangulation[i].p3;
+            this->bufVBO[0 + i * 7 * 3 + prev] = p1.x;
+            this->bufVBO[1 + i * 7 * 3 + prev] = p1.y;
+            this->bufVBO[2 + i * 7 * 3 + prev] = p1.z;
+
+            this->bufVBO[3 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[4 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[5 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[6 + i * 7 * 3 + prev] = 1;
+            
+            
+            this->bufVBO[7 + i * 7 * 3 + prev] = p2.x;
+            this->bufVBO[8 + i * 7 * 3 + prev] = p2.y;
+            this->bufVBO[9 + i * 7 * 3 + prev] = p2.z;
+
+            this->bufVBO[10 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[11 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[12 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[13 + i * 7 * 3 + prev] = 1;
+
+
+            this->bufVBO[14 + i * 7 * 3 + prev] = p3.x;
+            this->bufVBO[15 + i * 7 * 3 + prev] = p3.y;
+            this->bufVBO[16 + i * 7 * 3 + prev] = p3.z;
+
+            this->bufVBO[17 + i * 7 * 3 + prev] = 1;
             this->bufVBO[18 + i * 7 * 3 + prev] = 1;
-            this->bufVBO[19 + i * 7 * 3 + prev] = 0;
-            this->bufVBO[20 + i * 7 * 3 + prev] = p3.a;
+            this->bufVBO[19 + i * 7 * 3 + prev] = 1;
+            this->bufVBO[20 + i * 7 * 3 + prev] = 1;
         }
         prev += lengthTriangulation * 7;
 
@@ -308,6 +351,8 @@ namespace Triangulation3d {
         static bool showRead = false;
         static bool genPoints = false;
         static bool exit = false;
+        static bool sameColor = false;
+        static bool interpolationColor = false;
 
         if (this->window->IsOpen()) {
             if (ImGui::BeginMainMenuBar()) {
@@ -319,6 +364,11 @@ namespace Triangulation3d {
                 if (ImGui::BeginMenu("Gen Points")) {
                     ImGui::MenuItem("read file", NULL, &showRead);
                     ImGui::MenuItem("Random Points", NULL, &genPoints);
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("Color")) {
+                    ImGui::MenuItem("Same Color", NULL, &sameColor);
+                    ImGui::MenuItem("Interpolation Color", NULL, &interpolationColor);
                     ImGui::EndMenu();
                 }
                 if (ImGui::BeginMenu("Show")) {
@@ -335,6 +385,14 @@ namespace Triangulation3d {
         if (showRead) this->ReaderUI(&showRead);
         if (genPoints) this->GenRandPointsUI(&genPoints);
         if (exit) this->window->Close();
+        if (sameColor) {
+            this->vertexcalc.colorSameColor(0, 0.5f, 1, 1);
+            sameColor = false;
+        }
+        if (interpolationColor) {
+            this->vertexcalc.colorInterpolationColor();
+            interpolationColor = false;
+        }
     }
 
 

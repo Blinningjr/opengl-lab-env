@@ -85,6 +85,9 @@ namespace Triangulation3d {
 
 			Point getPickedC();
 
+			void colorSameColor(float r, float g, float b, float a);
+			void colorInterpolationColor();
+
 		private:
             // Var
             Triangulation3d::Reader reader;
@@ -142,6 +145,9 @@ namespace Triangulation3d {
 			void debugTree(Node* node);
 
 			void debugLeafs(Leaf* leaf);
+
+			float calcColorForPoint(float x, float y);
+			float calcAlphaForPoint(Point r, Point b, Point g, Point p);
 
 	};
 } // namespace Triangulation3d

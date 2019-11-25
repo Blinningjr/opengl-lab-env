@@ -225,6 +225,9 @@ namespace Triangulation3d {
 
         int pos = 0;
         int restLength = this->pointsLength - this->convexHullLength - 1;
+        if (restLength < 0) {
+            restLength = 0;
+        }
         Point rest[restLength];
 
         for (int i = 0; i < this->pointsLength; i++) {
@@ -1192,6 +1195,69 @@ namespace Triangulation3d {
                 this->debugLeafs(leaf->rl);
             }
         }
+    }
+
+
+    void VertexCalc::colorSameColor(float r, float g, float b, float a) {
+        for (int i = 0; i < this->triangulationLength; i++) {
+            this->triangulation[i].p1.r = r;
+            this->triangulation[i].p1.g = g;
+            this->triangulation[i].p1.b = b;
+            this->triangulation[i].p1.a = a;
+
+            this->triangulation[i].p2.r = r;
+            this->triangulation[i].p2.g = g;
+            this->triangulation[i].p2.b = b;
+            this->triangulation[i].p2.a = a;
+
+            this->triangulation[i].p3.r = r;
+            this->triangulation[i].p3.g = g;
+            this->triangulation[i].p3.b = b;
+            this->triangulation[i].p3.a = a;
+        }
+    }
+
+    void VertexCalc::colorInterpolationColor() {
+        int interval = this->convexHullLength/3;
+        Point r = this->convexHull[0];
+        Point g = this->convexHull[interval];
+        Point b = this->convexHull[interval * 2];
+
+        for (int i = 0; i < this->triangulationLength; i++) {
+            this->triangulation[i].p1.r = this->calcColorForPoint(this->triangulation[i].p1.x - r.x, this->triangulation[i].p1.y - r.y);
+            this->triangulation[i].p1.g = this->calcColorForPoint(this->triangulation[i].p1.x - g.x, this->triangulation[i].p1.y - g.y);
+            this->triangulation[i].p1.b = this->calcColorForPoint(this->triangulation[i].p1.x - b.x, this->triangulation[i].p1.y - b.y);
+            this->triangulation[i].p1.a = this->calcAlphaForPoint(r, g, b, this->triangulation[i].p1);
+
+            this->triangulation[i].p2.r = this->calcColorForPoint(this->triangulation[i].p2.x - r.x, this->triangulation[i].p2.y - r.y);
+            this->triangulation[i].p2.g = this->calcColorForPoint(this->triangulation[i].p2.x - g.x, this->triangulation[i].p2.y - g.y);
+            this->triangulation[i].p2.b = this->calcColorForPoint(this->triangulation[i].p2.x - b.x, this->triangulation[i].p2.y - b.y);
+            this->triangulation[i].p2.a = this->calcAlphaForPoint(r, g, b, this->triangulation[i].p2);
+
+            this->triangulation[i].p3.r = this->calcColorForPoint(this->triangulation[i].p3.x - r.x, this->triangulation[i].p3.y - r.y);
+            this->triangulation[i].p3.g = this->calcColorForPoint(this->triangulation[i].p3.x - g.x, this->triangulation[i].p3.y - g.y);
+            this->triangulation[i].p3.b = this->calcColorForPoint(this->triangulation[i].p3.x - b.x, this->triangulation[i].p3.y - b.y);
+            this->triangulation[i].p3.a = this->calcAlphaForPoint(r, g, b, this->triangulation[i].p3);
+        }
+
+    }
+
+    float VertexCalc::calcColorForPoint(float x, float y) {
+        return 1.0f - abs(sqrt(pow(x, 2.0f) + pow(y, 2.0f)))/1.5f;
+    }
+
+
+    float VertexCalc::calcAlphaForPoint(Point r, Point b, Point g, Point p) {
+        if (this->crossProduct(r, b, p) < 0) {
+            return 0.0f;
+        }
+        if (this->crossProduct(b, g, p) < 0) {
+            return 0.0f;
+        }
+        if (this->crossProduct(g, r, p) < 0) {
+            return 0.0f;
+        }
+        return 1.0f;
     }
 
 
