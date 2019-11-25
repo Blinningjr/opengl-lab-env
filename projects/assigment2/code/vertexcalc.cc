@@ -1243,109 +1243,11 @@ namespace Triangulation3d {
     }
 
     void VertexCalc::fourColor() {
-        Point p;
-        p.x = 0;
-        p.y = 0;
-        Node* nodeArr[2];
-        nodeArr[0] = NULL;
-        nodeArr[1] = NULL;
-        this->getLeaf(p, this->tree, nodeArr);
-        bool* colors = new bool[5];
-        for (int i = 0; i < 5; i++) {
-            colors[i] = true;
-        }
-        int t = this->fourColorHelper(nodeArr[0]->l, 0, colors);
-        delete[] colors;
+       
     }
 
     int VertexCalc::fourColorHelper(Leaf* leaf, int pos, bool* colors) {
-        if (leaf) {
-            if (leaf->color != 0) {
-                return pos;
-            }
-            float r = 0;
-            float g = 0;
-            float b = 0;
-            float a = 1;
-    
-            bool* newColors = new bool[5];
-            for (int i = 0; i < 5; i++) {
-                newColors[i] = true;
-            }
-            if (leaf->ll) {
-                colors[leaf->ll->color] = false;
-                newColors[leaf->ll->color] = false;
-            }
-            if (leaf->ml) {
-                colors[leaf->ml->color] = false;
-                newColors[leaf->ml->color] = false;
-            }
-            if (leaf->rl) {
-                colors[leaf->rl->color] = false;
-                newColors[leaf->rl->color] = false;
-            }
-            if (colors[1]) {
-                leaf->color = 1;
-                r = 1;
-                g = 0;
-                b = 0;
-            } else if (colors[2]) {
-                leaf->color = 2;
-                r = 0;
-                g = 1;
-                b = 0;
-            } else if (colors[3]) {
-                leaf->color = 3;
-                r = 0;
-                g = 0;
-                b = 1;
-            } else if (colors[4]) {
-                leaf->color = 4;
-                r = 0.5;
-                g = 0.5;
-                b = 0.5;
-            } else {
-                leaf->color = 1;
-                std::cout << "Error all colors are taken\n";
-            }
-            
-            leaf->triangle.p1.r = r;
-            leaf->triangle.p1.g = g;
-            leaf->triangle.p1.b = b;
-            leaf->triangle.p1.a = a;
-
-            leaf->triangle.p2.r = r;
-            leaf->triangle.p2.g = g;
-            leaf->triangle.p2.b = b;
-            leaf->triangle.p2.a = a;
-
-            leaf->triangle.p3.r = r;
-            leaf->triangle.p3.g = g;
-            leaf->triangle.p3.b = b;
-            leaf->triangle.p3.a = a;
-
-            if (pos >= this->triangulationLength) {
-                std::cout << "Error pos >= triangulationLength\n";
-            }
-            this->triangulation[pos] = leaf->triangle;
-            float newPos = pos + 1;
-
-            if (leaf->ll) {
-                newPos = this->fourColorHelper(leaf->ll, newPos, newColors);
-                newColors[leaf->ll->color] = false;
-            }
-            if (leaf->ml) {
-                newPos = this->fourColorHelper(leaf->ml, newPos, newColors);
-                newColors[leaf->ml->color] = false;
-            }
-            if (leaf->rl) {
-                newPos = this->fourColorHelper(leaf->rl, newPos, newColors);
-                newColors[leaf->rl->color] = false;
-            }
-            delete[] newColors;
-            return newPos;
-        }
-        return pos;
+        return 0;
     }
 
 
