@@ -12,7 +12,7 @@ namespace Triangulation3d {
      */
     VertexCalc::VertexCalc() {
         this->pointsLength = 0;
-        this->points = new Point[this->pointsLength];
+        this->points = std::shared_ptr<Point[]>(new Point[this->pointsLength]);
         this->convexHullLength = 0;
         this->convexHull = std::shared_ptr<Point[]>(new Point[this->convexHullLength]);
         this->triangulationLength = 0;
@@ -40,10 +40,6 @@ namespace Triangulation3d {
      *  Deletes all values made by this class. 
      */
     VertexCalc::~VertexCalc() {
-        if (this->points) {
-            delete[] this->points;
-            this->points = NULL;
-        }
         this->deleteTree(this->tree);
     }
 
@@ -56,24 +52,28 @@ namespace Triangulation3d {
         int numCords = this->reader.getPointsLength()/2;
         GLfloat* tBuf = this->reader.getPoints();
 
-        if (this->points) {
-            delete[] this->points;
-            this->points = NULL;
-        }
         this->pointsLength = numCords;
-        this->points = new Point[this->pointsLength];
+        this->points = std::shared_ptr<Point[]>(new Point[this->pointsLength]);
+
+        Point* tPs = new Point[numCords];
 
         for (int i = 0; i < numCords; i++) {
-            this->points[i].x = tBuf[0 + i * 2];
-            this->points[i].y = tBuf[1 + i * 2];
-            this->points[i].z = -1;
+            tPs[i].x = tBuf[0 + i * 2];
+            tPs[i].y = tBuf[1 + i * 2];
+            tPs[i].z = -1;
 
-            this->points[i].r = 1;
-            this->points[i].g = 1;
-            this->points[i].b = 1;
-            this->points[i].a = 1;
+            tPs[i].r = 1;
+            tPs[i].g = 1;
+            tPs[i].b = 1;
+            tPs[i].a = 1;
         }
-        std::sort(this->points, this->points + this->pointsLength);
+        std::sort(tPs, tPs + numCords);
+        for (int i = 0; i < numCords; i++) {
+            this->points[i] = tPs[i];
+        }
+
+        delete[] tPs;
+
         this->calcTriangulation();
     }
 
@@ -87,25 +87,27 @@ namespace Triangulation3d {
             numPoints = 3;
         }
 
-        if (this->points) {
-            delete[] this->points;
-            this->points = NULL;
-        }
-
         this->pointsLength = numPoints;
-        this->points = new Point[this->pointsLength];
+        this->points = std::shared_ptr<Point[]>(new Point[this->pointsLength]);
+
+        Point* tPs = new Point[numPoints];
 
         for (int i = 0; i < numPoints; i++) {
-            this->points[i].x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
-            this->points[i].y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
-            this->points[i].z = -1;
+            tPs[i].x = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
+            tPs[i].y = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/1.8f)) - 0.9f;
+            tPs[i].z = -1;
 
-            this->points[i].r = 1;
-            this->points[i].g = 1;
-            this->points[i].b = 1;
-            this->points[i].a = 1;
+            tPs[i].r = 1;
+            tPs[i].g = 1;
+            tPs[i].b = 1;
+            tPs[i].a = 1;
         }
-        std::sort(this->points, this->points + this->pointsLength);
+        std::sort(tPs, tPs + numPoints);
+        for (int i = 0; i < numPoints; i++) {
+            this->points[i] = tPs[i];
+        }
+
+        delete[] tPs;
 
         GLfloat onLine = (this->points[numPoints - 1].x - this->points[0].x)/(this->points[numPoints - 1].y - this->points[0].y);
         bool ok = false;
@@ -1239,7 +1241,7 @@ namespace Triangulation3d {
     /**
      *  Gets a pointer to the array with read points. 
      */
-    VertexCalc::Point* VertexCalc::getPoints() {
+    std::shared_ptr<VertexCalc::Point[]> VertexCalc::getPoints() {
         return this->points;
     }
 

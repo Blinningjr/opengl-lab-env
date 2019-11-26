@@ -321,7 +321,7 @@ namespace Triangulation3d {
         prev += lengthConvexHull * 7;
 
         // Adds all points
-        VertexCalc::Point* points = this->vertexcalc.getPoints();
+        std::shared_ptr<VertexCalc::Point[]> points = this->vertexcalc.getPoints();
         for (int i = 0; i < lengthPoints; i++) {
             this->bufVBO[0 + i * 7 + prev] = points[i].x;
             this->bufVBO[1 + i * 7 + prev] = points[i].y;

@@ -77,7 +77,7 @@ namespace Triangulation3d {
 			void calcTriangulation();
 			
 			int getPointsLength();
-			Point* getPoints();
+			std::shared_ptr<Point[]> getPoints();
 
 			int getConvexHullLength();
 			std::shared_ptr<Point[]> getConvexHull();
@@ -96,7 +96,7 @@ namespace Triangulation3d {
             Triangulation3d::Reader reader;
 
 			int pointsLength;
-			Point* points;
+			std::shared_ptr<Point[]> points;
 
             int convexHullLength;
 			std::shared_ptr<Point[]> convexHull;
