@@ -45,26 +45,26 @@ namespace Triangulation3d {
 				bool debugde = false;
 
 				Triangle triangle;
-				Leaf *ll, *ml, *rl;
+				std::shared_ptr<Leaf> ll, ml, rl;
 
 				bool operator ==(const Leaf& l){
 					return triangle == l.triangle;
 				}
 			};
 			struct BNode {
-				Edge* e;
-				Node *lst, *rst;
+				std::shared_ptr<Edge> e;
+				std::shared_ptr<Node> lst, rst;
 			};
 			struct Trenary {
 				Point v;
-				Edge *e1, *e2,* e3;
-				Node *lst, *mst, *rst;
+				std::shared_ptr<Edge> e1, e2, e3;
+				std::shared_ptr<Node> lst, mst, rst;
 			};
 			struct Node {
 				int id;
-				Leaf* l;
-				BNode* bn;
-				Trenary* t;
+				std::shared_ptr<Leaf> l;
+				std::shared_ptr<BNode> bn;
+				std::shared_ptr<Trenary> t;
 			};
 
 
@@ -106,10 +106,10 @@ namespace Triangulation3d {
 
 			Point pickedC;
 
-			Node* tree;
+			std::shared_ptr<Node> root;
 			
 			int leafsLength;
-			Node** leafs;
+			std::shared_ptr<std::shared_ptr<Node>[]> leafs;
 
 			int nodeId;
 			int leafId;
@@ -123,36 +123,36 @@ namespace Triangulation3d {
 
 			std::shared_ptr<Triangle[]> calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v);
 
-			Node* createTree(std::shared_ptr<Point[]> ps, int length, Point* p, Node* bn);
+			std::shared_ptr<Node> createTree(std::shared_ptr<Point[]> ps, int length, Point* p, std::shared_ptr<Node> bn);
 
-			Node* findLeaf(Edge* edge, bool left);
+			std::shared_ptr<Node> findLeaf(std::shared_ptr<Edge> edge, bool left);
 
-			void insertPoint(Point p, Node* node);
+			void insertPoint(Point p, std::shared_ptr<Node> node0);
 
-			int getLeaf(Point p, Node* node, Node* found[2]);
+			int getLeaf(Point p, std::shared_ptr<Node> node, std::shared_ptr<std::shared_ptr<Node>[]> found);
 
-			void insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2);
+			void insertLeafPointer(std::shared_ptr<Leaf> l0, std::shared_ptr<Leaf> l1, std::shared_ptr<Leaf> l2);
 
-			int findDiractionOfNeighbor(Leaf* l0, Leaf* l1);
+			int findDiractionOfNeighbor(std::shared_ptr<Leaf> l0, std::shared_ptr<Leaf> l1);
 
-			bool isInsideEdges(Edge* e0, Edge* e1, Point p);
+			bool isInsideEdges(std::shared_ptr<Edge> e0, std::shared_ptr<Edge> e1, Point p);
 
-			void deleteTree(Node* node);
+			void deleteTree(std::shared_ptr<Node> node);
 
 			bool pickedCOnHull();
 
-			bool onLineSeg(Edge* edge, Point* point);
+			bool onLineSeg(std::shared_ptr<Edge> edge, Point* point);
 
 			float calcEpsilon(Point p1, Point p2);
             
-			void debugTree(Node* node);
+			void debugTree(std::shared_ptr<Node> node);
 
-			void debugLeafs(Leaf* leaf);
+			void debugLeafs(std::shared_ptr<Leaf> leaf);
 
 			float calcColorForPoint(float x, float y);
 			float calcAlphaForPoint(Point r, Point b, Point g, Point p);
 
-			int fourColorHelper(Leaf* leaf, int pos, bool* colors);
+			int fourColorHelper(std::shared_ptr<Leaf> leaf, int pos, bool* colors);
 
 	};
 } // namespace Triangulation3d

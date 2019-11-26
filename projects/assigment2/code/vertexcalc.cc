@@ -26,13 +26,13 @@ namespace Triangulation3d {
         this->pickedC.g = 0;
         this->pickedC.b = 1;
         this->pickedC.a = 1;
-        Node* n = new Node();
+        std::shared_ptr<Node> n = std::shared_ptr<Node>(new Node());
         n->id = 0;
         this->nodeId = 1;
         this->leafId = 0;
-        this->tree = n;
+        this->root = n;
         this->leafsLength = 0;
-        this->leafs = new Node*[this->leafsLength];
+        this->leafs = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[this->leafsLength]);
     }
 
 
@@ -40,7 +40,7 @@ namespace Triangulation3d {
      *  Deletes all values made by this class. 
      */
     VertexCalc::~VertexCalc() {
-        this->deleteTree(this->tree);
+        this->deleteTree(this->root);
     }
 
 
@@ -206,8 +206,8 @@ namespace Triangulation3d {
         this->triangulationLength = cLength;
         this->triangulation = this->calcTriangles(this->convexHull, this->convexHullLength, this->pickedC);
 
-        this->deleteTree(this->tree);
-        this->tree = this->createTree(this->convexHull, this->convexHullLength, NULL, NULL);
+        this->deleteTree(this->root);
+        this->root = this->createTree(this->convexHull, this->convexHullLength, NULL, NULL);
 
         int pos = 0;
         int restLength = this->pointsLength - this->convexHullLength - 1;
@@ -234,7 +234,7 @@ namespace Triangulation3d {
             Point p = rest[r];
             rest[r] = rest[pos - 1];
             rest[pos - 1] = p;
-            this->insertPoint(p, this->tree);
+            this->insertPoint(p, this->root);
             pos -= 1;
         }
 
@@ -246,10 +246,10 @@ namespace Triangulation3d {
         Point p;
         p.x = 0;
         p.y = 0;
-        Node* nodeArr[2];
+        std::shared_ptr<std::shared_ptr<Node>[]> nodeArr = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[2]);
         nodeArr[0] = NULL;
         nodeArr[1] = NULL;
-        this->getLeaf(p, this->tree, nodeArr);
+        this->getLeaf(p, this->root, nodeArr);
         std::cout << "\nDebug Leafs \n";
         this->debugLeafs(nodeArr[0]->l);
     }
@@ -303,21 +303,21 @@ namespace Triangulation3d {
 
         // delete this->leafs;
         this->leafsLength = length;
-        this->leafs = new Node*[this->leafsLength];
+        this->leafs = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[this->leafsLength]);
 
-        Node* pl = new Node();
+        std::shared_ptr<Node> pl = std::shared_ptr<Node>(new Node());
         pl->id = this->nodeId;
         this->nodeId += 1;
-        pl->l = new Leaf();
+        pl->l = std::shared_ptr<Leaf>(new Leaf());
         pl->l->id = this->leafId;
         this->leafId += 1;
         pl->l->triangle = triangles[0];
         this->leafs[0] = pl;
         for (int i = 1; i < length; i++) {
-            Node* l = new Node();
+            std::shared_ptr<Node> l = std::shared_ptr<Node>(new Node());
             l->id = this->nodeId;
             this->nodeId += 1;
-            l->l = new Leaf();
+            l->l = std::shared_ptr<Leaf>(new Leaf());
             l->l->id = this->leafId;
             this->leafId += 1;
             l->l->triangle = triangles[i];
@@ -336,8 +336,8 @@ namespace Triangulation3d {
     /**
      *  Creates the initial balanced tree with the convex hull and point c.
     */
-    VertexCalc::Node* VertexCalc::createTree(std::shared_ptr<Point[]> ps, int length, Point* p, Node* bn) {
-        Edge* edge = new Edge();
+    std::shared_ptr<VertexCalc::Node> VertexCalc::createTree(std::shared_ptr<Point[]> ps, int length, Point* p, std::shared_ptr<Node> bn) {
+        std::shared_ptr<Edge> edge = std::shared_ptr<Edge>(new Edge());
         edge->p1 = this->pickedC;
         edge->p2 = ps[length/2];
         
@@ -373,7 +373,7 @@ namespace Triangulation3d {
                 lpsLength += 1;
 
                 p = &tps[i];
-                bn = new Node();
+                bn = std::shared_ptr<Node>(new Node());
                 bn->id = this->nodeId;
                 this->nodeId += 1;
             }
@@ -381,7 +381,7 @@ namespace Triangulation3d {
 
         if (p == &edge->p2) {
             if (!bn->bn) {
-                bn->bn = new BNode();
+                bn->bn = std::shared_ptr<BNode>(new BNode());
                 bn->bn->e = edge;
                 if (lpsLength == 0) {
                     bn->bn->lst = this->findLeaf(edge, true);
@@ -398,11 +398,11 @@ namespace Triangulation3d {
 
             return bn;
         } else {
-             Node* node = new Node();
+            std::shared_ptr<Node> node = std::shared_ptr<Node>(new Node());
             node->id = this->nodeId;
             this->nodeId += 1;
 
-            BNode* bNode = new BNode();
+            std::shared_ptr<BNode> bNode = std::shared_ptr<BNode>(new BNode());
             bNode->e = edge;
 
             if (lpsLength == 0) {
@@ -428,7 +428,7 @@ namespace Triangulation3d {
      *  Finds a leaf with edge edge and in position left/rigth.
      *  Not only works when triangulation is a circle of triangles.
     */
-    VertexCalc::Node* VertexCalc::findLeaf(Edge* edge, bool left) {
+    std::shared_ptr<VertexCalc::Node> VertexCalc::findLeaf(std::shared_ptr<Edge> edge, bool left) {
         for (int i = 0; i < this->leafsLength; i++) {
             if (left && this->leafs[i]->l->triangle.p1 == edge->p2) {
                 return this->leafs[i];
@@ -444,14 +444,14 @@ namespace Triangulation3d {
     /**
      *  Finds which triangle p is in and triangulates it.
     */
-    void VertexCalc::insertPoint(Point p, Node* node0) {
-        Node* nodeArr[2];
+    void VertexCalc::insertPoint(Point p, std::shared_ptr<Node> node0) {
+        std::shared_ptr<std::shared_ptr<Node>[]> nodeArr = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[2]);
         nodeArr[0] = NULL;
         nodeArr[1] = NULL;
         int numLeafs = this->getLeaf(p, node0, nodeArr);
         if (numLeafs == 1) {
             // std::cout << "insertPoint numleafs=1 \n";
-            Leaf* l = nodeArr[0]->l;
+            std::shared_ptr<Leaf> l = nodeArr[0]->l;
             // if (l == this->leaf) {
             //     this->leaf = l->ll;
             // }
@@ -473,40 +473,40 @@ namespace Triangulation3d {
             t3.p3 = l->triangle.p2;
 
             
-            Trenary* trenary = new Trenary();
+            std::shared_ptr<Trenary> trenary = std::shared_ptr<Trenary>(new Trenary());
             trenary->v = p;
-            trenary->e1 = new Edge();
+            trenary->e1 = std::shared_ptr<Edge>(new Edge());
             trenary->e1->p1 = p;
             trenary->e1->p2 = l->triangle.p1;
 
-            trenary->e2 = new Edge();
+            trenary->e2 = std::shared_ptr<Edge>(new Edge());
             trenary->e2->p1 = p;
             trenary->e2->p2 = l->triangle.p2;
 
-            trenary->e3 = new Edge();
+            trenary->e3 = std::shared_ptr<Edge>(new Edge());
             trenary->e3->p1 = p;
             trenary->e3->p2 = l->triangle.p3;
 
-            trenary->lst = new Node();
+            trenary->lst = std::shared_ptr<Node>(new Node());
             trenary->lst->id = this->nodeId;
             this->nodeId += 1;
-            trenary->lst->l = new Leaf();
+            trenary->lst->l = std::shared_ptr<Leaf>(new Leaf());
             trenary->lst->l->id = this->leafId;
             this->leafId += 1;
             trenary->lst->l->triangle = t1;
 
-            trenary->mst = new Node();
+            trenary->mst = std::shared_ptr<Node>(new Node());
             trenary->mst->id = this->nodeId;
             this->nodeId += 1;
-            trenary->mst->l = new Leaf();
+            trenary->mst->l = std::shared_ptr<Leaf>(new Leaf());
             trenary->mst->l->id = this->leafId;
             this->leafId += 1;
             trenary->mst->l->triangle = t2;
 
-            trenary->rst = new Node();
+            trenary->rst = std::shared_ptr<Node>(new Node());
             trenary->rst->id = this->nodeId;
             this->nodeId += 1;
-            trenary->rst->l = new Leaf();
+            trenary->rst->l = std::shared_ptr<Leaf>(new Leaf());
             trenary->rst->l->id = this->leafId;
             this->leafId += 1;
             trenary->rst->l->triangle = t3;
@@ -545,12 +545,6 @@ namespace Triangulation3d {
 
             this->triangulationLength = length;
             this->triangulation = triangle;
-
-
-            if (l) {
-                delete l;
-                l = NULL;
-            }
             
         } else if (numLeafs == 2) {
             // std::cout << "insertPoint numleafs=2 \n";
@@ -566,25 +560,25 @@ namespace Triangulation3d {
             if (!nodeArr[1]->l) {
                 std::cout << "Error leaf2 = null insertPoint \n";
             }
-            Leaf* leaf1 = nodeArr[0]->l;
-            Leaf* leaf2 = nodeArr[1]->l;
+            std::shared_ptr<Leaf> leaf1 = nodeArr[0]->l;
+            std::shared_ptr<Leaf> leaf2 = nodeArr[1]->l;
             nodeArr[0]->l = NULL;
             nodeArr[1]->l = NULL;
             
             int dirNode1 = this->findDiractionOfNeighbor(leaf1, leaf2);
             int dirNode2 = this->findDiractionOfNeighbor(leaf2, leaf1);
 
-            Leaf* l1 = new Leaf();
+            std::shared_ptr<Leaf> l1 = std::shared_ptr<Leaf>(new Leaf());
             l1->id = this->leafId;
             this->leafId += 1;
             l1->triangle.p2 = p;
 
-            Leaf* l2 = new Leaf();
+            std::shared_ptr<Leaf> l2 = std::shared_ptr<Leaf>(new Leaf());
             l2->id = this->leafId;
             this->leafId += 1;
             l2->triangle.p2 = p;
             
-            Edge* edge1 = new Edge();
+            std::shared_ptr<Edge> edge1 = std::shared_ptr<Edge>(new Edge());
             edge1->p1 = p;
 
             if (dirNode1 == 1) {
@@ -631,17 +625,17 @@ namespace Triangulation3d {
             }
 
 
-            Leaf* l3 = new Leaf();
+            std::shared_ptr<Leaf> l3 = std::shared_ptr<Leaf>(new Leaf());
             l3->id = this->leafId;
             this->leafId += 1;
             l3->triangle.p2 = p;
 
-            Leaf* l4 = new Leaf();
+            std::shared_ptr<Leaf> l4 = std::shared_ptr<Leaf>(new Leaf());
             l4->id = this->leafId;
             this->leafId += 1;
             l4->triangle.p2 = p;
             
-            Edge* edge2 = new Edge();
+            std::shared_ptr<Edge> edge2 = std::shared_ptr<Edge>(new Edge());
             edge2->p1 = p;
 
             if (dirNode2 == 1) {
@@ -699,26 +693,26 @@ namespace Triangulation3d {
             l4->ll = l3;
             l4->rl = l1;
 
-            BNode* bNode1 = new BNode();
+            std::shared_ptr<BNode> bNode1 = std::shared_ptr<BNode>(new BNode());
             bNode1->e = edge1;
-            bNode1->lst = new Node();
+            bNode1->lst = std::shared_ptr<Node>(new Node());
             bNode1->lst->id = this->nodeId;
             this->nodeId += 1;
             bNode1->lst->l = l2;
-            bNode1->rst = new Node();
+            bNode1->rst = std::shared_ptr<Node>(new Node());
             bNode1->rst->id = this->nodeId;
             this->nodeId += 1;
             bNode1->rst->l = l1;
 
             nodeArr[0]->bn = bNode1;
             
-            BNode* bNode2 = new BNode();
+            std::shared_ptr<BNode> bNode2 = std::shared_ptr<BNode>(new BNode());
             bNode2->e = edge2;
-            bNode2->lst = new Node();
+            bNode2->lst = std::shared_ptr<Node>(new Node());
             bNode2->lst->id = this->nodeId;
             this->nodeId += 1;
             bNode2->lst->l = l4;
-            bNode2->rst = new Node();
+            bNode2->rst = std::shared_ptr<Node>(new Node());
             bNode2->rst->id = this->nodeId;
             this->nodeId += 1;
             bNode2->rst->l = l3;
@@ -764,7 +758,7 @@ namespace Triangulation3d {
      *  Finds what leaf p is in and return that node in found.
      *  Note: there can be two nodes found if p is on a edge. 
     */
-    int VertexCalc::getLeaf(Point p, Node* node, Node* found[2]) {
+    int VertexCalc::getLeaf(Point p, std::shared_ptr<Node> node, std::shared_ptr<std::shared_ptr<Node>[]> found) {
         if (node->l) {
             if (!found[0]) {
                 found[0] = node;
@@ -817,7 +811,7 @@ namespace Triangulation3d {
             }
         } else if (node->t) {
 
-            Trenary* t = node->t;
+            std::shared_ptr<Trenary> t = node->t;
 
             if (this->isInsideEdges(t->e1, t->e2, p)) {
 
@@ -883,7 +877,7 @@ namespace Triangulation3d {
     /**
      *  Finds which diraction l1 is pointing to l0 and switches that pointer to l2.
     */
-    void VertexCalc::insertLeafPointer(Leaf* l0, Leaf* l1, Leaf* l2) {
+    void VertexCalc::insertLeafPointer(std::shared_ptr<Leaf> l0, std::shared_ptr<Leaf> l1, std::shared_ptr<Leaf> l2) {
         if (!l0 || !l1 || !l2) {
             // std::cout << "NULL insertLeafPointer \n";
             return;
@@ -917,7 +911,7 @@ namespace Triangulation3d {
      *  Gets which direction l1 is to l0-
      *  0 = l0 == null, 1 = left, 2 = midel, 3 = right
     */
-    int VertexCalc::findDiractionOfNeighbor(Leaf* l0, Leaf* l1) {
+    int VertexCalc::findDiractionOfNeighbor(std::shared_ptr<Leaf> l0, std::shared_ptr<Leaf> l1) {
         if (!l0 || !l1) {
             std::cout << "Error NULL findDiractionOfNeighbor \n";
             return 0;
@@ -948,7 +942,7 @@ namespace Triangulation3d {
     /**
      *  Checks if the point is to the right of e0 and to the left of e1.
     */
-    bool VertexCalc::isInsideEdges(Edge* e0, Edge* e1, Point p) {
+    bool VertexCalc::isInsideEdges(std::shared_ptr<Edge> e0, std::shared_ptr<Edge> e1, Point p) {
         if (this->crossProduct(e0->p1, e0->p2, p) < -this->calcEpsilon(e0->p1, p)) {
             if (this->crossProduct(e1->p1, e1->p2, p) > this->calcEpsilon(e1->p1, p)) {
                 return true;
@@ -961,7 +955,7 @@ namespace Triangulation3d {
     /**
      *  Delete all nodes in tree.
     */
-    void VertexCalc::deleteTree(Node* node) {
+    void VertexCalc::deleteTree(std::shared_ptr<Node>) {
         // if (node) {
         //     if (node->l) {
         //         delete node->l;
@@ -982,20 +976,20 @@ namespace Triangulation3d {
         //         }
         //     }
         // }
-        if (node) {
-            if (node->bn) {
-                if (node->bn->e) {
-                    delete node->bn->e;
-                    node->bn->e = NULL;
-                }
-            }
-        }
-        if (node) {
-            if (node->bn) {
-                delete node->bn;
-                node->bn = NULL;
-            }
-        }
+        // if (node) {
+        //     if (node->bn) {
+        //         if (node->bn->e) {
+        //             delete node->bn->e;
+        //             node->bn->e = NULL;
+        //         }
+        //     }
+        // }
+        // if (node) {
+        //     if (node->bn) {
+        //         delete node->bn;
+        //         node->bn = NULL;
+        //     }
+        // }
         // if (node) {
         //     if (node->t) {
         //         if (node->t->lst) {
@@ -1017,34 +1011,34 @@ namespace Triangulation3d {
         //         }
         //     }
         // }
-        if (node) {
-            if (node->t) {
-                if (node->t->e1) {
-                    delete node->t->e1;
-                    node->t->e1 = NULL;
-                }
-            }
-        }
-        if (node) {
-            if (node->t) {
-                if (node->t->e2) {
-                    delete node->t->e2;
-                    node->t->e2 = NULL;
-                }
-            }
-        }
-        if (node) {
-            if (node->t) {
-                if (node->t->e3) {
-                    delete node->t->e3;
-                    node->t->e3 = NULL;
-                }
-            }
-        }
-        if (node) {
-            delete node;
-            node = NULL;
-        }
+        // if (node) {
+        //     if (node->t) {
+        //         if (node->t->e1) {
+        //             delete node->t->e1;
+        //             node->t->e1 = NULL;
+        //         }
+        //     }
+        // }
+        // if (node) {
+        //     if (node->t) {
+        //         if (node->t->e2) {
+        //             delete node->t->e2;
+        //             node->t->e2 = NULL;
+        //         }
+        //     }
+        // }
+        // if (node) {
+        //     if (node->t) {
+        //         if (node->t->e3) {
+        //             delete node->t->e3;
+        //             node->t->e3 = NULL;
+        //         }
+        //     }
+        // }
+        // if (node) {
+        //     delete node;
+        //     node = NULL;
+        // }
     }
 
 
@@ -1064,7 +1058,7 @@ namespace Triangulation3d {
     /**
      *  Cheack is p ins ond edge.
     */
-    bool VertexCalc::onLineSeg(Edge* edge, Point* point) {
+    bool VertexCalc::onLineSeg(std::shared_ptr<Edge> edge, Point* point) {
         if (abs(this->crossProduct(edge->p1, edge->p2, *point)) > this->calcEpsilon(edge->p1, *point)) {
             return false;
         }
@@ -1094,7 +1088,7 @@ namespace Triangulation3d {
     /**
      *  Prints whole tree.
     */
-    void VertexCalc::debugTree(Node* node) {
+    void VertexCalc::debugTree(std::shared_ptr<Node> node) {
         std::cout << "id: ";
         std::cout << node->id;
         std::cout << " type: ";
@@ -1121,7 +1115,7 @@ namespace Triangulation3d {
     /**
      *  Prints topology of leafs.
     */
-    void VertexCalc::debugLeafs(Leaf* leaf) {
+    void VertexCalc::debugLeafs(std::shared_ptr<Leaf> leaf) {
         if (!leaf) {
             return;
         } else {
@@ -1206,7 +1200,7 @@ namespace Triangulation3d {
        
     }
 
-    int VertexCalc::fourColorHelper(Leaf* leaf, int pos, bool* colors) {
+    int VertexCalc::fourColorHelper(std::shared_ptr<Leaf> leaf, int pos, bool* colors) {
         return 0;
     }
 
