@@ -45,7 +45,7 @@ namespace Triangulation3d {
 
     Triangulation3dApp::Triangulation3dApp() {
         this->bufLength = 0;
-        this->bufVBO = new GLfloat[this->bufLength];
+        this->bufVBO = std::unique_ptr<GLfloat[]>(new GLfloat[this->bufLength]);
         this->showPoints = true;
         this->showConvexHull = false;
         this->showTriangulation = true;
@@ -56,9 +56,6 @@ namespace Triangulation3d {
     
 
     Triangulation3dApp::~Triangulation3dApp() {
-        if (this->bufVBO) {
-            delete[] this->bufVBO;
-        }
         if (this->vsBuffer) {
             delete[] this->vsBuffer;
         }
@@ -224,10 +221,6 @@ namespace Triangulation3d {
      *  Updates the VBO with this->buf.
      */
     void Triangulation3dApp::UpdateVBO() {
-        if (this->bufVBO) {
-            delete[] this->bufVBO;
-        }
-
         this->angle += 0.01f;
 
         int lengthTriangulation = this->vertexcalc.getTriangulationLength() * 3;
@@ -237,7 +230,7 @@ namespace Triangulation3d {
         int prev = 0;
 
         this->bufLength = (lengthTriangulation * 2 + lengthConvexHull + lengthPoints + lengthC) * 7;
-        this->bufVBO = new GLfloat[this->bufLength];
+        this->bufVBO = std::unique_ptr<GLfloat[]>(new GLfloat[this->bufLength]);
 
 
         // Adds triangulation.
@@ -314,7 +307,7 @@ namespace Triangulation3d {
         prev += lengthTriangulation * 7;
 
         // Adds convexHull.
-        VertexCalc::Point* convexHull = this->vertexcalc.getConvexHull();
+        std::shared_ptr<VertexCalc::Point[]> convexHull = this->vertexcalc.getConvexHull();
         for (int i = 0; i < lengthConvexHull; i++) {
             this->bufVBO[0 + i * 7 + prev] = convexHull[i].x;
             this->bufVBO[1 + i * 7 + prev] = convexHull[i].y;
@@ -356,7 +349,7 @@ namespace Triangulation3d {
         // setup vbo
 		glGenBuffers(1, &this->triangle);
 		glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength * 7, this->bufVBO, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * this->bufLength * 7, static_cast<void *> (this->bufVBO.get()), GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     

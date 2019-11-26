@@ -14,7 +14,7 @@ namespace Triangulation3d {
         this->pointsLength = 0;
         this->points = new Point[this->pointsLength];
         this->convexHullLength = 0;
-        this->convexHull = new Point[this->convexHullLength];
+        this->convexHull = std::shared_ptr<Point[]>(new Point[this->convexHullLength]);
         this->triangulationLength = 0;
         this->triangulation = new Triangle[this->triangulationLength];
         
@@ -43,10 +43,6 @@ namespace Triangulation3d {
         if (this->points) {
             delete[] this->points;
             this->points = NULL;
-        }
-        if (this->convexHull) {
-            delete[] this->convexHull;
-            this->convexHull = NULL;
         }
         this->deleteTree(this->tree);
         if (this->triangulation) {
@@ -141,15 +137,11 @@ namespace Triangulation3d {
      * Andrew's algorithm.
      */
     void VertexCalc::calcConvexHull() {
-        if (this->convexHull) {
-            delete[] this->convexHull;
-            this->convexHull = NULL;
-        }
         this->convexHullLength = 0;
 
         if (this->pointsLength == 3) {
             this->convexHullLength = this->pointsLength;
-            this->convexHull = new Point[this->convexHullLength];
+            this->convexHull = std::shared_ptr<Point[]>(new Point[this->convexHullLength]);
             for (int i = 0; i <  this->pointsLength; i++) {
                 this->convexHull[i] = this->points[i];
             }
@@ -179,7 +171,7 @@ namespace Triangulation3d {
 	    }
 
         this->convexHullLength = lLen + uLen - 2;
-        this->convexHull = new Point[this->convexHullLength];
+        this->convexHull = std::shared_ptr<Point[]>(new Point[this->convexHullLength]);
         
         for (int i = 0; i < lLen - 1; i++) {
             this->convexHull[i] = l[i];
@@ -303,7 +295,7 @@ namespace Triangulation3d {
     /**
      *  Calculates the initial triangles where only the convex hull and point C.
     */
-    VertexCalc::Triangle* VertexCalc::calcTriangles(Point* ps, int length, Point v) {
+    VertexCalc::Triangle* VertexCalc::calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v) {
         Triangle* triangles = new Triangle[length];
         for (int i = 0; i < length - 1; i++) {
             triangles[i].p1 = ps[i];
@@ -350,7 +342,7 @@ namespace Triangulation3d {
     /**
      *  Creates the initial balanced tree with the convex hull and point c.
     */
-    VertexCalc::Node* VertexCalc::createTree(Point* ps, int length, Point* p, Node* bn) {
+    VertexCalc::Node* VertexCalc::createTree(std::shared_ptr<Point[]> ps, int length, Point* p, Node* bn) {
         Edge* edge = new Edge();
         edge->p1 = this->pickedC;
         edge->p2 = ps[length/2];
@@ -367,10 +359,10 @@ namespace Triangulation3d {
         }
 
         int lpsLength = 0;
-        Point* lps = new Point[length];
+        std::shared_ptr<Point[]> lps = std::shared_ptr<Point[]>(new Point[length]);
 
         int rpsLength = 0;
-        Point* rps = new Point[length];
+        std::shared_ptr<Point[]> rps = std::shared_ptr<Point[]>(new Point[length]);
 
         for (int i = 0; i < length-1; i++) {
             if (this->crossProduct(edge->p1, edge->p2, tps[i]) < -this->calcEpsilon(edge->p1, tps[i])) {
@@ -408,15 +400,6 @@ namespace Triangulation3d {
                 } else {
                     bn->bn->rst = createTree(rps, rpsLength, p, bn);
                 }
-
-                if (lps) {
-                    delete[] lps;
-                    lps = NULL;
-                }
-                if (rps) {
-                    delete[] rps;
-                    rps = NULL;
-                }
             }
 
             return bn;
@@ -441,15 +424,6 @@ namespace Triangulation3d {
             }
 
             node->bn = bNode;
-
-            if (lps) {
-                delete[] lps;
-                lps = NULL;
-            }
-            if (rps) {
-                delete[] rps;
-                rps = NULL;
-            }
 
             return node;
         }
@@ -1297,7 +1271,7 @@ namespace Triangulation3d {
     /**
      *  Gets a pointer to the array with the convex hull. 
      */
-	VertexCalc::Point* VertexCalc::getConvexHull() {
+	std::shared_ptr<VertexCalc::Point[]> VertexCalc::getConvexHull() {
         return this->convexHull;
     }
 

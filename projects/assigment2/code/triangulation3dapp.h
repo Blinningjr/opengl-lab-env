@@ -3,6 +3,7 @@
 #include "core/app.h"
 #include "render/window.h"
 #include "vertexcalc.h"
+#include <memory>
 
 namespace Triangulation3d {
 	class Triangulation3dApp : public Core::App {
@@ -38,7 +39,7 @@ namespace Triangulation3d {
 			// std::string compilerLog;
 
 			int bufLength;
-            GLfloat* bufVBO;
+            std::unique_ptr<GLfloat[]>  bufVBO;
 
 			Triangulation3d::VertexCalc vertexcalc;
 

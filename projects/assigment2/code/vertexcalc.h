@@ -1,6 +1,7 @@
 #include <string>
 #include <GL/glew.h>
 #include "reader.h"
+#include <memory>
 
 namespace Triangulation3d {
 	class VertexCalc {
@@ -79,7 +80,7 @@ namespace Triangulation3d {
 			Point* getPoints();
 
 			int getConvexHullLength();
-			Point* getConvexHull();
+			std::shared_ptr<Point[]> getConvexHull();
 
 			int getTriangulationLength();
 			Triangle* getTriangulation();
@@ -98,7 +99,7 @@ namespace Triangulation3d {
 			Point* points;
 
             int convexHullLength;
-			Point* convexHull;
+			std::shared_ptr<Point[]> convexHull;
 
             int triangulationLength;
 			Triangle* triangulation;
@@ -120,9 +121,9 @@ namespace Triangulation3d {
 
 			void pickC(); 
 
-			Triangle* calcTriangles(Point* points, int length, Point v);
+			Triangle* calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v);
 
-			Node* createTree(Point* points, int length, Point* p, Node* bn);
+			Node* createTree(std::shared_ptr<Point[]> ps, int length, Point* p, Node* bn);
 
 			Node* findLeaf(Edge* edge, bool left);
 
