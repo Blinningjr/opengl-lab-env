@@ -16,7 +16,7 @@ namespace Triangulation3d {
         this->convexHullLength = 0;
         this->convexHull = std::shared_ptr<Point[]>(new Point[this->convexHullLength]);
         this->triangulationLength = 0;
-        this->triangulation = new Triangle[this->triangulationLength];
+        this->triangulation = std::shared_ptr<Triangle[]>(new Triangle[this->triangulationLength]);
         
         this->pickedC.x = 0;
         this->pickedC.y = 0;
@@ -45,10 +45,6 @@ namespace Triangulation3d {
             this->points = NULL;
         }
         this->deleteTree(this->tree);
-        if (this->triangulation) {
-            delete[] this->triangulation;
-            this->triangulation = NULL;
-        }
     }
 
 
@@ -201,10 +197,6 @@ namespace Triangulation3d {
         this->calcConvexHull();
         this->pickC();
 
-        if (this->triangulation) {
-            delete[] this->triangulation;
-            this->triangulation = NULL;
-        }
         int cLength = this->convexHullLength;
         // if (this->pickedCOnHull()) {
         //     cLength -= 1;
@@ -295,8 +287,8 @@ namespace Triangulation3d {
     /**
      *  Calculates the initial triangles where only the convex hull and point C.
     */
-    VertexCalc::Triangle* VertexCalc::calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v) {
-        Triangle* triangles = new Triangle[length];
+    std::shared_ptr<VertexCalc::Triangle[]> VertexCalc::calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v) {
+        std::shared_ptr<Triangle[]> triangles = std::shared_ptr<Triangle[]>(new Triangle[length]);
         for (int i = 0; i < length - 1; i++) {
             triangles[i].p1 = ps[i];
             triangles[i].p2 = v;
@@ -538,7 +530,7 @@ namespace Triangulation3d {
 
             int pos = 0;
             int length = this->triangulationLength + 2;
-            Triangle* triangle = new Triangle[length];
+            std::shared_ptr<Triangle[]> triangle = std::shared_ptr<Triangle[]>(new Triangle[length]);
             for (int i = 0; i < this->triangulationLength; i++) {
                 if (!(l->triangle == this->triangulation[i])) {
                     triangle[pos] = this->triangulation[i];
@@ -549,10 +541,6 @@ namespace Triangulation3d {
             triangle[pos + 1] = t2;
             triangle[pos + 2] = t3;
 
-            if (this->triangulation) {
-                delete[] this->triangulation;
-                this->triangulation = NULL;
-            }
             this->triangulationLength = length;
             this->triangulation = triangle;
 
@@ -738,7 +726,7 @@ namespace Triangulation3d {
 
             int pos = 0;
             int length = this->triangulationLength + 2;
-            Triangle* triangle = new Triangle[length];
+            std::shared_ptr<Triangle[]> triangle = std::shared_ptr<Triangle[]>(new Triangle[length]);
             for (int i = 0; i < this->triangulationLength; i++) {
                 if (!(leaf1->triangle == this->triangulation[i]) && !(leaf2->triangle == this->triangulation[i])) {
                     triangle[pos] = this->triangulation[i];
@@ -750,10 +738,6 @@ namespace Triangulation3d {
             triangle[pos + 2] = l3->triangle;
             triangle[pos + 3] = l4->triangle;
 
-            if (this->triangulation) {
-                delete[] this->triangulation;
-                this->triangulation = NULL;
-            }
             this->triangulationLength = length;
             this->triangulation = triangle;
 
@@ -1287,7 +1271,7 @@ namespace Triangulation3d {
     /**
      *  Gets a pointer to the array with the triangulation. 
      */
-	VertexCalc::Triangle* VertexCalc::getTriangulation() {
+	std::shared_ptr<VertexCalc::Triangle[]> VertexCalc::getTriangulation() {
         return this->triangulation;
     }
 

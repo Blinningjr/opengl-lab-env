@@ -234,7 +234,7 @@ namespace Triangulation3d {
 
 
         // Adds triangulation.
-        VertexCalc::Triangle* triangulation = this->vertexcalc.getTriangulation();
+        std::shared_ptr<VertexCalc::Triangle[]> triangulation = this->vertexcalc.getTriangulation();
         for (int i = 0; i < this->vertexcalc.getTriangulationLength(); i++) {
             VertexCalc::Point p1 = triangulation[i].p1;
             VertexCalc::Point p2 = triangulation[i].p2;

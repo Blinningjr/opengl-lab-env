@@ -83,7 +83,7 @@ namespace Triangulation3d {
 			std::shared_ptr<Point[]> getConvexHull();
 
 			int getTriangulationLength();
-			Triangle* getTriangulation();
+			std::shared_ptr<Triangle[]> getTriangulation();
 
 			Point getPickedC();
 
@@ -102,7 +102,7 @@ namespace Triangulation3d {
 			std::shared_ptr<Point[]> convexHull;
 
             int triangulationLength;
-			Triangle* triangulation;
+			std::shared_ptr<Triangle[]> triangulation;
 
 			Point pickedC;
 
@@ -121,7 +121,7 @@ namespace Triangulation3d {
 
 			void pickC(); 
 
-			Triangle* calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v);
+			std::shared_ptr<Triangle[]> calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v);
 
 			Node* createTree(std::shared_ptr<Point[]> ps, int length, Point* p, Node* bn);
 
