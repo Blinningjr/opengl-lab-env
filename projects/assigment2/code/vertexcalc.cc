@@ -40,7 +40,6 @@ namespace Triangulation3d {
      *  Deletes all values made by this class. 
      */
     VertexCalc::~VertexCalc() {
-        this->deleteTree(this->root);
     }
 
 
@@ -206,7 +205,6 @@ namespace Triangulation3d {
         this->triangulationLength = cLength;
         this->triangulation = this->calcTriangles(this->convexHull, this->convexHullLength, this->pickedC);
 
-        this->deleteTree(this->root);
         this->root = this->createTree(this->convexHull, this->convexHullLength, NULL, NULL);
 
         int pos = 0;
@@ -953,96 +951,6 @@ namespace Triangulation3d {
 
 
     /**
-     *  Delete all nodes in tree.
-    */
-    void VertexCalc::deleteTree(std::shared_ptr<Node>) {
-        // if (node) {
-        //     if (node->l) {
-        //         delete node->l;
-        //     }
-        // }
-
-        // if (node) {
-        //     if (node->bn) {
-        //         if (node->bn->lst) {
-        //             this->deleteTree(node->bn->lst);
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->bn) {
-        //         if (node->bn->rst) {
-        //             this->deleteTree(node->bn->rst);
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->bn) {
-        //         if (node->bn->e) {
-        //             delete node->bn->e;
-        //             node->bn->e = NULL;
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->bn) {
-        //         delete node->bn;
-        //         node->bn = NULL;
-        //     }
-        // }
-        // if (node) {
-        //     if (node->t) {
-        //         if (node->t->lst) {
-        //             this->deleteTree(node->t->lst);
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->t) {
-        //         if (node->t->mst) {
-        //             this->deleteTree(node->t->mst);
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->t) {
-        //         if (node->t->rst) {
-        //             this->deleteTree(node->t->rst);
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->t) {
-        //         if (node->t->e1) {
-        //             delete node->t->e1;
-        //             node->t->e1 = NULL;
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->t) {
-        //         if (node->t->e2) {
-        //             delete node->t->e2;
-        //             node->t->e2 = NULL;
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     if (node->t) {
-        //         if (node->t->e3) {
-        //             delete node->t->e3;
-        //             node->t->e3 = NULL;
-        //         }
-        //     }
-        // }
-        // if (node) {
-        //     delete node;
-        //     node = NULL;
-        // }
-    }
-
-
-    /**
      *  Checks if picked C is on the convex hull.
     */
     bool VertexCalc::pickedCOnHull() {
@@ -1197,11 +1105,134 @@ namespace Triangulation3d {
     }
 
     void VertexCalc::fourColor() {
-       
+        Point p;
+        p.x = 0;
+        p.y = 0;
+        std::shared_ptr<std::shared_ptr<Node>[]> nodeArr = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[2]);
+        nodeArr[0] = NULL;
+        nodeArr[1] = NULL;
+        this->getLeaf(p, this->root, nodeArr);
+        std::cout << this->triangulationLength;
+        std::cout << "\n";
+        std::shared_ptr<std::shared_ptr<Leaf>[]> leafs = std::shared_ptr<std::shared_ptr<Leaf>[]>(new std::shared_ptr<Leaf>[this->triangulationLength]);
+        leafs[0] = nodeArr[0]->l;
+        this->fourColorHelper(leafs, 0, 1, 0);
     }
 
-    int VertexCalc::fourColorHelper(std::shared_ptr<Leaf> leaf, int pos, bool* colors) {
-        return 0;
+    void VertexCalc::fourColorHelper(std::shared_ptr<std::shared_ptr<Leaf>[]> leafs, int start, int end, int pos) {
+        if (leafs[start]) {
+                float r = 0;
+                float g = 0;
+                float b = 0;
+                float a = 1;
+
+                bool colors[5];
+                
+                std::shared_ptr<bool[]> colorsl = getUsedColors(leafs[start]);
+                for (int i = 0; i < 5; i++) {
+                    colors[i] = colorsl[i];
+                }
+
+                if (colors[1]) {
+                    leafs[start]->color = 1;
+                    r = 1;
+                    g = 0;
+                    b = 0;
+                } else if (colors[2]) {
+                    leafs[start]->color = 2;
+                    r = 0;
+                    g = 1;
+                    b = 0;
+                } else if (colors[3]) {
+                    leafs[start]->color = 3;
+                    r = 0;
+                    g = 0;
+                    b = 1;
+                } else if (colors[4]) {
+                    leafs[start]->color = 4;
+                    r = 0.5;
+                    g = 0.5;
+                    b = 0.5;
+                } else {
+                    leafs[start]->color = 1;
+                    std::cout << "Error all colors are taken\n";
+                }
+
+                leafs[start]->triangle.p1.r = r;
+                leafs[start]->triangle.p1.g = g;
+                leafs[start]->triangle.p1.b = b;
+                leafs[start]->triangle.p1.a = a;
+
+                leafs[start]->triangle.p2.r = r;
+                leafs[start]->triangle.p2.g = g;
+                leafs[start]->triangle.p2.b = b;
+                leafs[start]->triangle.p2.a = a;
+
+                leafs[start]->triangle.p3.r = r;
+                leafs[start]->triangle.p3.g = g;
+                leafs[start]->triangle.p3.b = b;
+                leafs[start]->triangle.p3.a = a;
+
+                if (pos >= this->triangulationLength) {
+                    std::cout << "Error pos >= triangulationLength\n";
+                }
+                this->triangulation[pos] = leafs[start]->triangle;
+                pos += 1;
+
+                if (leafs[start]->ll) {
+                    if (leafs[start]->ll->color == 0) {
+                        leafs[start]->ll->color = 5;
+                        leafs[end] = leafs[start]->ll;
+                        end += 1;
+                    }
+                }
+                if (leafs[start]->ml) {
+                    if (leafs[start]->ml->color == 0) {
+                        leafs[start]->ml->color = 5;
+                        leafs[end] = leafs[start]->ml;
+                        end += 1;
+                    }
+                }
+                if (leafs[start]->rl) {
+                    if (leafs[start]->rl->color == 0) {
+                        leafs[start]->rl->color = 5;
+                        leafs[end] = leafs[start]->rl;
+                        end += 1;
+                    }
+                }
+                
+            
+        }
+        start += 1;
+        if (start < end) {
+            this->fourColorHelper(leafs, start, end, pos);
+        }
+        if (leafs[start - 1]) {
+            leafs[start - 1]->color = 0;
+        }
+    }
+
+
+    std::shared_ptr<bool[]> VertexCalc::getUsedColors(std::shared_ptr<Leaf> leaf) {
+        std::shared_ptr<bool[]> colors = std::shared_ptr<bool[]>(new bool[6]);
+        for (int i = 0; i < 6; i++) {
+            colors[i] = true;
+        }
+        if (leaf) {
+
+            colors[leaf->color] = false;
+            
+            if (leaf->ll) {
+                colors[leaf->ll->color] = false;
+            }
+            if (leaf->ml) {
+                colors[leaf->ml->color] = false;
+            }
+            if (leaf->rl) {
+                colors[leaf->rl->color] = false;
+            }
+        }
+        return colors;
     }
 
 

@@ -137,8 +137,6 @@ namespace Triangulation3d {
 
 			bool isInsideEdges(std::shared_ptr<Edge> e0, std::shared_ptr<Edge> e1, Point p);
 
-			void deleteTree(std::shared_ptr<Node> node);
-
 			bool pickedCOnHull();
 
 			bool onLineSeg(std::shared_ptr<Edge> edge, Point* point);
@@ -152,7 +150,9 @@ namespace Triangulation3d {
 			float calcColorForPoint(float x, float y);
 			float calcAlphaForPoint(Point r, Point b, Point g, Point p);
 
-			int fourColorHelper(std::shared_ptr<Leaf> leaf, int pos, bool* colors);
+			void fourColorHelper(std::shared_ptr<std::shared_ptr<Leaf>[]> leafs, int start, int end, int pos);
+			
+			std::shared_ptr<bool[]> getUsedColors(std::shared_ptr<Leaf> leaf);
 
 	};
 } // namespace Triangulation3d
