@@ -33,6 +33,8 @@ namespace Triangulation3d {
         this->root = n;
         this->leafsLength = 0;
         this->leafs = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[this->leafsLength]);
+
+        this->pickCOption = 0;
     }
 
 
@@ -146,7 +148,7 @@ namespace Triangulation3d {
         }
 
         int lLen = 0;
-        Point l[this->pointsLength];
+        Point* l = new Point[this->pointsLength];
 
         for (int i = 0; i < this->pointsLength; i++) {
             while (lLen >= 2 && this->crossProduct(l[lLen-2], l[lLen-1], this->points[i]) <= 0) {
@@ -157,7 +159,7 @@ namespace Triangulation3d {
 	    }
 
         int uLen = 0;
-        Point u[this->pointsLength];
+        Point* u = new Point[this->pointsLength];
 
         for (int i = this->pointsLength - 1; i >= 0; i--) {
             while (uLen >= 2 && this->crossProduct(u[uLen-2], u[uLen-1], this->points[i]) <= 0) {
@@ -176,6 +178,11 @@ namespace Triangulation3d {
         for (int i = 0; i < uLen - 1 ; i++) {
             this->convexHull[i + lLen - 1] = u[i];
         }
+        if (this->pickCOption == 2) {
+            this->GetAllAntiPodalPairs(u, uLen, l, lLen);
+        }
+        delete[] l;
+        delete[] u;
     }
 
 
@@ -196,7 +203,16 @@ namespace Triangulation3d {
         this->leafId = 0;
 
         this->calcConvexHull();
-        this->pickC();
+        if (this->pickCOption == 0) {
+            this->pickRandomC();
+        } else if (this->pickCOption == 1) {
+            this->pickSquareMiddleC();
+        }
+
+        this->pickedC.r = 0;
+        this->pickedC.g = 0;
+        this->pickedC.b = 1;
+        this->pickedC.a = 1;
 
         int cLength = this->convexHullLength;
         // if (this->pickedCOnHull()) {
@@ -236,6 +252,8 @@ namespace Triangulation3d {
             pos -= 1;
         }
 
+        this->colorSameColor(0, 0.5f, 1, 1);
+
         std::cout << "\nlength =";
         std::cout << this->triangulationLength;
         // std::cout << "\n";
@@ -256,7 +274,7 @@ namespace Triangulation3d {
     /**
      *  Picks the vertex closses to the center of the box created by the largest and smalles x and y value.
      */
-    void VertexCalc::pickC() {
+    void VertexCalc::pickSquareMiddleC() {
         this->pickedC.x = this->points[0].x;
         this->pickedC.y = this->points[0].y;
         GLfloat cx = 0;
@@ -275,6 +293,65 @@ namespace Triangulation3d {
         }
         cy = minY + (maxY - minY)/2;
 
+        for (int i = 1; i < this->pointsLength; i++) {
+            if (pow(this->pickedC.x - cx, 2) + pow(this->pickedC.y - cy, 2) > pow(this->points[i].x - cx, 2) + pow(this->points[i].y - cy, 2)) {
+                this->pickedC.x = this->points[i].x;
+                this->pickedC.y = this->points[i].y;
+            }
+        }
+    }
+
+
+    void VertexCalc::pickRandomC() {
+        int pos = 0;
+        int restLength = this->pointsLength - this->convexHullLength;
+        if (restLength < 0) {
+            restLength = 0;
+        }
+        Point rest[restLength];
+
+        for (int i = 0; i < this->pointsLength; i++) {
+            bool add = true;
+            for (int j = 0; j < this->convexHullLength; j++) {
+                if (this->convexHull[j] == this->points[i]) {
+                    add = false;
+                    break;
+                }
+            }
+            if (add) {
+                rest[pos] = this->points[i];
+                pos += 1;
+            }
+        }
+        this->pickedC = rest[rand()%restLength];
+
+    }
+
+
+    void VertexCalc::GetAllAntiPodalPairs(Point* U, int uLength, Point* L, int lLength) {
+        //Now we have U and L, apply rotating calipers
+        int i = 1;
+        int j = lLength-1;
+        while (i < uLength || j > 1) {
+            // yield U[i], L[j];
+            
+            //if i or j made it all the way through
+            //advance other size
+            if (i == uLength) {
+                j = j - 1;
+            } else if (j == 1) {
+                i = i + 1;
+            } else if ((U[i+1].y - U[i].y) * (L[j].x - L[j-1].x) > (U[i+1].x - U[i].x) * (L[j].y - L[j-1].y)) {
+                i = i + 1;
+            } else {
+                j = j - 1;
+            }
+        }
+
+        GLfloat cx = U[i].x + (U[i].x - L[i].x)/2;
+        GLfloat cy = U[i].y + (U[i].y - L[i].y)/2;
+        this->pickedC.x = this->points[0].x;
+        this->pickedC.y = this->points[0].y;
         for (int i = 1; i < this->pointsLength; i++) {
             if (pow(this->pickedC.x - cx, 2) + pow(this->pickedC.y - cy, 2) > pow(this->points[i].x - cx, 2) + pow(this->points[i].y - cy, 2)) {
                 this->pickedC.x = this->points[i].x;
@@ -1112,8 +1189,6 @@ namespace Triangulation3d {
         nodeArr[0] = NULL;
         nodeArr[1] = NULL;
         this->getLeaf(p, this->root, nodeArr);
-        std::cout << this->triangulationLength;
-        std::cout << "\n";
         std::shared_ptr<std::shared_ptr<Leaf>[]> leafs = std::shared_ptr<std::shared_ptr<Leaf>[]>(new std::shared_ptr<Leaf>[this->triangulationLength]);
         leafs[0] = nodeArr[0]->l;
         this->fourColorHelper(leafs, 0, 1, 0);
@@ -1308,5 +1383,15 @@ namespace Triangulation3d {
      */
     VertexCalc::Point VertexCalc::getPickedC() {
         return this->pickedC;
+    }
+
+
+    int VertexCalc::getPickCOption() {
+        return this->pickCOption;
+    }
+
+
+    void VertexCalc::setPickCOption(int option) {
+        this->pickCOption = option;
     }
 }

@@ -20,11 +20,12 @@ const GLchar* vs =
 "layout(location=0) in vec3 pos;\n"
 "layout(location=1) in vec4 color;\n"
 "layout(location=0) out vec4 Color;\n"
+"#define M_PI 3.1415926535897932384626433832795\n"
 "uniform float dist;\n"
 "uniform float angle;\n"
 "void main()\n"
 "{\n"
-"   float newAngle = angle * ((1.0/2.0) * (pos.x + 1.0 + pos.y + 1.0) * (pos.x + 1.0 + pos.y + 1.0 + 1.0) + (pos.y + 1.0)); \n" // Cantor pairing function https://en.wikipedia.org/wiki/Pairing_function
+"   float newAngle = angle + M_PI * ((1.0/2.0) * (pos.x + 1.0 + pos.y + 1.0) * (pos.x + 1.0 + pos.y + 1.0 + 1.0) + (pos.y + 1.0)); \n" // Cantor pairing function https://en.wikipedia.org/wiki/Pairing_function
 "   vec4 vDist = vec4((cos(newAngle) -sin(newAngle)) * dist, (sin(newAngle) + cos(newAngle)) * dist, 0, 0);\n"
 "	gl_Position = vec4(pos, 1) + vDist;\n"
 "	Color = color;\n"
@@ -221,7 +222,7 @@ namespace Triangulation3d {
      *  Updates the VBO with this->buf.
      */
     void Triangulation3dApp::UpdateVBO() {
-        this->angle += 0.01f;
+        this->angle += 0.05f;
 
         int lengthTriangulation = this->vertexcalc.getTriangulationLength() * 3;
         int lengthConvexHull = this->vertexcalc.getConvexHullLength();
@@ -364,6 +365,7 @@ namespace Triangulation3d {
         static bool sameColor = false;
         static bool interpolationColor = false;
         static bool fourColor = false;
+        static int pickCOption = 0;
 
         if (this->window->IsOpen()) {
             if (ImGui::BeginMainMenuBar()) {
@@ -375,6 +377,9 @@ namespace Triangulation3d {
                 if (ImGui::BeginMenu("Gen Points")) {
                     ImGui::MenuItem("read file", NULL, &showRead);
                     ImGui::MenuItem("Random Points", NULL, &genPoints);
+                    ImGui::RadioButton("Random", &pickCOption, 0); 
+                    ImGui::RadioButton("Square Middle", &pickCOption, 1); 
+                    ImGui::RadioButton("Middle", &pickCOption, 2);
                     ImGui::EndMenu();
                 }
                 if (ImGui::BeginMenu("Show")) {
@@ -410,6 +415,7 @@ namespace Triangulation3d {
             this->vertexcalc.fourColor();
             fourColor = false;
         }
+        this->vertexcalc.setPickCOption(pickCOption);
     }
 
 

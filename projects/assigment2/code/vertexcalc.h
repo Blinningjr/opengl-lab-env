@@ -91,6 +91,9 @@ namespace Triangulation3d {
 			void colorInterpolationColor();
 			void fourColor();
 
+			int getPickCOption();
+			void setPickCOption(int option);
+
 		private:
             // Var
             Triangulation3d::Reader reader;
@@ -116,10 +119,16 @@ namespace Triangulation3d {
 
 			float epsilon = 0.01f;
 
+			int pickCOption;
+
             // Funcs
 			GLfloat crossProduct(Point a, Point b, Point c);
 
-			void pickC(); 
+			void pickSquareMiddleC();
+
+			void pickRandomC();
+
+			void GetAllAntiPodalPairs(Point* U, int uLength, Point* L, int lLength);
 
 			std::shared_ptr<Triangle[]> calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v);
 
