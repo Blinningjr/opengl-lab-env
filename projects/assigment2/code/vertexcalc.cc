@@ -302,6 +302,9 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Picks a random point that is not part of the convex hull as C.
+    */
     void VertexCalc::pickRandomC() {
         int pos = 0;
         int restLength = this->pointsLength - this->convexHullLength;
@@ -811,16 +814,6 @@ namespace Triangulation3d {
 
             this->triangulationLength = length;
             this->triangulation = triangle;
-
-
-            // if (leaf1) {
-            //     delete leaf1;
-            //     leaf1 = NULL;
-            // }
-            // if (leaf2) {
-            //     delete leaf2;
-            //     leaf2 = NULL;
-            // }
         } else {
             std::cout << "Error insertPoint numleafs=";
             std::cout <<  numLeafs;
@@ -1137,6 +1130,9 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Colors all points in the same color.
+    */
     void VertexCalc::colorSameColor(float r, float g, float b, float a) {
         for (int i = 0; i < this->triangulationLength; i++) {
             this->triangulation[i].p1.r = r;
@@ -1156,6 +1152,10 @@ namespace Triangulation3d {
         }
     }
 
+
+    /**
+     *  Color all points by calculating the distance from point r, g and b. Which are three points picked from the convex hull. 
+    */
     void VertexCalc::colorInterpolationColor() {
         int interval = this->convexHullLength/3;
         Point r = this->convexHull[0];
@@ -1181,6 +1181,10 @@ namespace Triangulation3d {
 
     }
 
+
+    /**
+     *  Colors all triangles with the four-color therom.
+    */
     void VertexCalc::fourColor() {
         Point p;
         p.x = 0;
@@ -1194,6 +1198,10 @@ namespace Triangulation3d {
         this->fourColorHelper(leafs, 0, 1, 0);
     }
 
+
+    /**
+     *  Helper function for recursively calculeting four-color for all triangles.
+    */
     void VertexCalc::fourColorHelper(std::shared_ptr<std::shared_ptr<Leaf>[]> leafs, int start, int end, int pos) {
         if (leafs[start]) {
                 float r = 0;
@@ -1288,6 +1296,9 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Gets the color used by the leaf and its connected nodes.
+    */
     std::shared_ptr<bool[]> VertexCalc::getUsedColors(std::shared_ptr<Leaf> leaf) {
         std::shared_ptr<bool[]> colors = std::shared_ptr<bool[]>(new bool[6]);
         for (int i = 0; i < 6; i++) {
@@ -1311,11 +1322,18 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Calculates 1 - hypotinusa. 
+     */
     float VertexCalc::calcColorForPoint(float x, float y) {
         return 1.0f - abs(sqrt(pow(x, 2.0f) + pow(y, 2.0f)))/1.5f;
     }
 
 
+    /**
+     *  Calculates alpha for point p.
+     *  The alpha is 0 if the point is outside the triangle r-b-g.
+     */
     float VertexCalc::calcAlphaForPoint(Point r, Point b, Point g, Point p) {
         if (this->crossProduct(r, b, p) < 0) {
             return 0.0f;
@@ -1386,11 +1404,17 @@ namespace Triangulation3d {
     }
 
 
+    /**
+     *  Get an int that repressents the method of picking C.
+    */
     int VertexCalc::getPickCOption() {
         return this->pickCOption;
     }
 
 
+    /**
+     *  Set an int that repressents the method of picking C.
+    */
     void VertexCalc::setPickCOption(int option) {
         this->pickCOption = option;
     }

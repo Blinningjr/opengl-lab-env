@@ -379,7 +379,7 @@ namespace Triangulation3d {
                     ImGui::MenuItem("Random Points", NULL, &genPoints);
                     ImGui::RadioButton("Random", &pickCOption, 0); 
                     ImGui::RadioButton("Square Middle", &pickCOption, 1); 
-                    ImGui::RadioButton("Middle", &pickCOption, 2);
+                    ImGui::RadioButton("Rotating Calipers", &pickCOption, 2);
                     ImGui::EndMenu();
                 }
                 if (ImGui::BeginMenu("Show")) {
