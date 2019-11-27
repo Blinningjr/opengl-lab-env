@@ -1,7 +1,7 @@
 #include <string>
 #include <GL/glew.h>
 
-namespace Triangulation3d {
+namespace Triangulation2d {
 	class Reader {
 		public:
 			// constructor
@@ -31,4 +31,4 @@ namespace Triangulation3d {
             
 
 	};
-} // namespace Triangulation3d
+} // namespace Triangulation2d

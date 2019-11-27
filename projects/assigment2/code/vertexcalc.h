@@ -3,7 +3,7 @@
 #include "reader.h"
 #include <memory>
 
-namespace Triangulation3d {
+namespace Triangulation2d {
 	class VertexCalc {
 		public:
 			// constructor
@@ -96,7 +96,7 @@ namespace Triangulation3d {
 
 		private:
             // Var
-            Triangulation3d::Reader reader;
+            Triangulation2d::Reader reader;
 
 			int pointsLength;
 			std::shared_ptr<Point[]> points;
@@ -164,4 +164,4 @@ namespace Triangulation3d {
 			std::shared_ptr<bool[]> getUsedColors(std::shared_ptr<Leaf> leaf);
 
 	};
-} // namespace Triangulation3d
+} // namespace Triangulation2d

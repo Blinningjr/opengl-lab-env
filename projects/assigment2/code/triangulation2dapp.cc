@@ -1,5 +1,5 @@
 #include "config.h"
-#include "triangulation3dapp.h"
+#include "triangulation2dapp.h"
 #include <cstring>
 #include <glm/glm.hpp>
 #include <glm/vec3.hpp> // glm::vec3
@@ -41,10 +41,10 @@ const GLchar* ps =
 "	Color = color;\n"
 "}\n";
 
-namespace Triangulation3d {
+namespace Triangulation2d {
 
 
-    Triangulation3dApp::Triangulation3dApp() {
+    Triangulation2dApp::Triangulation2dApp() {
         this->bufLength = 0;
         this->bufVBO = std::unique_ptr<GLfloat[]>(new GLfloat[this->bufLength]);
         this->showPoints = true;
@@ -56,7 +56,7 @@ namespace Triangulation3d {
     }
     
 
-    Triangulation3dApp::~Triangulation3dApp() {
+    Triangulation2dApp::~Triangulation2dApp() {
         if (this->vsBuffer) {
             delete[] this->vsBuffer;
         }
@@ -69,7 +69,7 @@ namespace Triangulation3d {
     /**
      *   Initaial setup of the app.
      */
-    bool Triangulation3dApp::Open() {
+    bool Triangulation2dApp::Open() {
         App::Open();
         this->window = new Display::Window;
 
@@ -154,7 +154,7 @@ namespace Triangulation3d {
     /**
      *  Main app loop. 
      */
-    void Triangulation3dApp::Run() {
+    void Triangulation2dApp::Run() {
        while (this->window->IsOpen()) {
             glClear(GL_COLOR_BUFFER_BIT);
             this->window->Update();
@@ -221,7 +221,7 @@ namespace Triangulation3d {
     /**
      *  Updates the VBO with this->buf.
      */
-    void Triangulation3dApp::UpdateVBO() {
+    void Triangulation2dApp::UpdateVBO() {
         this->angle += 0.05f;
 
         int lengthTriangulation = this->vertexcalc.getTriangulationLength() * 3;
@@ -358,7 +358,7 @@ namespace Triangulation3d {
     /**
      *  Handels the GUI.
      */
-    void Triangulation3dApp::RenderUI() {
+    void Triangulation2dApp::RenderUI() {
         static bool showRead = false;
         static bool genPoints = false;
         static bool exit = false;
@@ -422,7 +422,7 @@ namespace Triangulation3d {
     /**
      *  GUI for reading file. 
      */
-    void Triangulation3dApp::ReaderUI(bool* open) {
+    void Triangulation2dApp::ReaderUI(bool* open) {
         if (ImGui::Begin("File reader", open, ImGuiWindowFlags_AlwaysAutoResize)) {
             static char buf[100] = "";
             ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
@@ -439,7 +439,7 @@ namespace Triangulation3d {
     /**
      *  GUI for generating points. 
      */
-    void Triangulation3dApp::GenRandPointsUI(bool* open) {
+    void Triangulation2dApp::GenRandPointsUI(bool* open) {
         if (ImGui::Begin("Rand point gen", open, ImGuiWindowFlags_AlwaysAutoResize)) {
             static int i0=3;
             ImGui::InputInt("input int", &i0, 1, 5);

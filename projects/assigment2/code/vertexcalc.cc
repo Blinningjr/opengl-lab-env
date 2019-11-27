@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <math.h>  
 
-namespace Triangulation3d {
+namespace Triangulation2d {
 
     /**
      *  Creates a reader with no read points 

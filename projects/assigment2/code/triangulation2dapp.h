@@ -5,17 +5,17 @@
 #include "vertexcalc.h"
 #include <memory>
 
-namespace Triangulation3d {
-	class Triangulation3dApp : public Core::App {
+namespace Triangulation2d {
+	class Triangulation2dApp : public Core::App {
 		public:
 			// Var
 
 
 			// constructor
-			Triangulation3dApp();
+			Triangulation2dApp();
 			
             // destructor
-			~Triangulation3dApp();
+			~Triangulation2dApp();
 
 
             // funcs
@@ -41,7 +41,7 @@ namespace Triangulation3d {
 			int bufLength;
             std::unique_ptr<GLfloat[]>  bufVBO;
 
-			Triangulation3d::VertexCalc vertexcalc;
+			Triangulation2d::VertexCalc vertexcalc;
 
 			bool showPoints;
 			bool showConvexHull;
@@ -61,4 +61,4 @@ namespace Triangulation3d {
 			void GenRandPointsUI(bool* open);
 
 	};
-} // namespace Triangulation3d
+} // namespace Triangulation2d
