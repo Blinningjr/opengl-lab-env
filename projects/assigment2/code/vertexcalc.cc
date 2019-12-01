@@ -178,8 +178,9 @@ namespace Triangulation2d {
         for (int i = 0; i < uLen - 1 ; i++) {
             this->convexHull[i + lLen - 1] = u[i];
         }
+
         if (this->pickCOption == 2) {
-            this->GetAllAntiPodalPairs(u, uLen, l, lLen);
+            this->rotatingCalipers();
         }
         delete[] l;
         delete[] u;
@@ -330,31 +331,49 @@ namespace Triangulation2d {
 
     }
 
+    /**
+     * Picks C py calculating the largest diameter and finding the point closest to its middle.
+     * http://www-cgrl.cs.mcgill.ca/~godfried/research/calipers.html
+     * https://es.wikipedia.org/wiki/M%C3%A9todo_del_Calibre_Giratorio
+    */
+    void VertexCalc::rotatingCalipers() {
+        auto dist = [] (Point a, Point b)  {
+            return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+        };
 
-    void VertexCalc::GetAllAntiPodalPairs(Point* U, int uLength, Point* L, int lLength) {
-        //Now we have U and L, apply rotating calipers
-        int i = 1;
-        int j = lLength-1;
-        while (i < uLength || j > 1) {
-            // yield U[i], L[j];
-            
-            //if i or j made it all the way through
-            //advance other size
-            if (i == uLength) {
-                j = j - 1;
-            } else if (j == 1) {
-                i = i + 1;
-            } else if ((U[i+1].y - U[i].y) * (L[j].x - L[j-1].x) > (U[i+1].x - U[i].x) * (L[j].y - L[j-1].y)) {
-                i = i + 1;
-            } else {
-                j = j - 1;
+        int k = 1;
+        while ( abs(this->crossProduct(this->convexHull[this->convexHullLength - 1], this->convexHull[0], this->convexHull[(k + 1) % this->convexHullLength])) > 
+                abs(this->crossProduct(this->convexHull[this->convexHullLength - 1], this->convexHull[0], this->convexHull[k]))) {
+            ++k;
+        }
+
+        Point p1 = this->convexHull[0];
+        Point p2 = this->convexHull[k];
+
+        //Generate all antipodal pairs in i,j
+        for (int i = 0, j = k; i <= k && j < this->convexHullLength; ++i) {
+            if (dist(this->convexHull[i], this->convexHull[j]) > dist(p1, p2)) {
+                p1 = this->convexHull[i];
+                p2 = this->convexHull[j];
+            }
+
+            //Advance point j while j is antipodal pair of i
+            while (j < this->convexHullLength && 
+                (abs(this->crossProduct(this->convexHull[i], this->convexHull[(i + 1) % this->convexHullLength], this->convexHull[(j + 1) % this->convexHullLength])) > 
+                abs(this->crossProduct(this->convexHull[i], this->convexHull[(i + 1) % this->convexHullLength], this->convexHull[j])))) {
+
+                if (dist(this->convexHull[i], this->convexHull[(j + 1) % this->convexHullLength]) > dist(p1, p2)) {
+                    p1 = this->convexHull[i];
+                    p2 = this->convexHull[(j + 1) % this->convexHullLength];
+                }
+                ++j;
             }
         }
 
-        GLfloat cx = U[i].x + (U[i].x - L[i].x)/2;
-        GLfloat cy = U[i].y + (U[i].y - L[i].y)/2;
-        this->pickedC.x = this->points[0].x;
-        this->pickedC.y = this->points[0].y;
+        GLfloat cx = 0;
+        GLfloat cy = 0;
+        cx = p1.x + (p2.x - p1.x)/2;
+        cy = p1.y + (p2.y - p1.y)/2;
         for (int i = 1; i < this->pointsLength; i++) {
             if (pow(this->pickedC.x - cx, 2) + pow(this->pickedC.y - cy, 2) > pow(this->points[i].x - cx, 2) + pow(this->points[i].y - cy, 2)) {
                 this->pickedC.x = this->points[i].x;

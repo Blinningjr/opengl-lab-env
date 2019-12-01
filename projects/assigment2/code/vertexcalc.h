@@ -128,7 +128,7 @@ namespace Triangulation2d {
 
 			void pickRandomC();
 
-			void GetAllAntiPodalPairs(Point* U, int uLength, Point* L, int lLength);
+			void rotatingCalipers();
 
 			std::shared_ptr<Triangle[]> calcTriangles(std::shared_ptr<Point[]> ps, int length, Point v);
 
