@@ -159,7 +159,7 @@ namespace Triangulation2d {
             glClear(GL_COLOR_BUFFER_BIT);
             this->window->Update();
 
-            this->UpdateVBO();
+            this->angle += 0.05f;
 
             // do stuff
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -222,8 +222,6 @@ namespace Triangulation2d {
      *  Updates the VBO with this->buf.
      */
     void Triangulation2dApp::UpdateVBO() {
-        this->angle += 0.05f;
-
         int lengthTriangulation = this->vertexcalc.getTriangulationLength() * 3;
         int lengthConvexHull = this->vertexcalc.getConvexHullLength();
         int lengthPoints = this->vertexcalc.getPointsLength();
@@ -406,14 +404,17 @@ namespace Triangulation2d {
         if (sameColor) {
             this->vertexcalc.colorSameColor(0, 0.5f, 1, 1);
             sameColor = false;
+            this->UpdateVBO();
         }
         if (interpolationColor) {
             this->vertexcalc.colorInterpolationColor();
             interpolationColor = false;
+            this->UpdateVBO();
         }
         if (fourColor) {
             this->vertexcalc.fourColor();
             fourColor = false;
+            this->UpdateVBO();
         }
         this->vertexcalc.setPickCOption(pickCOption);
     }
@@ -429,6 +430,7 @@ namespace Triangulation2d {
             if (ImGui::Button("Read file")) {
                 std::string filePath(buf);
                 this->vertexcalc.ReadPoints(filePath);
+                this->UpdateVBO();
                 *open = false;
             }
             ImGui::End();
@@ -445,6 +447,7 @@ namespace Triangulation2d {
             ImGui::InputInt("input int", &i0, 1, 5);
             if (ImGui::Button("Gen Points")) {
                 this->vertexcalc.GenRandomPoints(i0);
+                this->UpdateVBO();
                 *open = false;
             }
             ImGui::End();
