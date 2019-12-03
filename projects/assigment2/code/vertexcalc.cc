@@ -134,6 +134,7 @@ namespace Triangulation2d {
     /**
      * Calculates the convex hull of the array points and stores it in convexHull.
      * Andrew's algorithm.
+     * https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
      */
     void VertexCalc::calcConvexHull() {
         this->convexHullLength = 0;
@@ -150,22 +151,19 @@ namespace Triangulation2d {
         int lLen = 0;
         Point* l = new Point[this->pointsLength];
 
+        int uLen = 0;
+        Point* u = new Point[this->pointsLength];
+
         for (int i = 0; i < this->pointsLength; i++) {
             while (lLen >= 2 && this->crossProduct(l[lLen-2], l[lLen-1], this->points[i]) <= 0) {
                 lLen--;
             }
-            l[lLen] = this->points[i];
-            lLen += 1;
-	    }
-
-        int uLen = 0;
-        Point* u = new Point[this->pointsLength];
-
-        for (int i = this->pointsLength - 1; i >= 0; i--) {
-            while (uLen >= 2 && this->crossProduct(u[uLen-2], u[uLen-1], this->points[i]) <= 0) {
+                while (uLen >= 2 && this->crossProduct(u[uLen-2], u[uLen-1], this->points[this->pointsLength - 1 - i]) <= 0) {
                 uLen--;
             }
-            u[uLen] = this->points[i];
+            l[lLen] = this->points[i];
+            lLen += 1;
+            u[uLen] = this->points[this->pointsLength - 1 - i];
             uLen += 1;
 	    }
 
