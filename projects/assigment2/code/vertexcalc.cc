@@ -330,32 +330,36 @@ namespace Triangulation2d {
     }
 
     /**
-     * Picks C py calculating the largest diameter and finding the point closest to its middle.
+     * Picks C py calculating the largest diameter and finding the point closest to its middle, using rotating calipers algorithm.
      * http://www-cgrl.cs.mcgill.ca/~godfried/research/calipers.html
      * https://es.wikipedia.org/wiki/M%C3%A9todo_del_Calibre_Giratorio
     */
     void VertexCalc::rotatingCalipers() {
+        // Calculates distance between points a and b.
         auto dist = [] (Point a, Point b)  {
             return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
         };
 
-        int k = 1;
-        while ( abs(this->crossProduct(this->convexHull[this->convexHullLength - 1], this->convexHull[0], this->convexHull[(k + 1) % this->convexHullLength])) > 
-                abs(this->crossProduct(this->convexHull[this->convexHullLength - 1], this->convexHull[0], this->convexHull[k]))) {
-            ++k;
+        // Find starting point for right caliper.
+        int k = 0;
+        for (int i = 1; i < this->convexHullLength; i++) {
+            if (this->points[i] == this->convexHull[this->convexHullLength - 1]) {
+                k = i;
+                break;
+            }
         }
 
         Point p1 = this->convexHull[0];
         Point p2 = this->convexHull[k];
 
-        //Generate all antipodal pairs in i,j
+        // Left caliper
         for (int i = 0, j = k; i <= k && j < this->convexHullLength; ++i) {
             if (dist(this->convexHull[i], this->convexHull[j]) > dist(p1, p2)) {
                 p1 = this->convexHull[i];
                 p2 = this->convexHull[j];
             }
 
-            //Advance point j while j is antipodal pair of i
+            // Right caliper
             while (j < this->convexHullLength && 
                 (abs(this->crossProduct(this->convexHull[i], this->convexHull[(i + 1) % this->convexHullLength], this->convexHull[(j + 1) % this->convexHullLength])) > 
                 abs(this->crossProduct(this->convexHull[i], this->convexHull[(i + 1) % this->convexHullLength], this->convexHull[j])))) {
@@ -368,6 +372,7 @@ namespace Triangulation2d {
             }
         }
 
+        // Find point nearest the middle of the longest diameter of the convex hull
         GLfloat cx = 0;
         GLfloat cy = 0;
         cx = p1.x + (p2.x - p1.x)/2;
