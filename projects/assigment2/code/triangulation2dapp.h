@@ -47,6 +47,7 @@ namespace Triangulation2d {
 			bool showConvexHull;
 			bool showC;
 			bool showTriangulation;
+			bool showTriangulationOutline;
 
 			GLfloat angle;
 			GLfloat dist;

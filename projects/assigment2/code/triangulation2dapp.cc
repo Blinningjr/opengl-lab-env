@@ -50,6 +50,7 @@ namespace Triangulation2d {
         this->showPoints = true;
         this->showConvexHull = false;
         this->showTriangulation = true;
+        this->showTriangulationOutline = true;
         this->showC = false;
         this->angle = 0;
         this->dist = 0.0f;
@@ -189,7 +190,7 @@ namespace Triangulation2d {
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-            if (this->showTriangulation) {
+            if (this->showTriangulationOutline) {
                 glDrawArrays(GL_TRIANGLES, start, this->vertexcalc.getTriangulationLength() * 3);
             }
             
@@ -385,6 +386,7 @@ namespace Triangulation2d {
                     ImGui::MenuItem("Convex Hull", NULL, &this->showConvexHull);
                     ImGui::MenuItem("C", NULL, &this->showC);
                     ImGui::MenuItem("Triangulation", NULL, &this->showTriangulation);
+                    ImGui::MenuItem("Triangulation Outline", NULL, &this->showTriangulationOutline);
                     ImGui::SliderFloat("Distans", &this->dist, 0.0f, 0.5f);
                     ImGui::EndMenu();
                 }
