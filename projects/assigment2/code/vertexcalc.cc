@@ -253,20 +253,20 @@ namespace Triangulation2d {
 
         this->colorSameColor(0, 0.5f, 1, 1);
 
-        std::cout << "\nlength =";
-        std::cout << this->triangulationLength;
-        // std::cout << "\n";
-        // std::cout << "\nDebug Tree \n";
-        // this->debugTree(this->tree);
-        Point p;
-        p.x = 0;
-        p.y = 0;
-        std::shared_ptr<std::shared_ptr<Node>[]> nodeArr = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[2]);
-        nodeArr[0] = NULL;
-        nodeArr[1] = NULL;
-        this->getLeaf(p, this->root, nodeArr);
-        std::cout << "\nDebug Leafs \n";
-        this->debugLeafs(nodeArr[0]->l);
+        // std::cout << "\nlength =";
+        // std::cout << this->triangulationLength;
+        // // std::cout << "\n";
+        // // std::cout << "\nDebug Tree \n";
+        // // this->debugTree(this->tree);
+        // Point p;
+        // p.x = 0;
+        // p.y = 0;
+        // std::shared_ptr<std::shared_ptr<Node>[]> nodeArr = std::shared_ptr<std::shared_ptr<Node>[]>(new std::shared_ptr<Node>[2]);
+        // nodeArr[0] = NULL;
+        // nodeArr[1] = NULL;
+        // this->getLeaf(p, this->root, nodeArr);
+        // std::cout << "\nDebug Leafs \n";
+        // this->debugLeafs(nodeArr[0]->l);
     }
 
 
@@ -328,6 +328,7 @@ namespace Triangulation2d {
         this->pickedC = rest[rand()%restLength];
 
     }
+
 
     /**
      * Picks C py calculating the largest diameter and finding the point closest to its middle, using rotating calipers algorithm.
@@ -999,7 +1000,7 @@ namespace Triangulation2d {
 
     /**
      *  Gets which direction l1 is to l0-
-     *  0 = l0 == null, 1 = left, 2 = midel, 3 = right
+     *  0 = l0 == null, 1 = left, 2 = middle, 3 = right
     */
     int VertexCalc::findDiractionOfNeighbor(std::shared_ptr<Leaf> l0, std::shared_ptr<Leaf> l1) {
         if (!l0 || !l1) {

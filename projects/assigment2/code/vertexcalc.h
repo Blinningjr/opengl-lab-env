@@ -117,7 +117,7 @@ namespace Triangulation2d {
 			int nodeId;
 			int leafId;
 
-			float epsilon = 0.01f;
+			float epsilon = 0.00f;
 
 			int pickCOption;
 
