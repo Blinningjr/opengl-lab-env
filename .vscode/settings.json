@@ -70,6 +70,12 @@
         "shared_mutex": "cpp",
         "thread": "cpp",
         "typeindex": "cpp",
-        "valarray": "cpp"
-    }
+        "valarray": "cpp",
+        "bit": "cpp"
+    },
+    "cSpell.words": [
+        "g",
+        "lfloat",
+        "luint"
+    ]
 }
