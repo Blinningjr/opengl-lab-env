@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <vector>
 
-#include "General.h"
+#include "Vertex.h"
 
 
 namespace Simple3DGraphics {

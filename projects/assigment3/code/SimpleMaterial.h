@@ -4,10 +4,13 @@
 
 
 namespace Simple3DGraphics {
-	class SimpleMaterial : Material {
+	class SimpleMaterial : public Material {
 		public:
 
-            void ApplyMaterial() override;
+            SimpleMaterial(std::shared_ptr<ShaderProgram> shaderProgram, GLfloat color[3]);
+            ~SimpleMaterial();
+
+            void applyMaterial() override;
 
         private:
 

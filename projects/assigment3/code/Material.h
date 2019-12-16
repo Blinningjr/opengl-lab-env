@@ -9,9 +9,9 @@ namespace Simple3DGraphics {
 
             virtual void applyMaterial() = 0;
 
-        private:
+        protected:
 
-            std::unique_ptr<ShaderProgram> shaderProgram;
+            std::shared_ptr<ShaderProgram> shaderProgram;
 
     };
 } 

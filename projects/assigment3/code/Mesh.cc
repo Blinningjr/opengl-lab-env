@@ -46,7 +46,7 @@ namespace Simple3DGraphics {
     }
 
 
-    int Mesh::getIndicesSize() {
+    unsigned int Mesh::getIndicesSize() {
         return this->indices.size();
     }
 
