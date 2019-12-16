@@ -7,7 +7,7 @@ namespace Simple3DGraphics {
 	class Material {
 		public:
 
-            virtual void ApplyMaterial() = 0;
+            virtual void applyMaterial() = 0;
 
         private:
 

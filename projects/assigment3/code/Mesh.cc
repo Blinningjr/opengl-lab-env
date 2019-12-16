@@ -12,7 +12,10 @@ namespace Simple3DGraphics {
     // ● The idea with this (and all other) resource classes is that they should be sharablebetween renderable objects.
 
 
-    Mesh::Mesh() {
+    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
+        this->vertices = vertices;
+        this->indices = indices;
+
         glGenVertexArrays(1, &this->vao);
         glGenBuffers(1, &this->vbo);
         glGenBuffers(1, &this->ebo);
@@ -27,7 +30,7 @@ namespace Simple3DGraphics {
     /**
      *  Sets up the buffers on the GPU.
     */
-    void Mesh::setupBuffers(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
+    void Mesh::setupBuffers() {
         glBindVertexArray(vao);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -37,9 +40,14 @@ namespace Simple3DGraphics {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), NULL);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
 
         glBindVertexArray(0);
+    }
+
+
+    int Mesh::getIndicesSize() {
+        return this->indices.size();
     }
 
 }
