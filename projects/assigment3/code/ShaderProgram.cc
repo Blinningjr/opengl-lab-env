@@ -38,7 +38,7 @@ namespace Simple3DGraphics {
     /**
      *  Activate this program, so its shaders are used.
     */
-    void ShaderProgram::activateProgram() {
+    void ShaderProgram::use() {
         glUseProgram(this->program);
     }
 
@@ -46,7 +46,7 @@ namespace Simple3DGraphics {
     /**
      *  Gets the Id of uniform with identifier name.
     */
-    GLuint ShaderProgram::getUniformId(GLchar *name) {
+    GLint ShaderProgram::getUniformId(GLchar *name) {
         return glGetUniformLocation(this->program, name);
     }
 

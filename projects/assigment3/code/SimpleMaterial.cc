@@ -27,8 +27,8 @@ namespace Simple3DGraphics {
      *  Applays shaders and color. 
     */
     void SimpleMaterial::applyMaterial() {
-        this->shaderProgram->activateProgram();
-        GLuint colorID = this->shaderProgram->getUniformId("color");
+        this->shaderProgram->use();
+        GLint colorID = this->shaderProgram->getUniformId("color");
         glUniform3f(colorID, this->color[0], this->color[1], this->color[2]);
     }
 

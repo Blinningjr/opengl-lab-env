@@ -12,9 +12,9 @@ namespace Simple3DGraphics {
             ShaderProgram(std::vector<std::shared_ptr<Shader>> shaders);
             ~ShaderProgram();
 
-            void activateProgram();
+            void use();
 
-            GLuint getUniformId(GLchar *name);
+            GLint getUniformId(GLchar *name);
 
         private:
 

@@ -4,7 +4,7 @@
 
 
 namespace Simple3DGraphics {
-	class SimpleMaterial : public Material {
+	class SimpleMaterial : Material {
 		public:
 
             SimpleMaterial(std::shared_ptr<ShaderProgram> shaderProgram, GLfloat color[3]);

@@ -9,6 +9,10 @@ namespace Simple3DGraphics {
 
             virtual void applyMaterial() = 0;
 
+            GLint getUniformId(GLchar *name) {
+                return shaderProgram->getUniformId(name);
+            }
+
         protected:
 
             std::shared_ptr<ShaderProgram> shaderProgram;

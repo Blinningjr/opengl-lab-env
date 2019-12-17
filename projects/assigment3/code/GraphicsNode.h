@@ -14,7 +14,7 @@ namespace Simple3DGraphics {
             GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::mat4 transform);
             ~GraphicsNode();
 
-            void Draw();
+            void draw();
 
         private:
 
