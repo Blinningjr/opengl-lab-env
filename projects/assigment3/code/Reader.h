@@ -8,7 +8,7 @@ namespace Simple3DGraphics {
             Reader();
             ~Reader();
 
-            char* readFile(char* filePath);
-            
+            char* readFile(char* filePath);  
+
     };
 } 

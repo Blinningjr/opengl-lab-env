@@ -4,6 +4,8 @@
 #include "ShaderProgram.h"
 #include "Shader.h"
 #include "ShaderType.h"
+#include "Reader.h"
+
 
 #include <vector>
 
@@ -34,6 +36,13 @@ namespace Simple3DGraphics {
         vertices.push_back(vertex0);
         vertices.push_back(vertex1);
         vertices.push_back(vertex2);
+
+        GLfloat color[3];
+        color[0] = 1;
+        color[1] = 0;
+        color[2] = 0;
+
+        glm::mat4 transform = {1.0f};
         
         
         vertices.push_back( );
@@ -45,15 +54,21 @@ namespace Simple3DGraphics {
         Mesh mesh(vertices, indices);
         std::shared_ptr<Mesh> meshPointer(&mesh);
 
-        Shader vertexShader(, vertexShader);
-        Shader fragmentShader(, fragmentShader);
+        Reader reader();
 
-        ShaderProgram shaderProgram();
+        std::shared_ptr<Shader> vertexShader = new Shader(reader->readFile("assigment3/code/SimpleShader.vert"), vertexShader);
+        std::shared_ptr<Shader> fragmentShader = new Shader(reader->readFile("assigment3/code/SimpleShader.frag"), fragmentShader);
 
-        SimpleMaterial simpleMaterial();
+        std::vector<std::shared_ptr<Shader>> shaders;
+        shaders.push_back(vertexShader);
+        shaders.push_back(fragmentShader);
+
+        std::shared_ptr<ShaderProgram> shaderProgram = new ShaderProgram(shaders);
+
+        std::shared_ptr<SimpleMaterial> simpleMaterial = new SimpleMaterial(shaderProgram, color);
         
     
-        this->gNode(meshPointer, );
+        this->gNode(meshPointer, simpleMaterial, transform);
         
 
         return false;
