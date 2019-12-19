@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GL/glew.h>
 
 
@@ -9,6 +11,8 @@ namespace Simple3DGraphics {
             ~Reader();
 
             char* readFile(char* filePath);  
+
+        private:
 
     };
 } 

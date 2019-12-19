@@ -7,11 +7,11 @@
 
 
 namespace Simple3DGraphics {
-	class Simple3DGraphics : public Core::App {
+	class SimpleGraphics : public Core::App {
 		public:
 
-			Simple3DGraphics();
-			~Simple3DGraphics();
+			SimpleGraphics();
+			~SimpleGraphics();
 
 
 			bool Open();
@@ -20,7 +20,9 @@ namespace Simple3DGraphics {
 
 		private:
 
-			GraphicsNode gNode;
+			GraphicsNode* gNode;
+
+			Display::Window* window;
 		
 	};
 }

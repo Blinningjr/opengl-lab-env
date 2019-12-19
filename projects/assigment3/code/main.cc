@@ -1,8 +1,8 @@
 #include "config.h"
-#include "Simple3DGraphics.h"
+#include "SimpleGraphics.h"
 
 int main(int argc, const char** argv) {
-	Simple3DGraphics::Simple3DGraphics app;
+	Simple3DGraphics::SimpleGraphics app;
 	if (app.Open())
 	{
 		app.Run();

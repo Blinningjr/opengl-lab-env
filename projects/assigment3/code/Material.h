@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include <memory>
 
 #include "ShaderProgram.h"
