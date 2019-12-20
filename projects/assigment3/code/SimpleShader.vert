@@ -5,9 +5,10 @@ precision mediump float;
 layout(location=0) in vec3 pos;
 layout(location=0) out vec4 Color;
 
+uniform mat4 object_transform;
 uniform vec3 color;
 
 void main() {
-	gl_Position = vec4(pos, 1);
+	gl_Position = (object_transform * vec4(pos, 1));
 	Color = vec4(color, 1);
 }

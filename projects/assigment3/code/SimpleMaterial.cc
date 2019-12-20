@@ -1,5 +1,6 @@
 #include "SimpleMaterial.h"
 
+#include <iostream>
 
 namespace Simple3DGraphics {
 //  Class: SimpleMaterial
