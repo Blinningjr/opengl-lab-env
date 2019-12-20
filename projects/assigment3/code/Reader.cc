@@ -21,7 +21,7 @@ namespace Simple3DGraphics {
     char* Reader::readFile(char* filePath) {
         std::streampos size;
         char* fileText;
-        std::ifstream file (filePath);
+        std::ifstream file(filePath, std::ios::in|std::ios::binary|std::ios::ate);
         if (file.is_open())
         {
             size = file.tellg();

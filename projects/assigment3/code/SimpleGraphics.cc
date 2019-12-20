@@ -63,6 +63,12 @@ namespace Simple3DGraphics {
             GLchar* vst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.vert");
             GLchar* fst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.frag");
             
+            // std::cout << "vst = \n";
+            // for (int i = 0; i < 100; i++) {
+            //     std::cout << vst[i];
+            // }
+            // std::cout << "\n";
+
             std::shared_ptr<Shader> vShader(new Shader(vst, vertexShader));
             std::shared_ptr<Shader> fShader(new Shader(fst, fragmentShader));
 
