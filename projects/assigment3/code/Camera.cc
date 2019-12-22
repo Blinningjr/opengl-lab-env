@@ -16,8 +16,14 @@ namespace Simple3DGraphics {
         
     }
 
+
     glm::mat4 Camera::getCameraMatrix() {
         return glm::lookAt(this->cameraPos, this->cameraPos + this->cameraDirection, glm::vec3(0, 1, 0));
+    }
+
+
+    glm::vec3 Camera::getCameraPos() {
+        return this->cameraPos;
     }
 
 }

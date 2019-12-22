@@ -42,11 +42,11 @@ namespace Simple3DGraphics {
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             Vertex vertex0;
-            vertex0.pos = {-0.5, -0.5, -1};
+            vertex0.pos = {-0.1, -0.1, -0.5};
             Vertex vertex1;
-            vertex1.pos = {0.5, -0.5, -1};
+            vertex1.pos = {0.1, -0.1, -0.5};
             Vertex vertex2;
-            vertex2.pos = {0, 0.5, -1};
+            vertex2.pos = {0, 0.1, -0.5};
             std::vector<Vertex> vertices;
             vertices.push_back(vertex0);
             vertices.push_back(vertex1);
@@ -107,6 +107,10 @@ namespace Simple3DGraphics {
             this->shaderProgram->use();
             GLint cameraID = this->shaderProgram->getUniformId("camera");
             glUniformMatrix4fv(cameraID, 1, GL_FALSE, glm::value_ptr(this->camera->getCameraMatrix()));
+
+            GLint lightID = this->shaderProgram->getUniformId("light");
+            glm::vec3 cameraPos = this->camera->getCameraPos();
+            glUniform3f(lightID, cameraPos[0], cameraPos[1], cameraPos[2]);
 
             this->gNode->draw();
 

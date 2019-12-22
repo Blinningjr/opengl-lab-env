@@ -11,6 +11,7 @@ namespace Simple3DGraphics {
             ~Camera();
 
             glm::mat4 getCameraMatrix();
+            glm::vec3 getCameraPos();
 
         private:
 
