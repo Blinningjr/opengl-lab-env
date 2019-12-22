@@ -2,6 +2,7 @@
 
 #include "core/app.h"
 #include "render/window.h"
+#include "Camera.h"
 
 #include "GraphicsNode.h"
 
@@ -21,6 +22,10 @@ namespace Simple3DGraphics {
 		private:
 
 			GraphicsNode* gNode;
+
+			Camera* camera;
+
+			std::shared_ptr<ShaderProgram> shaderProgram;
 
 			Display::Window* window;
 		

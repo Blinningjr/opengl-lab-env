@@ -6,7 +6,9 @@
 #include "Shader.h"
 #include "ShaderType.h"
 #include "Reader.h"
+#include "Camera.h"
 
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <vector>
 
@@ -15,12 +17,13 @@ namespace Simple3DGraphics {
 
 
     SimpleGraphics::SimpleGraphics() {
-        
+
     }
 
 
     SimpleGraphics::~SimpleGraphics() {
         delete[] this->gNode;
+        delete[] this->camera;
     }
 
 
@@ -32,6 +35,10 @@ namespace Simple3DGraphics {
         });
 
         if (this->window->Open()) {
+
+            this->camera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
+
+
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             Vertex vertex0;
@@ -55,7 +62,7 @@ namespace Simple3DGraphics {
             color[1] = 0;
             color[2] = 0;
 
-            glm::mat4 transform;
+            glm::mat4 transform(1);
 
             std::shared_ptr<Mesh> mesh(new Mesh(vertices, indices));
 
@@ -77,6 +84,7 @@ namespace Simple3DGraphics {
             shaders.push_back(fShader);
 
             std::shared_ptr<ShaderProgram> shaderProgram(new ShaderProgram(shaders));
+            this->shaderProgram = shaderProgram;
 
             std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, color));
             
@@ -95,6 +103,10 @@ namespace Simple3DGraphics {
             glClear(GL_COLOR_BUFFER_BIT);
 		    this->window->Update();
 
+
+            this->shaderProgram->use();
+            GLint cameraID = this->shaderProgram->getUniformId("camera");
+            glUniformMatrix4fv(cameraID, 1, GL_FALSE, glm::value_ptr(this->camera->getCameraMatrix()));
 
             this->gNode->draw();
 
