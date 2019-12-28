@@ -40,12 +40,13 @@ namespace Simple3DGraphics {
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+            glm::vec3 pos = glm::vec3(0, 0, 1);
 
             GLfloat color[3];
             color[0] = 1;
             color[1] = 1;
             color[2] = 0;
-            createSquare(color);
+            createSquare(pos, color);
 
             return true;
         }
@@ -76,8 +77,9 @@ namespace Simple3DGraphics {
     }
 
 
-    void SimpleGraphics::createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, GLfloat color[3]) {
-        glm::mat4 transform(1);
+    void SimpleGraphics::createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, glm::vec3 pos, GLfloat color[3]) {
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, pos);
 
         std::shared_ptr<Mesh> mesh(new Mesh(vertices, indices));
 
@@ -102,20 +104,35 @@ namespace Simple3DGraphics {
     }
 
 
-    void SimpleGraphics::createSquare(GLfloat color[3]) {
+    void SimpleGraphics::createSquare(glm::vec3 pos, GLfloat color[3]) {
         Vertex vertex0;
-        vertex0.pos = {-0.1, -0.1, -0.5};
+        vertex0.pos = {-0.1, -0.1, -0.05};
         Vertex vertex1;
-        vertex1.pos = {0.1, -0.1, -0.5};
+        vertex1.pos = {0.1, -0.1, -0.05};
         Vertex vertex2;
-        vertex2.pos = {0.1, 0.1, -0.5};
+        vertex2.pos = {0.1, 0.1, -0.05};
         Vertex vertex3;
-        vertex3.pos = {-0.1, 0.1, -0.5};
+        vertex3.pos = {-0.1, 0.1, -0.05};
+
+        Vertex vertex4;
+        vertex4.pos = {-0.1, -0.1, 0.05};
+        Vertex vertex5;
+        vertex5.pos = {0.1, -0.1, 0.05};
+        Vertex vertex6;
+        vertex6.pos = {0.1, 0.1, 0.05};
+        Vertex vertex7;
+        vertex7.pos = {-0.1, 0.1, 0.05};
+
+
         std::vector<Vertex> vertices;
         vertices.push_back(vertex0);
         vertices.push_back(vertex1);
         vertices.push_back(vertex2);
         vertices.push_back(vertex3);
+        vertices.push_back(vertex4);
+        vertices.push_back(vertex5);
+        vertices.push_back(vertex6);
+        vertices.push_back(vertex7);
         
         std::vector<unsigned int> indices;
         indices.push_back(0);
@@ -126,7 +143,7 @@ namespace Simple3DGraphics {
         indices.push_back(2);
 
 
-        createGNode(vertices, indices, color);
+        createGNode(vertices, indices, pos, color);
     }
 
 }

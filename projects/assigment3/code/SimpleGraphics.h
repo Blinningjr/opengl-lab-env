@@ -32,9 +32,9 @@ namespace Simple3DGraphics {
 
 
 
-			void createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, GLfloat color[3]);
+			void createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, glm::vec3 pos, GLfloat color[3]);
 
-			void createSquare(GLfloat color[3]);
+			void createSquare(glm::vec3 pos, GLfloat color[3]);
 		
 	};
 }
