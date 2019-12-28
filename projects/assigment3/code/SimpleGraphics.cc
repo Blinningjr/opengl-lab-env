@@ -64,6 +64,7 @@ namespace Simple3DGraphics {
 		    this->window->Update();
 
 
+            this->gNodes[0].setPitch((float)glfwGetTime());
             this->gNodes[0].setYawn((float)glfwGetTime());
             this->gNodes[0].setRoll((float)glfwGetTime());
 
@@ -79,6 +80,10 @@ namespace Simple3DGraphics {
             GLint lightID = this->shaderProgram->getUniformId("light");
             glm::vec3 cameraPos = this->camera->getCameraPos();
             glUniform3f(lightID, cameraPos[0], cameraPos[1], cameraPos[2]);
+
+
+            glEnable(GL_CULL_FACE);  
+
 
             this->gNodes[0].draw();
 
@@ -151,11 +156,11 @@ namespace Simple3DGraphics {
         indices.push_back(2);
 
         indices.push_back(4);
-        indices.push_back(6);
         indices.push_back(5);
-        indices.push_back(4);
-        indices.push_back(7);
         indices.push_back(6);
+        indices.push_back(4);
+        indices.push_back(6);
+        indices.push_back(7);
 
         indices.push_back(3);
         indices.push_back(6);
@@ -172,11 +177,11 @@ namespace Simple3DGraphics {
         indices.push_back(5);
 
         indices.push_back(0);
-        indices.push_back(5);
         indices.push_back(1);
-        indices.push_back(0);
-        indices.push_back(4);
         indices.push_back(5);
+        indices.push_back(0);
+        indices.push_back(5);
+        indices.push_back(4);
 
         indices.push_back(0);
         indices.push_back(7);
