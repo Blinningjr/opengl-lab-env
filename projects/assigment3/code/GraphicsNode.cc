@@ -12,10 +12,11 @@ namespace Simple3DGraphics {
 //          method of the material, and then executes a draw call.
 
 
-    GraphicsNode::GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::vec3 position, GLfloat pitch, GLfloat roll, GLfloat yawn) {
+    GraphicsNode::GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::vec3 position, glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn) {
         this->mesh = mesh;
         this->material = material;
         this->position = position;
+        this->scale = scale;
         this->pitch = pitch;
         this->roll = roll;
         this->yawn = yawn;
@@ -39,6 +40,7 @@ namespace Simple3DGraphics {
         this->transform = glm::rotate(this->transform, this->pitch, glm::vec3(1.0f, 0.0f, 0.0f));
         this->transform = glm::rotate(this->transform, this->roll, glm::vec3(0.0f, 0.0f, 1.0f));
         this->transform = glm::rotate(this->transform, this->yawn, glm::vec3(0.0f, 1.0f, 0.0f));
+        this->transform = glm::scale(this->transform, this->scale);
 
         GLint objTransformID = this->material->getUniformId("object_transform");
         glUniformMatrix4fv(objTransformID, 1, GL_FALSE, glm::value_ptr(this->transform));
@@ -51,6 +53,11 @@ namespace Simple3DGraphics {
 
     glm::vec3 GraphicsNode::getPosition() {
         return this->position;
+    }
+
+
+    glm::vec3 GraphicsNode::getScale() {
+        return this->scale;
     }
 
 
@@ -67,10 +74,15 @@ namespace Simple3DGraphics {
     GLfloat GraphicsNode::getYawn() {
         return this->yawn;
     }
-    
+
 
     void GraphicsNode::setPosition(glm::vec3 position) {
         this->position = position;
+    }
+
+
+    void GraphicsNode::setScale(glm::vec3 scale) {
+        this->scale = scale;
     }
 
 

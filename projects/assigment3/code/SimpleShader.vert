@@ -13,5 +13,5 @@ uniform vec3 color;
 void main() {
 	gl_Position = (camera * object_transform * vec4(pos, 1));
 	float dist = sqrt(pow(pos.x - light.x, 2.0) + pow(pos.y - light.y, 2.0) + pow( pos.z - light.z, 2.0));
-	Color = (vec4(color, 1) - dist);
+	Color = (vec4(color, 1) - (dist * 2.0));
 }
