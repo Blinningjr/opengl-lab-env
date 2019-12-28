@@ -40,16 +40,43 @@ namespace Simple3DGraphics {
 
             this->camera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
 
+
+            Reader reader;
+            GLchar* vst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.vert");
+            GLchar* fst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.frag");
+
+            std::shared_ptr<Shader> vShader(new Shader(vst, vertexShader));
+            std::shared_ptr<Shader> fShader(new Shader(fst, fragmentShader));
+
+            std::vector<std::shared_ptr<Shader>> shaders;
+            shaders.push_back(vShader);
+            shaders.push_back(fShader);
+
+            std::shared_ptr<ShaderProgram> shaderProgram(new ShaderProgram(shaders));
+            this->shaderProgram = shaderProgram;
+
+
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-            glm::vec3 pos = glm::vec3(0, 0, -1);
+            GLfloat red[3];
+            red[0] = 1;
+            red[1] = 0;
+            red[2] = 0;
 
-            GLfloat color[3];
-            color[0] = 1;
-            color[1] = 1;
-            color[2] = 0;
-            createSquare(pos, color);
+            GLfloat green[3];
+            green[0] = 0;
+            green[1] = 1;
+            green[2] = 0;
+
+            GLfloat blue[3];
+            blue[0] = 0;
+            blue[1] = 0;
+            blue[2] = 1;
+        
+            createBox(glm::vec3(0.3, 0, -1), red);
+            createBox(glm::vec3(-0.3, 0, -1), green);
+            createBox(glm::vec3(0, 0.3, -1), blue);
 
             return true;
         }
@@ -62,12 +89,6 @@ namespace Simple3DGraphics {
         while (this->window->IsOpen()) {
             glClear(GL_COLOR_BUFFER_BIT);
 		    this->window->Update();
-
-
-            this->gNodes[0].setPitch((float)glfwGetTime());
-            this->gNodes[0].setYawn((float)glfwGetTime());
-            this->gNodes[0].setRoll((float)glfwGetTime());
-
 
             this->shaderProgram->use();
 
@@ -84,8 +105,13 @@ namespace Simple3DGraphics {
 
             glEnable(GL_CULL_FACE);  
 
+            for(int i = 0; i < this->gNodes.size(); i++) {
+                this->gNodes[i].setPitch((float)glfwGetTime());
+                this->gNodes[i].setYawn((float)glfwGetTime());
+                this->gNodes[i].setRoll((float)glfwGetTime());
 
-            this->gNodes[0].draw();
+                this->gNodes[i].draw();
+            }
 
 
             this->window->SwapBuffers();
@@ -96,45 +122,30 @@ namespace Simple3DGraphics {
     void SimpleGraphics::createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, glm::vec3 pos, GLfloat color[3]) {
         std::shared_ptr<Mesh> mesh(new Mesh(vertices, indices));
 
-        Reader reader;
-        GLchar* vst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.vert");
-        GLchar* fst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.frag");
-
-        std::shared_ptr<Shader> vShader(new Shader(vst, vertexShader));
-        std::shared_ptr<Shader> fShader(new Shader(fst, fragmentShader));
-
-        std::vector<std::shared_ptr<Shader>> shaders;
-        shaders.push_back(vShader);
-        shaders.push_back(fShader);
-
-        std::shared_ptr<ShaderProgram> shaderProgram(new ShaderProgram(shaders));
-        this->shaderProgram = shaderProgram;
-
-        std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, color));
-        
+        std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(this->shaderProgram, color));      
     
         this->gNodes.push_back(GraphicsNode(mesh, simpleMaterial, pos, glm::vec3(1,1,1), 0, 0, 0));
     }
 
 
-    void SimpleGraphics::createSquare(glm::vec3 pos, GLfloat color[3]) {
+    void SimpleGraphics::createBox(glm::vec3 pos, GLfloat color[3]) {
         Vertex vertex0;
-        vertex0.pos = {-0.1, -0.1, -0.2};
+        vertex0.pos = {-0.1, -0.1, -0.1};
         Vertex vertex1;
-        vertex1.pos = {0.1, -0.1, -0.2};
+        vertex1.pos = {0.1, -0.1, -0.1};
         Vertex vertex2;
-        vertex2.pos = {0.1, 0.1, -0.2};
+        vertex2.pos = {0.1, 0.1, -0.1};
         Vertex vertex3;
-        vertex3.pos = {-0.1, 0.1, -0.2};
+        vertex3.pos = {-0.1, 0.1, -0.1};
 
         Vertex vertex4;
-        vertex4.pos = {-0.1, -0.1, 0.2};
+        vertex4.pos = {-0.1, -0.1, 0.1};
         Vertex vertex5;
-        vertex5.pos = {0.1, -0.1, 0.2};
+        vertex5.pos = {0.1, -0.1, 0.1};
         Vertex vertex6;
-        vertex6.pos = {0.1, 0.1, 0.2};
+        vertex6.pos = {0.1, 0.1, 0.1};
         Vertex vertex7;
-        vertex7.pos = {-0.1, 0.1, 0.2};
+        vertex7.pos = {-0.1, 0.1, 0.1};
 
 
         std::vector<Vertex> vertices;
