@@ -22,7 +22,6 @@ namespace Simple3DGraphics {
 
 
     SimpleGraphics::~SimpleGraphics() {
-        delete[] this->gNode;
         delete[] this->camera;
     }
 
@@ -89,7 +88,7 @@ namespace Simple3DGraphics {
             std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, color));
             
         
-            this->gNode = new GraphicsNode(mesh, simpleMaterial, transform);
+            this->gNodes.push_back(GraphicsNode(mesh, simpleMaterial, transform));
 
             return true;
         }
@@ -112,7 +111,7 @@ namespace Simple3DGraphics {
             glm::vec3 cameraPos = this->camera->getCameraPos();
             glUniform3f(lightID, cameraPos[0], cameraPos[1], cameraPos[2]);
 
-            this->gNode->draw();
+            this->gNodes[0].draw();
 
 
             this->window->SwapBuffers();

@@ -3,6 +3,7 @@
 #include "core/app.h"
 #include "render/window.h"
 #include "Camera.h"
+#include <vector>
 
 #include "GraphicsNode.h"
 
@@ -21,7 +22,7 @@ namespace Simple3DGraphics {
 
 		private:
 
-			GraphicsNode* gNode;
+			std::vector<GraphicsNode> gNodes;
 
 			Camera* camera;
 
