@@ -35,12 +35,15 @@ namespace Simple3DGraphics {
 
         if (this->window->Open()) {
 
+            
+            this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
+
             this->camera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
 
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-            glm::vec3 pos = glm::vec3(0, 0, 1);
+            glm::vec3 pos = glm::vec3(0, 0, -1);
 
             GLfloat color[3];
             color[0] = 1;
@@ -62,9 +65,14 @@ namespace Simple3DGraphics {
 
 
             this->gNodes[0].setYawn((float)glfwGetTime());
+            this->gNodes[0].setRoll((float)glfwGetTime());
 
 
             this->shaderProgram->use();
+
+            GLint projectionID = this->shaderProgram->getUniformId("projection");
+            glUniformMatrix4fv(projectionID, 1, GL_FALSE, glm::value_ptr(this->projection));
+
             GLint cameraID = this->shaderProgram->getUniformId("camera");
             glUniformMatrix4fv(cameraID, 1, GL_FALSE, glm::value_ptr(this->camera->getCameraMatrix()));
 
@@ -106,22 +114,22 @@ namespace Simple3DGraphics {
 
     void SimpleGraphics::createSquare(glm::vec3 pos, GLfloat color[3]) {
         Vertex vertex0;
-        vertex0.pos = {-0.1, -0.1, -0.5};
+        vertex0.pos = {-0.1, -0.1, -0.2};
         Vertex vertex1;
-        vertex1.pos = {0.1, -0.1, -0.5};
+        vertex1.pos = {0.1, -0.1, -0.2};
         Vertex vertex2;
-        vertex2.pos = {0.1, 0.1, -0.5};
+        vertex2.pos = {0.1, 0.1, -0.2};
         Vertex vertex3;
-        vertex3.pos = {-0.1, 0.1, -0.5};
+        vertex3.pos = {-0.1, 0.1, -0.2};
 
         Vertex vertex4;
-        vertex4.pos = {-0.1, -0.1, 0.1};
+        vertex4.pos = {-0.1, -0.1, 0.2};
         Vertex vertex5;
-        vertex5.pos = {0.1, -0.1, 0.1};
+        vertex5.pos = {0.1, -0.1, 0.2};
         Vertex vertex6;
-        vertex6.pos = {0.1, 0.1, 0.1};
+        vertex6.pos = {0.1, 0.1, 0.2};
         Vertex vertex7;
-        vertex7.pos = {-0.1, 0.1, 0.1};
+        vertex7.pos = {-0.1, 0.1, 0.2};
 
 
         std::vector<Vertex> vertices;

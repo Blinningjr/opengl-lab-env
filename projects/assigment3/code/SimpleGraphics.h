@@ -24,6 +24,8 @@ namespace Simple3DGraphics {
 
 			std::vector<GraphicsNode> gNodes;
 
+			glm::mat4 projection;
+
 			Camera* camera;
 
 			std::shared_ptr<ShaderProgram> shaderProgram;
