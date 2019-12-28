@@ -29,6 +29,12 @@ namespace Simple3DGraphics {
 			std::shared_ptr<ShaderProgram> shaderProgram;
 
 			Display::Window* window;
+
+
+
+			void createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, GLfloat color[3]);
+
+			void createSquare(GLfloat color[3]);
 		
 	};
 }

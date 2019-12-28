@@ -30,11 +30,8 @@ namespace Simple3DGraphics {
         this->mesh->setupBuffers();
         this->material->applyMaterial();
         GLint objTransformID = this->material->getUniformId("object_transform");
-        // std::cout << "\n transformID =";
-        // std::cout << objTransformID;
-        // std::cout << "\n";
         glUniformMatrix4fv(objTransformID, 1, GL_FALSE, glm::value_ptr(this->transform));
-
+        
         glDrawElements(GL_TRIANGLES, mesh->getIndicesSize(),  GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(0);
