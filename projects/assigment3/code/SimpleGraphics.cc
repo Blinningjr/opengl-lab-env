@@ -61,6 +61,9 @@ namespace Simple3DGraphics {
 		    this->window->Update();
 
 
+            this->gNodes[0].setRoll((float)glfwGetTime());
+
+
             this->shaderProgram->use();
             GLint cameraID = this->shaderProgram->getUniformId("camera");
             glUniformMatrix4fv(cameraID, 1, GL_FALSE, glm::value_ptr(this->camera->getCameraMatrix()));
@@ -78,9 +81,6 @@ namespace Simple3DGraphics {
 
 
     void SimpleGraphics::createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, glm::vec3 pos, GLfloat color[3]) {
-        glm::mat4 transform = glm::mat4(1.0f);
-        transform = glm::translate(transform, pos);
-
         std::shared_ptr<Mesh> mesh(new Mesh(vertices, indices));
 
         Reader reader;
@@ -100,7 +100,7 @@ namespace Simple3DGraphics {
         std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, color));
         
     
-        this->gNodes.push_back(GraphicsNode(mesh, simpleMaterial, transform));
+        this->gNodes.push_back(GraphicsNode(mesh, simpleMaterial, pos, 0, 0, 0));
     }
 
 
