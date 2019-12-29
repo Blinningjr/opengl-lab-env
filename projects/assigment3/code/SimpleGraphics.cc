@@ -33,22 +33,22 @@ namespace Simple3DGraphics {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
                 this->window->Close();
             }
-            if (key == GLFW_KEY_UP && !(mods & (1 << 0)) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+            if (key == GLFW_KEY_UP && mods != GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
                 this->zPos -= 0.02f;
             }
-            if (key == GLFW_KEY_DOWN && !(mods & (1 << 0)) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+            if (key == GLFW_KEY_DOWN && mods != GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
                 this->zPos += 0.02f;
             }
-            if (key == GLFW_KEY_LEFT && (action == 0 || action == GLFW_PRESS)) {
+            if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
                 this->xPos -= 0.02f;
             }
-            if (key == GLFW_KEY_RIGHT && (action == 0 || action == GLFW_PRESS)) {
+            if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
                 this->xPos += 0.02f;
             }
-            if (key == GLFW_KEY_UP && mods & (1 << 0) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+            if (key == GLFW_KEY_UP && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
                 this->yPos += 0.02f;
             }
-            if (key == GLFW_KEY_DOWN && mods & (1 << 0) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+            if (key == GLFW_KEY_DOWN && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
                 this->yPos -= 0.02f;
             }
         });
