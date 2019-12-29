@@ -33,6 +33,10 @@ namespace Simple3DGraphics {
 			Display::Window* window;
 
 
+			GLfloat xPos = 0;
+			GLfloat yPos = 0;
+			GLfloat zPos = -1;
+
 
 			void createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, glm::vec3 pos, GLfloat color[3]);
 

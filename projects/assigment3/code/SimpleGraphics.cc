@@ -29,8 +29,28 @@ namespace Simple3DGraphics {
     bool SimpleGraphics::Open() {
         App::Open();
         this->window = new Display::Window;
-        window->SetKeyPressFunction([this](int32, int32, int32, int32) {
-            this->window->Close();
+        window->SetKeyPressFunction([this](int32 key, int32 scancode, int32 action, int32 mods) {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+                this->window->Close();
+            }
+            if (key == GLFW_KEY_UP && !(mods & (1 << 0)) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+                this->zPos -= 0.02f;
+            }
+            if (key == GLFW_KEY_DOWN && !(mods & (1 << 0)) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+                this->zPos += 0.02f;
+            }
+            if (key == GLFW_KEY_LEFT && (action == 0 || action == GLFW_PRESS)) {
+                this->xPos -= 0.02f;
+            }
+            if (key == GLFW_KEY_RIGHT && (action == 0 || action == GLFW_PRESS)) {
+                this->xPos += 0.02f;
+            }
+            if (key == GLFW_KEY_UP && mods & (1 << 0) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+                this->yPos += 0.02f;
+            }
+            if (key == GLFW_KEY_DOWN && mods & (1 << 0) && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+                this->yPos -= 0.02f;
+            }
         });
 
         if (this->window->Open()) {
@@ -73,10 +93,16 @@ namespace Simple3DGraphics {
             blue[0] = 0;
             blue[1] = 0;
             blue[2] = 1;
+
+            GLfloat white[3];
+            white[0] = 1;
+            white[1] = 1;
+            white[2] = 1;
         
-            createBox(glm::vec3(0.3, 0, -1), red);
-            createBox(glm::vec3(-0.3, 0, -1), green);
-            createBox(glm::vec3(0, 0.3, -1), blue);
+            createBox(glm::vec3(0.3, 0, this->zPos), red);
+            createBox(glm::vec3(-0.3, 0, this->zPos), green);
+            createBox(glm::vec3(0, 0.3, this->zPos), blue);
+            createBox(glm::vec3(0, -0.3, this->zPos), white);
 
             return true;
         }
@@ -110,8 +136,13 @@ namespace Simple3DGraphics {
                 this->gNodes[i].setYawn((float)glfwGetTime());
                 this->gNodes[i].setRoll((float)glfwGetTime());
 
+                glm::vec3 pos = this->gNodes[i].getPosition();
+                this->gNodes[i].setPosition(glm::vec3(pos[0] + this->xPos, pos[1] + this->yPos, this->zPos));
+
                 this->gNodes[i].draw();
             }
+            this->xPos = 0;
+            this->yPos = 0;
 
 
             this->window->SwapBuffers();
