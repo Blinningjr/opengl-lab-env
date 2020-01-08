@@ -13,6 +13,7 @@ uniform vec3 color;
 
 void main() {
 	gl_Position = (projection * camera * object_transform * vec4(pos, 1));
-	float dist = sqrt(pow(gl_Position.x - light.x, 2.0) + pow(gl_Position.y - light.y, 2.0) + pow(gl_Position.z - light.z, 2.0));
+	float fragPos = vec3(object_transform * vec4(pos, 1.0));
+	float dist = sqrt(pow(fragPos.x - light.x, 2.0) + pow(fragPos.y - light.y, 2.0) + pow(fragPos.z - light.z, 2.0));
 	Color = (vec4(color, 1) - (dist * 1.0));
 }

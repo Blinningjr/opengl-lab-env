@@ -14,6 +14,7 @@ namespace Graphics3D {
 
             void update() override {}
 
+            glm::mat4 getLightSourceMatrix();
             glm::vec3 getLightSourcePos();
             GLfloat getIntensity();
             GLfloat* getColor();
@@ -24,6 +25,8 @@ namespace Graphics3D {
 
             GLfloat intensity;
             GLfloat color[3];
+
+            void updateM();
 
     };
 } 

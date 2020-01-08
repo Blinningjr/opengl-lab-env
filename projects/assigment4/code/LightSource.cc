@@ -12,11 +12,18 @@ namespace Graphics3D {
         this->color[1] = color[1];
         this->color[2] = color[2];
         this->intensity = intensity;
+
+        this->updateM();
     }
 
 
     LightSource::~LightSource() {
         
+    }
+
+
+    glm::mat4 LightSource::getLightSourceMatrix() {
+        return this->M;
     }
 
 
@@ -34,4 +41,8 @@ namespace Graphics3D {
         return this->color;
     }
 
+    void LightSource::updateM() {
+        this->M = glm::mat4(1);
+        this->M = glm::translate(this->M, this->lightSourcePos);
+    }
 }
