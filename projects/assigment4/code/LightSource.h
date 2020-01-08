@@ -14,6 +14,10 @@ namespace Graphics3D {
 
             void update() override {}
 
+            glm::vec3 getLightSourcePos();
+            GLfloat getIntensity();
+            GLfloat* getColor();
+
         private:
 
             glm::vec3 lightSourcePos;

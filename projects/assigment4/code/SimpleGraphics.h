@@ -2,10 +2,11 @@
 
 #include "core/app.h"
 #include "render/window.h"
-#include "Camera.h"
 #include <vector>
 
 #include "GraphicsNode.h"
+#include "Camera.h"
+#include "LightSource.h"
 
 
 namespace Graphics3D {
@@ -27,6 +28,8 @@ namespace Graphics3D {
 			glm::mat4 projection;
 
 			Camera* camera;
+
+			LightSource* lightSource;
 
 			std::shared_ptr<ShaderProgram> shaderProgram;
 

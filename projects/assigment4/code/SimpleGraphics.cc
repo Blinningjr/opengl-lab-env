@@ -23,6 +23,7 @@ namespace Graphics3D {
 
     SimpleGraphics::~SimpleGraphics() {
         delete[] this->camera;
+        delete[] this->lightSource;
     }
 
 
@@ -55,10 +56,16 @@ namespace Graphics3D {
 
         if (this->window->Open()) {
 
+            GLfloat white[3];
+            white[0] = 1;
+            white[1] = 1;
+            white[2] = 1;
+
             
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
             this->camera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
+            this->lightSource = new LightSource(glm::vec3(0, 0, 1), white, 1);
 
 
             Reader reader;
@@ -93,11 +100,6 @@ namespace Graphics3D {
             blue[0] = 0;
             blue[1] = 0;
             blue[2] = 1;
-
-            GLfloat white[3];
-            white[0] = 1;
-            white[1] = 1;
-            white[2] = 1;
         
             createBox(glm::vec3(0.3, 0, this->zPos), red);
             createBox(glm::vec3(-0.3, 0, this->zPos), green);
@@ -125,8 +127,8 @@ namespace Graphics3D {
             glUniformMatrix4fv(cameraID, 1, GL_FALSE, glm::value_ptr(this->camera->getCameraMatrix()));
 
             GLint lightID = this->shaderProgram->getUniformId("light");
-            glm::vec3 cameraPos = this->camera->getCameraPos();
-            glUniform3f(lightID, cameraPos[0], cameraPos[1], cameraPos[2]);
+            glm::vec3 lightPos = this->lightSource->getLightSourcePos();
+            glUniform3f(lightID, lightPos[0], lightPos[1], lightPos[2]);
 
 
             glEnable(GL_CULL_FACE);  

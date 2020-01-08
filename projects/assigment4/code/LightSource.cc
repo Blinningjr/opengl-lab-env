@@ -19,4 +19,19 @@ namespace Graphics3D {
         
     }
 
+
+    glm::vec3 LightSource::getLightSourcePos() {
+        return this->lightSourcePos;
+    }
+
+
+    GLfloat LightSource::getIntensity() {
+        return this->intensity;
+    }
+
+
+    GLfloat* LightSource::getColor() {
+        return this->color;
+    }
+
 }
