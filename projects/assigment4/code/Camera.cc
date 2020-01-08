@@ -9,6 +9,7 @@ namespace Graphics3D {
     Camera::Camera(glm::vec3 cameraPos, glm::vec3 cameraDirection) {
         this->cameraPos = cameraPos;
         this->cameraDirection = cameraDirection;
+        
     }
 
 
@@ -18,12 +19,18 @@ namespace Graphics3D {
 
 
     glm::mat4 Camera::getCameraMatrix() {
-        return glm::lookAt(this->cameraPos, this->cameraPos + this->cameraDirection, glm::vec3(0, 1, 0));
+        this->updateM();
+        return this->M;;
     }
 
 
     glm::vec3 Camera::getCameraPos() {
         return this->cameraPos;
     }
+
+    void Camera::updateM() { 
+        this->M = glm::lookAt(this->cameraPos, 
+            this->cameraPos + this->cameraDirection, glm::vec3(0, 1, 0));
+    }   
 
 }
