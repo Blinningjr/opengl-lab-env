@@ -7,11 +7,11 @@
 
 #include "Material.h"
 #include "Mesh.h"
-
+#include "Node.h"
 
 
 namespace Graphics3D {
-	class GraphicsNode {
+	class GraphicsNode : public Node {
 		public:
 
             GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material,  glm::vec3 position, glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn);
@@ -19,27 +19,10 @@ namespace Graphics3D {
 
             void draw();
 
-            glm::vec3 getPosition();
-            glm::vec3 getScale();
-            GLfloat getPitch();
-            GLfloat getRoll();
-            GLfloat getYawn();
-
-            void setPosition(glm::vec3 position);
-            void setScale(glm::vec3 scale);
-            void setPitch(GLfloat pitch);
-            void setRoll(GLfloat roll);
-            void setYawn(GLfloat yawn);
+            void update() override {}
 
         private:
 
-            glm::vec3 position;
-            glm::vec3 scale;
-            GLfloat pitch;
-            GLfloat roll;
-            GLfloat yawn;
-
-            glm::mat4 transform;
             std::shared_ptr<Material> material;
             std::shared_ptr<Mesh> mesh;
         
