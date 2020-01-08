@@ -21,7 +21,25 @@ namespace Graphics3D {
 
             void update() override {}
 
+            glm::vec3 getPosition();
+            glm::vec3 getScale();
+            GLfloat getPitch();
+            GLfloat getRoll();
+            GLfloat getYawn();
+
+            void setPosition(glm::vec3 position);
+            void setScale(glm::vec3 scale);
+            void setPitch(GLfloat pitch);
+            void setRoll(GLfloat roll);
+            void setYawn(GLfloat yawn);
+
         private:
+
+            glm::vec3 position;
+            glm::vec3 scale;
+            GLfloat pitch;
+            GLfloat roll;
+            GLfloat yawn;
 
             std::shared_ptr<Material> material;
             std::shared_ptr<Mesh> mesh;

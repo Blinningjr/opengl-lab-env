@@ -34,11 +34,67 @@ namespace Graphics3D {
         this->mesh->setupBuffers();
         this->material->applyMaterial();
 
+        this->M = glm::mat4(1);
+        this->M = glm::translate(this->M, this->position);
+        this->M = glm::rotate(this->M, this->pitch, glm::vec3(1.0f, 0.0f, 0.0f));
+        this->M = glm::rotate(this->M, this->roll, glm::vec3(0.0f, 0.0f, 1.0f));
+        this->M = glm::rotate(this->M, this->yawn, glm::vec3(0.0f, 1.0f, 0.0f));
+        this->M = glm::scale(this->M, this->scale);
+
         GLint objTransformID = this->material->getUniformId("object_transform");
         glUniformMatrix4fv(objTransformID, 1, GL_FALSE, glm::value_ptr(this->M));
         
         glDrawElements(GL_TRIANGLES, mesh->getIndicesSize(),  GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(0);
+    }
+
+    glm::vec3 GraphicsNode::getPosition() {
+        return this->position;
+    }
+
+
+    glm::vec3 GraphicsNode::getScale() {
+        return this->scale;
+    }
+
+
+    GLfloat GraphicsNode::getPitch() {
+        return this->pitch;
+    }
+
+
+    GLfloat GraphicsNode::getRoll() {
+        return this->roll;
+    }
+
+
+    GLfloat GraphicsNode::getYawn() {
+        return this->yawn;
+    }
+
+
+    void GraphicsNode::setPosition(glm::vec3 position) {
+        this->position = position;
+    }
+
+
+    void GraphicsNode::setScale(glm::vec3 scale) {
+        this->scale = scale;
+    }
+
+
+    void GraphicsNode::setPitch(GLfloat pitch) {
+        this->pitch = pitch;
+    }
+
+
+    void GraphicsNode::setRoll(GLfloat roll) {
+        this->roll = roll;
+    }
+
+
+    void GraphicsNode::setYawn(GLfloat yawn) {
+        this->yawn = yawn;
     }
 }
