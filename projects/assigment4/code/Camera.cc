@@ -1,4 +1,6 @@
+#include "config.h"
 #include "Camera.h"
+
 
 #include <glm/gtc/matrix_transform.hpp> 
 
@@ -6,15 +8,67 @@
 namespace Graphics3D {
 
 
-    Camera::Camera(glm::vec3 cameraPos, glm::vec3 cameraDirection) {
+    Camera::Camera(Display::Window* window, glm::vec3 cameraPos, glm::vec3 cameraDirection) {
         this->cameraPos = cameraPos;
         this->cameraDirection = cameraDirection;
-        
+        this->window = window;
+        this->deltaTime = 0;
+
+        this->lastX = 512;
+        this->lastY = 384;
+
+        this->yaw = 0;
+        this->pitch = 0;
+        this->firstMouse = true;
+
+        window->SetKeyPressFunction([this](int32 key, int32 scancode, int32 action, int32 mods) {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+                this->window->Close();
+            }
+            float cameraSpeed = 2.5f * deltaTime;
+            if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
+                this->cameraPos += cameraSpeed * this->cameraDirection;
+            if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))
+                this->cameraPos -= cameraSpeed * this->cameraDirection;
+            if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
+                this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+            if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
+                this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+        });
+
+        window->SetMouseMoveFunction([this](float64 xPos, float64 yPos) {
+            if(this->firstMouse) {
+                this->lastX = xPos;
+                this->lastY = yPos;
+                this->firstMouse = false;
+            }
+            float xoffset = xPos - lastX;
+            float yoffset = lastY - yPos;
+            lastX = xPos;
+            lastY = yPos;
+
+            const float sensitivity = 0.25f;
+            xoffset *= sensitivity;
+            yoffset *= sensitivity;
+
+            this->yaw   += xoffset;
+            this->pitch += yoffset;
+
+            if(this->pitch  > 89.0f)
+                this->pitch  =  89.0f;
+            if(this->pitch  < -89.0f) 
+                this->pitch  = -89.0f;
+            glm::vec3 direction;
+            direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            direction.y = sin(glm::radians(pitch));
+            direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+            this->cameraDirection = glm::normalize(direction);
+        });
     }
 
 
     Camera::~Camera() {
-        
+        delete[] this->window;
     }
 
 
@@ -28,9 +82,13 @@ namespace Graphics3D {
         return this->cameraPos;
     }
 
+    void Camera::setDeltaTime(float deltaTime) {
+        this->deltaTime = deltaTime;
+    }
+
     void Camera::updateM() { 
         this->M = glm::lookAt(this->cameraPos, 
-            this->cameraPos + this->cameraDirection, glm::vec3(0, 1, 0));
+            this->cameraPos + this->cameraDirection, this->cameraUp);
     }   
 
 }

@@ -35,6 +35,9 @@ namespace Graphics3D {
 
 			Display::Window* window;
 
+			float deltaTime;
+			float lastFrame;
+
 
 			GLfloat xPos = 0;
 			GLfloat yPos = 0;

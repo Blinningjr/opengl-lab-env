@@ -18,7 +18,8 @@ namespace Graphics3D {
 
 
     SimpleGraphics::SimpleGraphics() {
-
+        this->deltaTime = 0;
+        this->lastFrame = 0;
     }
 
 
@@ -31,29 +32,6 @@ namespace Graphics3D {
     bool SimpleGraphics::Open() {
         App::Open();
         this->window = new Display::Window;
-        window->SetKeyPressFunction([this](int32 key, int32 scancode, int32 action, int32 mods) {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-                this->window->Close();
-            }
-            if (key == GLFW_KEY_UP && mods != GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-                this->zPos -= 0.02f;
-            }
-            if (key == GLFW_KEY_DOWN && mods != GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-                this->zPos += 0.02f;
-            }
-            if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-                this->xPos -= 0.02f;
-            }
-            if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-                this->xPos += 0.02f;
-            }
-            if (key == GLFW_KEY_UP && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-                this->yPos += 0.02f;
-            }
-            if (key == GLFW_KEY_DOWN && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-                this->yPos -= 0.02f;
-            }
-        });
 
         if (this->window->Open()) {
 
@@ -65,7 +43,7 @@ namespace Graphics3D {
             
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
-            this->camera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
+            this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
             this->lightSource = new LightSource(glm::vec3(0, 0, -this->zPos), white, 1);
 
 
@@ -103,13 +81,21 @@ namespace Graphics3D {
             blue[2] = 1;
         
             std::shared_ptr<SimpleMaterial> simpleMaterialRed(new SimpleMaterial(this->shaderProgram, red));  
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(-0.3, 0, this->zPos)));
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, this->zPos)));
 
             std::shared_ptr<SimpleMaterial> simpleMaterialGreen(new SimpleMaterial(this->shaderProgram, green));  
             this->gNodes.push_back(Cube(0.2, 0.5, 0.1, simpleMaterialGreen, glm::vec3(0.2, 0.2, this->zPos)));
 
             std::shared_ptr<SimpleMaterial> simpleMaterialBlue(new SimpleMaterial(this->shaderProgram, blue));  
             this->gNodes.push_back(Cube(0.1, 0.5, 0.5, simpleMaterialBlue, glm::vec3(0, 0.2, -1)));
+
+
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, -1)));
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, 1)));
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, -1, 0)));
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 1, 0)));
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(-1, 0, 0)));
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(1, 0, 0)));
 
             return true;
         }
@@ -122,6 +108,12 @@ namespace Graphics3D {
         while (this->window->IsOpen()) {
             glClear(GL_COLOR_BUFFER_BIT);
 		    this->window->Update();
+
+
+            float currentFrame = glfwGetTime();
+            this->deltaTime = currentFrame - this->lastFrame;
+            this->camera->setDeltaTime(this->deltaTime);
+            this->lastFrame = currentFrame;
 
             this->shaderProgram->use();
 
