@@ -11,7 +11,8 @@ namespace Graphics3D {
 //          method of the material, and then executes a draw call.
 
 
-    GraphicsNode::GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::vec3 position, glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn) {
+    GraphicsNode::GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, glm::vec3 position, 
+            glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn) {
         this->mesh = mesh;
         this->material = material;
         this->position = position;

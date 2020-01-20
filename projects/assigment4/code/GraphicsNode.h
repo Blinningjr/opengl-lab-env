@@ -14,7 +14,8 @@ namespace Graphics3D {
 	class GraphicsNode : public Node {
 		public:
 
-            GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material,  glm::vec3 position, glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn);
+            GraphicsNode(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material,  glm::vec3 position,
+                glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn);
             ~GraphicsNode();
 
             void draw();
@@ -33,7 +34,7 @@ namespace Graphics3D {
             void setRoll(GLfloat roll);
             void setYawn(GLfloat yawn);
 
-        private:
+        protected:
 
             glm::vec3 position;
             glm::vec3 scale;

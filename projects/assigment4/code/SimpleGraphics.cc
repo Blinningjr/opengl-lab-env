@@ -7,6 +7,7 @@
 #include "ShaderType.h"
 #include "Reader.h"
 #include "Camera.h"
+#include "Cube.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -101,10 +102,14 @@ namespace Graphics3D {
             blue[1] = 0;
             blue[2] = 1;
         
-            createBox(glm::vec3(0.3, 0, this->zPos), red);
-            createBox(glm::vec3(-0.3, 0, this->zPos), green);
-            createBox(glm::vec3(0, 0.3, this->zPos), blue);
-            createBox(glm::vec3(0, -0.3, this->zPos), white);
+            std::shared_ptr<SimpleMaterial> simpleMaterialRed(new SimpleMaterial(this->shaderProgram, red));  
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(-0.3, 0, this->zPos)));
+
+            std::shared_ptr<SimpleMaterial> simpleMaterialGreen(new SimpleMaterial(this->shaderProgram, green));  
+            this->gNodes.push_back(Cube(0.2, 0.5, 0.1, simpleMaterialGreen, glm::vec3(0.2, 0.2, this->zPos)));
+
+            std::shared_ptr<SimpleMaterial> simpleMaterialBlue(new SimpleMaterial(this->shaderProgram, blue));  
+            this->gNodes.push_back(Cube(0.1, 0.5, 0.5, simpleMaterialBlue, glm::vec3(0, 0.2, -1)));
 
             return true;
         }
@@ -134,13 +139,6 @@ namespace Graphics3D {
             glEnable(GL_CULL_FACE);  
 
             for(int i = 0; i < this->gNodes.size(); i++) {
-                this->gNodes[i].setPitch((float)glfwGetTime());
-                this->gNodes[i].setYawn((float)glfwGetTime());
-                this->gNodes[i].setRoll((float)glfwGetTime());
-
-                glm::vec3 pos = this->gNodes[i].getPosition();
-                this->gNodes[i].setPosition(glm::vec3(pos[0] + this->xPos, pos[1] + this->yPos, this->zPos));
-
                 this->gNodes[i].draw();
             }
             this->xPos = 0;
@@ -150,92 +148,4 @@ namespace Graphics3D {
             this->window->SwapBuffers();
         }
     }
-
-
-    void SimpleGraphics::createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, glm::vec3 pos, GLfloat color[3]) {
-        std::shared_ptr<Mesh> mesh(new Mesh(vertices, indices));
-
-        std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(this->shaderProgram, color));      
-    
-        this->gNodes.push_back(GraphicsNode(mesh, simpleMaterial, pos, glm::vec3(1,1,1), 0, 0, 0));
-    }
-
-
-    void SimpleGraphics::createBox(glm::vec3 pos, GLfloat color[3]) {
-        Vertex vertex0;
-        vertex0.pos = {-0.1, -0.1, -0.1};
-        Vertex vertex1;
-        vertex1.pos = {0.1, -0.1, -0.1};
-        Vertex vertex2;
-        vertex2.pos = {0.1, 0.1, -0.1};
-        Vertex vertex3;
-        vertex3.pos = {-0.1, 0.1, -0.1};
-
-        Vertex vertex4;
-        vertex4.pos = {-0.1, -0.1, 0.1};
-        Vertex vertex5;
-        vertex5.pos = {0.1, -0.1, 0.1};
-        Vertex vertex6;
-        vertex6.pos = {0.1, 0.1, 0.1};
-        Vertex vertex7;
-        vertex7.pos = {-0.1, 0.1, 0.1};
-
-
-        std::vector<Vertex> vertices;
-        vertices.push_back(vertex0);
-        vertices.push_back(vertex1);
-        vertices.push_back(vertex2);
-        vertices.push_back(vertex3);
-        vertices.push_back(vertex4);
-        vertices.push_back(vertex5);
-        vertices.push_back(vertex6);
-        vertices.push_back(vertex7);
-        
-        std::vector<unsigned int> indices;
-        indices.push_back(0);
-        indices.push_back(2);
-        indices.push_back(1);
-        indices.push_back(0);
-        indices.push_back(3);
-        indices.push_back(2);
-
-        indices.push_back(4);
-        indices.push_back(5);
-        indices.push_back(6);
-        indices.push_back(4);
-        indices.push_back(6);
-        indices.push_back(7);
-
-        indices.push_back(3);
-        indices.push_back(6);
-        indices.push_back(2);
-        indices.push_back(3);
-        indices.push_back(7);
-        indices.push_back(6);
-
-        indices.push_back(2);
-        indices.push_back(5);
-        indices.push_back(1);
-        indices.push_back(2);
-        indices.push_back(6);
-        indices.push_back(5);
-
-        indices.push_back(0);
-        indices.push_back(1);
-        indices.push_back(5);
-        indices.push_back(0);
-        indices.push_back(5);
-        indices.push_back(4);
-
-        indices.push_back(0);
-        indices.push_back(7);
-        indices.push_back(3);
-        indices.push_back(0);
-        indices.push_back(4);
-        indices.push_back(7);
-
-
-        createGNode(vertices, indices, pos, color);
-    }
-
 }
