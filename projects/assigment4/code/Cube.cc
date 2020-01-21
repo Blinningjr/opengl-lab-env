@@ -31,79 +31,182 @@ namespace Graphics3D {
         float halfHight = hight/2;
         float halfDepth = depth/2;
 
-        Vertex vertex0;
-        vertex0.pos = {-halfWidth, -halfHight, -halfDepth};
-        Vertex vertex1;
-        vertex1.pos = {halfWidth, -halfHight, -halfDepth};
-        Vertex vertex2;
-        vertex2.pos = {halfWidth, halfHight, -halfDepth};
-        Vertex vertex3;
-        vertex3.pos = {-halfWidth, halfHight, -halfDepth};
+        glm::vec3 vertex0(-halfWidth, -halfHight, -halfDepth);
+        glm::vec3 vertex1(halfWidth, -halfHight, -halfDepth);
+        glm::vec3 vertex2(halfWidth, halfHight, -halfDepth);
+        glm::vec3 vertex3(-halfWidth, halfHight, -halfDepth);
 
-        Vertex vertex4;
-        vertex4.pos = {-halfWidth, -halfHight, halfDepth};
-        Vertex vertex5;
-        vertex5.pos = {halfWidth, -halfHight, halfDepth};
-        Vertex vertex6;
-        vertex6.pos = {halfWidth, halfHight, halfDepth};
-        Vertex vertex7;
-        vertex7.pos = {-halfWidth, halfHight, halfDepth};
+        glm::vec3 vertex4(-halfWidth, -halfHight, halfDepth);
+        glm::vec3 vertex5(halfWidth, -halfHight, halfDepth);
+        glm::vec3 vertex6(halfWidth, halfHight, halfDepth);
+        glm::vec3 vertex7(-halfWidth, halfHight, halfDepth);
+
+        glm::vec3 normal0(1, 0, 0);
+        glm::vec3 normal1(-1, 0, 0);
+        glm::vec3 normal2(0, 1, 0);
+        glm::vec3 normal3(0, -1, 0);
+        glm::vec3 normal4(0, 0, 1);
+        glm::vec3 normal5(0, 0, -1);
 
 
         std::vector<Vertex> vertices;
-        vertices.push_back(vertex0);
-        vertices.push_back(vertex1);
-        vertices.push_back(vertex2);
-        vertices.push_back(vertex3);
-        vertices.push_back(vertex4);
-        vertices.push_back(vertex5);
-        vertices.push_back(vertex6);
-        vertices.push_back(vertex7);
+
+        vertices.push_back({
+            vertex0,
+            normal5,
+        });
+        vertices.push_back({
+            vertex2,
+            normal5,
+        });
+        vertices.push_back({
+            vertex1,
+            normal5,
+        });
+        vertices.push_back({
+            vertex0,
+            normal5,
+        });
+        vertices.push_back({
+            vertex3,
+            normal5,
+        });
+        vertices.push_back({
+            vertex2,
+            normal5,
+        });
+
+
+        vertices.push_back({
+            vertex4,
+            normal4,
+        });
+        vertices.push_back({
+            vertex5,
+            normal4,
+        });
+        vertices.push_back({
+            vertex6,
+            normal4,
+        });
+        vertices.push_back({
+            vertex4,
+            normal4,
+        });
+        vertices.push_back({
+            vertex6,
+            normal4,
+        });
+        vertices.push_back({
+            vertex7,
+            normal4,
+        });
         
-        std::vector<unsigned int> indices;
-        indices.push_back(0);
-        indices.push_back(2);
-        indices.push_back(1);
-        indices.push_back(0);
-        indices.push_back(3);
-        indices.push_back(2);
 
-        indices.push_back(4);
-        indices.push_back(5);
-        indices.push_back(6);
-        indices.push_back(4);
-        indices.push_back(6);
-        indices.push_back(7);
+        vertices.push_back({
+            vertex3,
+            normal2,
+        });
+        vertices.push_back({
+            vertex6,
+            normal2,
+        });
+        vertices.push_back({
+            vertex2,
+            normal2,
+        });
+        vertices.push_back({
+            vertex3,
+            normal2,
+        });
+        vertices.push_back({
+            vertex7,
+            normal2,
+        });
+        vertices.push_back({
+            vertex6,
+            normal2,
+        });
 
-        indices.push_back(3);
-        indices.push_back(6);
-        indices.push_back(2);
-        indices.push_back(3);
-        indices.push_back(7);
-        indices.push_back(6);
 
-        indices.push_back(2);
-        indices.push_back(5);
-        indices.push_back(1);
-        indices.push_back(2);
-        indices.push_back(6);
-        indices.push_back(5);
+        vertices.push_back({
+            vertex2,
+            normal0,
+        });
+        vertices.push_back({
+            vertex5,
+            normal0,
+        });
+        vertices.push_back({
+            vertex1,
+            normal0,
+        });
+        vertices.push_back({
+            vertex2,
+            normal0,
+        });
+        vertices.push_back({
+            vertex6,
+            normal0,
+        });
+        vertices.push_back({
+            vertex5,
+            normal0,
+        });
 
-        indices.push_back(0);
-        indices.push_back(1);
-        indices.push_back(5);
-        indices.push_back(0);
-        indices.push_back(5);
-        indices.push_back(4);
 
-        indices.push_back(0);
-        indices.push_back(7);
-        indices.push_back(3);
-        indices.push_back(0);
-        indices.push_back(4);
-        indices.push_back(7);
+        vertices.push_back({
+            vertex0,
+            normal3,
+        });
+        vertices.push_back({
+            vertex1,
+            normal3,
+        });
+        vertices.push_back({
+            vertex5,
+            normal3,
+        });
+        vertices.push_back({
+            vertex0,
+            normal3,
+        });
+        vertices.push_back({
+            vertex5,
+            normal3,
+        });
+        vertices.push_back({
+            vertex4,
+            normal3,
+        });
 
-        std::shared_ptr<Mesh> mesh(new Mesh(vertices, indices));
+        
+        vertices.push_back({
+            vertex0,
+            normal1,
+        });
+        vertices.push_back({
+            vertex7,
+            normal1,
+        });
+        vertices.push_back({
+            vertex3,
+            normal1,
+        });
+        vertices.push_back({
+            vertex0,
+            normal1,
+        });
+        vertices.push_back({
+            vertex4,
+            normal1,
+        });
+        vertices.push_back({
+            vertex7,
+            normal1,
+        });
+
+        std::shared_ptr<Mesh> mesh(new Mesh(vertices));
         return mesh;
     }
 }

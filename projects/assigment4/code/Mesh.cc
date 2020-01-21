@@ -12,13 +12,11 @@ namespace Graphics3D {
     // ● The idea with this (and all other) resource classes is that they should be sharablebetween renderable objects.
 
 
-    Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
+    Mesh::Mesh(std::vector<Vertex> vertices) {
         this->vertices = vertices;
-        this->indices = indices;
 
         glGenVertexArrays(1, &this->vao);
         glGenBuffers(1, &this->vbo);
-        glGenBuffers(1, &this->ebo);
     }
 
 
@@ -36,16 +34,13 @@ namespace Graphics3D {
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, pos));
     }
 
 
-    unsigned int Mesh::getIndicesSize() {
-        return this->indices.size();
+    unsigned int Mesh::getSize() {
+        return this->vertices.size();
     }
 
 }

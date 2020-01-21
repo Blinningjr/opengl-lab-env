@@ -35,6 +35,8 @@ namespace Graphics3D {
 
         if (this->window->Open()) {
 
+            glEnable(GL_DEPTH_TEST);  
+
             GLfloat white[3];
             white[0] = 1;
             white[1] = 1;
@@ -106,7 +108,7 @@ namespace Graphics3D {
 
     void SimpleGraphics::Run() {
         while (this->window->IsOpen()) {
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		    this->window->Update();
 
 

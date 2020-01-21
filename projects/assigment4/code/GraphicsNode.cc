@@ -45,7 +45,8 @@ namespace Graphics3D {
         GLint objTransformID = this->material->getUniformId("object_transform");
         glUniformMatrix4fv(objTransformID, 1, GL_FALSE, glm::value_ptr(this->M));
         
-        glDrawElements(GL_TRIANGLES, mesh->getIndicesSize(),  GL_UNSIGNED_INT, 0);
+        // glDrawElements(GL_TRIANGLES, mesh->getIndicesSize(),  GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, this->mesh->getSize());
 
         glBindVertexArray(0);
     }
