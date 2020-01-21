@@ -46,6 +46,7 @@ namespace Graphics3D {
 			GLint lightIntensityID;
 			GLint lightColorID;
 			GLint lightPosID;
+			GLint cameraPosID;
 
 			void createGNode(std::vector<Vertex> vertices,  std::vector<unsigned int> indices, glm::vec3 pos, GLfloat color[3]);
 

@@ -42,12 +42,12 @@ namespace Graphics3D {
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
             this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-            this->lightSource = new LightSource(glm::vec3(0, 0, 0), white, 1);
+            this->lightSource = new LightSource(glm::vec3(0, 0, 5), white, 1);
 
 
             Reader reader;
-            GLchar* vst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.vert");
-            GLchar* fst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment3/code/SimpleShader.frag");
+            GLchar* vst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment4/code/SimpleShader.vert");
+            GLchar* fst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment4/code/SimpleShader.frag");
 
             std::shared_ptr<Shader> vShader(new Shader(vst, vertexShader));
             std::shared_ptr<Shader> fShader(new Shader(fst, fragmentShader));
@@ -59,9 +59,10 @@ namespace Graphics3D {
             std::shared_ptr<ShaderProgram> shaderProgram(new ShaderProgram(shaders));
             this->shaderProgram = shaderProgram;
 
-            this->lightPosID = this->shaderProgram->getUniformId("lpos");
-            this->lightColorID = this->shaderProgram->getUniformId("lcolor");
-            this->lightIntensityID = this->shaderProgram->getUniformId("lintensity");
+            this->lightPosID = this->shaderProgram->getUniformId("lightPos");
+            this->lightColorID = this->shaderProgram->getUniformId("lightColor");
+            this->lightIntensityID = this->shaderProgram->getUniformId("lightIntensity");
+            this->cameraPosID = this->shaderProgram->getUniformId("cameraPos");
 
 
             // set clear color to gray
@@ -74,21 +75,14 @@ namespace Graphics3D {
             glm::vec3 blue(0, 0, 1);
         
             std::shared_ptr<SimpleMaterial> simpleMaterialRed(new SimpleMaterial(this->shaderProgram, red));  
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, -0.5)));
+            this->gNodes.push_back(Cube(0.1, 0.1, 0.1, simpleMaterialRed, glm::vec3(0, 0, 0)));
 
             std::shared_ptr<SimpleMaterial> simpleMaterialGreen(new SimpleMaterial(this->shaderProgram, green));  
-            this->gNodes.push_back(Cube(0.2, 0.5, 0.1, simpleMaterialGreen, glm::vec3(0.2, 0.2, -0.5)));
+            this->gNodes.push_back(Cube(10, 0.1, 10, simpleMaterialGreen, glm::vec3(0, -0.2, 0)));
 
             std::shared_ptr<SimpleMaterial> simpleMaterialBlue(new SimpleMaterial(this->shaderProgram, blue));  
-            this->gNodes.push_back(Cube(0.1, 0.5, 0.5, simpleMaterialBlue, glm::vec3(0, 0.2, -0.5)));
+            this->gNodes.push_back(Cube(0.1, 0.1, 0.1, simpleMaterialBlue, glm::vec3(0, 0, 1)));
 
-
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, -1)));
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, 1)));
-            this->gNodes.push_back(Cube(10, 0.1, 10, simpleMaterialRed, glm::vec3(0, -1, 0)));
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 1, 0)));
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(-1, 0, 0)));
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(1, 0, 0)));
 
             return true;
         }
