@@ -11,11 +11,9 @@ namespace Graphics3D {
 //          ○ Color the pixels according to the uniform color set by the material.
 
 
-    SimpleMaterial::SimpleMaterial(std::shared_ptr<ShaderProgram> shaderProgram, GLfloat color[3]) {
+    SimpleMaterial::SimpleMaterial(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 color) {
         this->shaderProgram = shaderProgram;
-        this->color[0] = color[0];
-        this->color[1] = color[1];
-        this->color[2] = color[2];
+        this->color = color;
     }
 
 

@@ -9,7 +9,7 @@ namespace Graphics3D {
 	class LightSource : public Node {
 		public:
 
-            LightSource(glm::vec3 lightSourcePos, GLfloat color[3], GLfloat intensity);
+            LightSource(glm::vec3 lightSourcePos, glm::vec3 color, GLfloat intensity);
             ~LightSource();
 
             void update() override {}
@@ -17,14 +17,14 @@ namespace Graphics3D {
             glm::mat4 getLightSourceMatrix();
             glm::vec3 getLightSourcePos();
             GLfloat getIntensity();
-            GLfloat* getColor();
+            glm::vec3 getColor();
 
         private:
 
             glm::vec3 lightSourcePos;
 
             GLfloat intensity;
-            GLfloat color[3];
+            glm::vec3 color;
 
             void updateM();
 

@@ -37,16 +37,12 @@ namespace Graphics3D {
 
             glEnable(GL_DEPTH_TEST);  
 
-            GLfloat white[3];
-            white[0] = 1;
-            white[1] = 1;
-            white[2] = 1;
-
+            glm::vec3 white(1, 1, 1);
             
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
             this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-            this->lightSource = new LightSource(glm::vec3(0, 0, -this->zPos), white, 1);
+            this->lightSource = new LightSource(glm::vec3(0, 0, 0), white, 1);
 
 
             Reader reader;
@@ -63,38 +59,33 @@ namespace Graphics3D {
             std::shared_ptr<ShaderProgram> shaderProgram(new ShaderProgram(shaders));
             this->shaderProgram = shaderProgram;
 
+            this->lightPosID = this->shaderProgram->getUniformId("lpos");
+            this->lightColorID = this->shaderProgram->getUniformId("lcolor");
+            this->lightIntensityID = this->shaderProgram->getUniformId("lintensity");
+
 
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-            GLfloat red[3];
-            red[0] = 1;
-            red[1] = 0;
-            red[2] = 0;
+            glm::vec3 red(1, 0, 0);
 
-            GLfloat green[3];
-            green[0] = 0;
-            green[1] = 1;
-            green[2] = 0;
+            glm::vec3 green(0, 1, 0);
 
-            GLfloat blue[3];
-            blue[0] = 0;
-            blue[1] = 0;
-            blue[2] = 1;
+            glm::vec3 blue(0, 0, 1);
         
             std::shared_ptr<SimpleMaterial> simpleMaterialRed(new SimpleMaterial(this->shaderProgram, red));  
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, this->zPos)));
+            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, -0.5)));
 
             std::shared_ptr<SimpleMaterial> simpleMaterialGreen(new SimpleMaterial(this->shaderProgram, green));  
-            this->gNodes.push_back(Cube(0.2, 0.5, 0.1, simpleMaterialGreen, glm::vec3(0.2, 0.2, this->zPos)));
+            this->gNodes.push_back(Cube(0.2, 0.5, 0.1, simpleMaterialGreen, glm::vec3(0.2, 0.2, -0.5)));
 
             std::shared_ptr<SimpleMaterial> simpleMaterialBlue(new SimpleMaterial(this->shaderProgram, blue));  
-            this->gNodes.push_back(Cube(0.1, 0.5, 0.5, simpleMaterialBlue, glm::vec3(0, 0.2, -1)));
+            this->gNodes.push_back(Cube(0.1, 0.5, 0.5, simpleMaterialBlue, glm::vec3(0, 0.2, -0.5)));
 
 
             this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, -1)));
             this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 0, 1)));
-            this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, -1, 0)));
+            this->gNodes.push_back(Cube(10, 0.1, 10, simpleMaterialRed, glm::vec3(0, -1, 0)));
             this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(0, 1, 0)));
             this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(-1, 0, 0)));
             this->gNodes.push_back(Cube(0.3, 0.1, 0.4, simpleMaterialRed, glm::vec3(1, 0, 0)));
@@ -111,7 +102,6 @@ namespace Graphics3D {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		    this->window->Update();
 
-
             float currentFrame = glfwGetTime();
             this->deltaTime = currentFrame - this->lastFrame;
             this->camera->setDeltaTime(this->deltaTime);
@@ -125,9 +115,12 @@ namespace Graphics3D {
             GLint cameraID = this->shaderProgram->getUniformId("camera");
             glUniformMatrix4fv(cameraID, 1, GL_FALSE, glm::value_ptr(this->camera->getCameraMatrix()));
 
-            GLint lightID = this->shaderProgram->getUniformId("light");
+            
             glm::vec3 lightPos = this->lightSource->getLightSourcePos();
-            glUniform3f(lightID, lightPos[0], lightPos[1], lightPos[2]);
+            glUniform3f(this->lightPosID, lightPos[0], lightPos[1], lightPos[2]);
+            glm::vec3 lightColor = this->lightSource->getColor();
+            glUniform3f(this->lightColorID, lightColor[0], lightColor[1], lightColor[2]);
+            glUniform1f(this->lightIntensityID, this->lightSource->getIntensity());
 
 
             glEnable(GL_CULL_FACE);  
@@ -135,8 +128,7 @@ namespace Graphics3D {
             for(int i = 0; i < this->gNodes.size(); i++) {
                 this->gNodes[i].draw();
             }
-            this->xPos = 0;
-            this->yPos = 0;
+
 
 
             this->window->SwapBuffers();
