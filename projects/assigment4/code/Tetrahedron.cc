@@ -42,10 +42,10 @@ namespace Graphics3D {
         glm::vec3 vertexC(0, -r, size);
         glm::vec3 vertexD(0, size, 0);
 
-        glm::vec3 normal0 = this->crossProduct(vertexA, vertexC, vertexB);
-        glm::vec3 normal1 = this->crossProduct(vertexA, vertexB, vertexD);
-        glm::vec3 normal2 = this->crossProduct(vertexB, vertexC, vertexD);
-        glm::vec3 normal3 = this->crossProduct(vertexC, vertexA, vertexD);
+        glm::vec3 normal0 = this->crossProduct(vertexA, vertexB, vertexC);
+        glm::vec3 normal1 = this->crossProduct(vertexA, vertexD, vertexB);
+        glm::vec3 normal2 = this->crossProduct(vertexB, vertexD, vertexC);
+        glm::vec3 normal3 = this->crossProduct(vertexC, vertexD, vertexA);
 
 
         std::vector<Vertex> vertices;
@@ -55,11 +55,11 @@ namespace Graphics3D {
             normal0,
         });
         vertices.push_back({
-            vertexC,
+            vertexB,
             normal0,
         });
         vertices.push_back({
-            vertexB,
+            vertexC,
             normal0,
         });
 
@@ -68,11 +68,11 @@ namespace Graphics3D {
             normal1,
         });
         vertices.push_back({
-            vertexB,
+            vertexD,
             normal1,
         });
         vertices.push_back({
-            vertexD,
+            vertexB,
             normal1,
         });
 
@@ -81,24 +81,24 @@ namespace Graphics3D {
             normal2,
         });
         vertices.push_back({
-            vertexC,
+            vertexD,
             normal2,
         });
         vertices.push_back({
-            vertexD,
+            vertexC,
             normal2,
         });
 
         vertices.push_back({
             vertexC,
+            normal3,
+        });
+        vertices.push_back({
+            vertexD,
             normal3,
         });
         vertices.push_back({
             vertexA,
-            normal3,
-        });
-        vertices.push_back({
-            vertexD,
             normal3,
         });
 

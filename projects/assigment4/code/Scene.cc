@@ -40,15 +40,15 @@ namespace Graphics3D {
         int numObjRows =  std::max((int) ceil(sqrt(numStaticObj + numSceneGraphs)), 1);
         int maxObjSize = 5;
         int floorSize = maxObjSize * numObjRows;
-        float startXPos = -floorSize/2;
-        float startYPos = -floorSize/2;
-        float startZPos = 0;
+        float startXPos = -floorSize/2.0f;
+        float startYPos = 0;
+        float startZPos = -floorSize/2.0f;
 
         std::vector<glm::vec3> emptyTiles;
         for (int i = 0; i < pow(numObjRows, 2); i++) {
-            float xPos = startXPos + (maxObjSize/2) + maxObjSize * (i%numObjRows);
-            float yPos = startYPos + (maxObjSize/2) + maxObjSize * floor(i/numObjRows);
-            emptyTiles.push_back(glm::vec3( xPos, startZPos, yPos));
+            float xPos = startXPos + maxObjSize/2.0f + maxObjSize * (i%numObjRows);
+            float zPos = startZPos + maxObjSize/2.0f + maxObjSize * floor(i/numObjRows);
+            emptyTiles.push_back(glm::vec3( xPos, startYPos, zPos));
         }
         
         Scene* scene = new Scene(shaderProgram);
@@ -61,7 +61,7 @@ namespace Graphics3D {
             int index = rand() % emptyTiles.size();
             glm::vec3 position = emptyTiles[index];
             emptyTiles.erase(emptyTiles.begin() + index);
-            scene->addStaticObj(genTetrahedron(shaderProgram, position, maxObjSize));
+            scene->addStaticObj(genBox(shaderProgram, position, maxObjSize));
         }
 
 
@@ -90,7 +90,7 @@ namespace Graphics3D {
 
         position.y = hight/2;
 
-        return Cube(width, hight, depth, simpleMaterial, position);
+        return Cube(maxObjSize, hight, maxObjSize, simpleMaterial, position);
     }
 
     GraphicsNode Scene::genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
