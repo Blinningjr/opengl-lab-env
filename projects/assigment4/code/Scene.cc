@@ -90,7 +90,7 @@ namespace Graphics3D {
 
         position.y = hight/2;
 
-        return Cube(maxObjSize, hight, maxObjSize, simpleMaterial, position);
+        return Cube(width, hight, depth, simpleMaterial, position);
     }
 
     GraphicsNode Scene::genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
