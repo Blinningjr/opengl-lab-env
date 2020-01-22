@@ -20,8 +20,11 @@ namespace Graphics3D {
 
             void draw();
 
+            void draw(glm::mat4x4 transformMatrix);
+
             void update() override {}
 
+            glm::mat4 getM();
             glm::vec3 getPosition();
             glm::vec3 getScale();
             GLfloat getPitch();

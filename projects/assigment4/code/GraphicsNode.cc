@@ -32,10 +32,19 @@ namespace Graphics3D {
      *  Draws the graphical node on screen.
     */
     void GraphicsNode::draw() {
+        this->draw(glm::mat4(1));
+    }
+
+
+    /**
+     * Draws the graphical node on screen.
+     * Uses the "transformMatrix" as the starting matrix for transforming.
+     */
+    void GraphicsNode::draw(glm::mat4x4 transformMatrix) {
         this->mesh->setupBuffers();
         this->material->applyMaterial();
 
-        this->M = glm::mat4(1);
+        this->M = transformMatrix;
         this->M = glm::translate(this->M, this->position);
         this->M = glm::rotate(this->M, this->pitch, glm::vec3(1.0f, 0.0f, 0.0f));
         this->M = glm::rotate(this->M, this->roll, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -50,6 +59,12 @@ namespace Graphics3D {
 
         glBindVertexArray(0);
     }
+
+
+    glm::mat4 GraphicsNode::getM() {
+        return this->M;
+    }
+
 
     glm::vec3 GraphicsNode::getPosition() {
         return this->position;

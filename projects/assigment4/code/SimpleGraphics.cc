@@ -8,6 +8,7 @@
 #include "Reader.h"
 #include "Camera.h"
 #include "Cube.h"
+#include "Colors.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
@@ -36,13 +37,11 @@ namespace Graphics3D {
         if (this->window->Open()) {
 
             glEnable(GL_DEPTH_TEST);  
-
-            glm::vec3 white(1, 1, 1);
             
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
             this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-            this->lightSource = new LightSource(glm::vec3(0, 2, 0), white, 0.5f);
+            this->lightSource = new LightSource(glm::vec3(0, 2, 0), WHITE, 0.5f);
 
 
             Reader reader;
@@ -67,21 +66,15 @@ namespace Graphics3D {
 
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
-            glm::vec3 red(1, 0, 0);
-
-            glm::vec3 green(0, 1, 0);
-
-            glm::vec3 blue(0, 0, 1);
-        
-            std::shared_ptr<SimpleMaterial> simpleMaterialRed(new SimpleMaterial(this->shaderProgram, red));  
+            
+            std::shared_ptr<SimpleMaterial> simpleMaterialRed(new SimpleMaterial(this->shaderProgram, RED));  
             this->gNodes.push_back(Cube(0.1, 0.1, 0.1, simpleMaterialRed, glm::vec3(0, 0, 0)));
 
-            std::shared_ptr<SimpleMaterial> simpleMaterialGreen(new SimpleMaterial(this->shaderProgram, green));  
+            std::shared_ptr<SimpleMaterial> simpleMaterialGreen(new SimpleMaterial(this->shaderProgram, GREEN));  
             this->gNodes.push_back(Cube(10, 0.1, 10, simpleMaterialGreen, glm::vec3(0, -0.2, 0)));
 
-            std::shared_ptr<SimpleMaterial> simpleMaterialBlue(new SimpleMaterial(this->shaderProgram, blue));  
-            this->gNodes.push_back(Cube(0.1, 0.1, 0.1, simpleMaterialBlue, glm::vec3(0, 0, 1)));
+            std::shared_ptr<SimpleMaterial> simpleMaterialBlue(new SimpleMaterial(this->shaderProgram, BLUE));  
+            this->gNodes.push_back(Cube(0.1, 0.2, 0.02, simpleMaterialBlue, glm::vec3(0, 0, 0)));
 
 
             return true;
