@@ -29,6 +29,8 @@ namespace Graphics3D {
             void addScreenGraph(SceneNode sceneNode);
 
             static GraphicsNode genBox(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
+
+            static GraphicsNode genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
             
         private:
 

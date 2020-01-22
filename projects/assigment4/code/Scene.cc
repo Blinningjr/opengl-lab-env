@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Cube.h"
+#include "Tetrahedron.h"
 #include "Colors.h"
 #include "SimpleMaterial.h"
 #include <math.h>
@@ -60,7 +61,7 @@ namespace Graphics3D {
             int index = rand() % emptyTiles.size();
             glm::vec3 position = emptyTiles[index];
             emptyTiles.erase(emptyTiles.begin() + index);
-            scene->addStaticObj(genBox(shaderProgram, position, maxObjSize));
+            scene->addStaticObj(genTetrahedron(shaderProgram, position, maxObjSize));
         }
 
 
@@ -83,13 +84,27 @@ namespace Graphics3D {
         glm::vec3 colors[] = {WHITE, RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
         std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, colors[rand() % numColors]));
 
-        float width = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize));
-        float hight = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize));
-        float depth = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize));
+        float width = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
+        float hight = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
+        float depth = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
 
         position.y = hight/2;
 
         return Cube(width, hight, depth, simpleMaterial, position);
+    }
+
+    GraphicsNode Scene::genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
+        int numColors = 7;
+        glm::vec3 colors[] = {WHITE, RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
+        std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, colors[rand() % numColors]));
+
+        float maxSize = maxObjSize/2;
+
+        float size = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxSize)), 0.1f);
+
+        position.y = size/2;
+
+        return Tetrahedron(size, simpleMaterial, position);
     }
 
 
