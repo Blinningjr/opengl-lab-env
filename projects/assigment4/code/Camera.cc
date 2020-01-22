@@ -25,7 +25,7 @@ namespace Graphics3D {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
                 this->window->Close();
             }
-            float cameraSpeed = 2.5f * deltaTime;
+            float cameraSpeed = 10.0f * deltaTime;
             if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
                 this->cameraPos += cameraSpeed * this->cameraDirection;
             if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))

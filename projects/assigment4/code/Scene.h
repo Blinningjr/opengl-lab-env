@@ -12,31 +12,32 @@ namespace Graphics3D {
 	class Scene {
 		public:
 
+            struct SceneNode {
+                GraphicsNode graphicsObj;
+                std::vector<SceneNode> children;
+            };
+
             Scene(std::shared_ptr<ShaderProgram> shaderProgram);
             ~Scene();
 
             void renderScene();
 
-            static Scene genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs);
+            static Scene* genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs);
 
-            void addStaticObj(std::shared_ptr<GraphicsNode> graphicsNode);
+            void addStaticObj(GraphicsNode graphicsNode);
 
-            void addScreenGraph(std::shared_ptr<GraphicsNode> graphicsNode);
+            void addScreenGraph(SceneNode sceneNode);
 
-            struct SceneNode
-            {
-                std::shared_ptr<GraphicsNode> graphicsObj;
-                std::vector<std::shared_ptr<SceneNode>> children;
-            };
+            static GraphicsNode genBox(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
             
         private:
 
             std::shared_ptr<ShaderProgram> shaderProgram;
 
-            std::vector<std::shared_ptr<GraphicsNode>> staticScene;
-            std::vector<std::shared_ptr<SceneNode>> sceneGraphs;
+            std::vector<GraphicsNode> staticScene;
+            std::vector<SceneNode> sceneGraphs;
 
-            void renderSceneNode(std::shared_ptr<SceneNode> node, glm::mat4 transformMatrix);
+            void renderSceneNode(SceneNode node, glm::mat4 transformMatrix);
 
     };
 } 

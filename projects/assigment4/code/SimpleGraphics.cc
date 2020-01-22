@@ -27,6 +27,7 @@ namespace Graphics3D {
     SimpleGraphics::~SimpleGraphics() {
         delete[] this->camera;
         delete[] this->lightSource;
+        delete[] this->scene;
     }
 
 
@@ -36,7 +37,10 @@ namespace Graphics3D {
 
         if (this->window->Open()) {
 
-            glEnable(GL_DEPTH_TEST);  
+            glEnable(GL_DEPTH_TEST); 
+
+            // set clear color to gray
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
@@ -63,20 +67,8 @@ namespace Graphics3D {
             this->lightIntensityID = this->shaderProgram->getUniformId("lightIntensity");
             this->cameraPosID = this->shaderProgram->getUniformId("cameraPos");
 
-
-            // set clear color to gray
-            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            this->scene = Scene::genScene(shaderProgram, 25, 0);
             
-            std::shared_ptr<SimpleMaterial> simpleMaterialRed(new SimpleMaterial(this->shaderProgram, RED));  
-            this->gNodes.push_back(Cube(0.1, 0.1, 0.1, simpleMaterialRed, glm::vec3(0, 0, 0)));
-
-            std::shared_ptr<SimpleMaterial> simpleMaterialGreen(new SimpleMaterial(this->shaderProgram, GREEN));  
-            this->gNodes.push_back(Cube(10, 0.1, 10, simpleMaterialGreen, glm::vec3(0, -0.2, 0)));
-
-            std::shared_ptr<SimpleMaterial> simpleMaterialBlue(new SimpleMaterial(this->shaderProgram, BLUE));  
-            this->gNodes.push_back(Cube(0.1, 0.2, 0.02, simpleMaterialBlue, glm::vec3(0, 0, 0)));
-
-
             return true;
         }
 
@@ -111,12 +103,8 @@ namespace Graphics3D {
 
 
             glEnable(GL_CULL_FACE);  
-
-            for(int i = 0; i < this->gNodes.size(); i++) {
-                this->gNodes[i].draw();
-            }
-
-
+            
+            this->scene->renderScene();
 
             this->window->SwapBuffers();
         }

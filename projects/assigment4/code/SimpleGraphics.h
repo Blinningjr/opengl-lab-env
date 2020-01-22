@@ -7,6 +7,7 @@
 #include "GraphicsNode.h"
 #include "Camera.h"
 #include "LightSource.h"
+#include "Scene.h"
 
 
 namespace Graphics3D {
@@ -22,8 +23,6 @@ namespace Graphics3D {
 
 
 		private:
-
-			std::vector<GraphicsNode> gNodes;
 
 			glm::mat4 projection;
 
@@ -42,6 +41,8 @@ namespace Graphics3D {
 			GLint lightColorID;
 			GLint lightPosID;
 			GLint cameraPosID;
+
+			Scene* scene;
 			
 	};
 }
