@@ -52,10 +52,10 @@ namespace Graphics3D {
         glm::vec3 vertexC(0, -r, size);
         glm::vec3 vertexD(0, size, 0);
 
-        glm::vec3 normal0 = GraphicsNode::crossProduct(vertexA, vertexB, vertexC);
-        glm::vec3 normal1 = GraphicsNode::crossProduct(vertexA, vertexD, vertexB);
-        glm::vec3 normal2 = GraphicsNode::crossProduct(vertexB, vertexD, vertexC);
-        glm::vec3 normal3 = GraphicsNode::crossProduct(vertexC, vertexD, vertexA);
+        glm::vec3 normal0 = glm::normalize(GraphicsNode::crossProduct(vertexA, vertexB, vertexC));
+        glm::vec3 normal1 = glm::normalize(GraphicsNode::crossProduct(vertexA, vertexD, vertexB));
+        glm::vec3 normal2 = glm::normalize(GraphicsNode::crossProduct(vertexB, vertexD, vertexC));
+        glm::vec3 normal3 = glm::normalize(GraphicsNode::crossProduct(vertexC, vertexD, vertexA));
 
 
         std::vector<Vertex> vertices;

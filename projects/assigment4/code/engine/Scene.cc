@@ -41,7 +41,7 @@ namespace Graphics3D {
      */
     Scene* Scene::genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs) {
         int totalObj = numStaticObj + numSceneGraphs;
-        int numObjRows =  std::max((int) ceil(sqrt(totalObj)), 1);
+        int numObjRows =  std::max((int) ceil(sqrt(totalObj) + totalObj/50.0f), 1);
         int maxObjSize = 5;
         int floorSize = maxObjSize * numObjRows;
         float startXPos = -floorSize/2.0f;
@@ -79,7 +79,12 @@ namespace Graphics3D {
             glm::vec3 position = emptyTiles[index];
             emptyTiles.erase(emptyTiles.begin() + index);
             position.y = 1;
-            scene->addScreenGraph(genSolarSystem(shaderProgram, position));
+            if (rand() % 100 < 50) {
+                scene->addScreenGraph(genDoor(shaderProgram, position));
+            } else {
+                scene->addScreenGraph(genSolarSystem(shaderProgram, position));
+            }
+            
         }
 
         return scene;
@@ -177,33 +182,58 @@ namespace Graphics3D {
      * Generates a door SceneNode.
     */
     Scene::SceneNode Scene::genDoor(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position) {
-        int numColors = 6;
-        glm::vec3 colors[] = {RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
-        std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, colors[rand() % numColors]));
-        std::shared_ptr<SimpleMaterial> simpleMaterialWhite(new SimpleMaterial(shaderProgram, WHITE));
+        std::vector<glm::vec3> colors;
+        colors.push_back(RED);
+        colors.push_back(GREEN);
+        colors.push_back(BLUE);
+        colors.push_back(WHITE);
+        colors.push_back(YELLOW);
+        colors.push_back(ORANGE);
+        colors.push_back(BROWN);
+
+        int index = rand() % colors.size();
+        std::shared_ptr<SimpleMaterial> wallMaterial(new SimpleMaterial(shaderProgram, colors[index]));
+        colors.erase(colors.begin() + index);
+
+        index = rand() % colors.size();
+        std::shared_ptr<SimpleMaterial> doorMaterial(new SimpleMaterial(shaderProgram, colors[index]));
+        colors.erase(colors.begin() + index);
+
+        index = rand() % colors.size();
+        std::shared_ptr<SimpleMaterial> tetrahedronMaterial(new SimpleMaterial(shaderProgram, colors[index]));
+        colors.erase(colors.begin() + index);
+
         
         std::vector<SceneNode> children;
 
         std::vector<SceneNode> doorChildren;
 
+        float pitchSpeed = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f))) - 2.5f;
+        float rollSpeed = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f))) - 2.5f;
+        float yawnSpeed = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f))) - 2.5f;
+
         struct SceneNode tetrahedronFront = {
-            new Tetrahedron(0.1f, simpleMaterialWhite, glm::vec3(0, 0, 0.3), 1, 1 ,1),
+            new Tetrahedron(0.1f, tetrahedronMaterial, glm::vec3(0, 0, 0.3), 1, 1 ,1),
         };
         doorChildren.push_back(tetrahedronFront);
 
+        pitchSpeed = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f))) - 2.5f;
+        rollSpeed = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f))) - 2.5f;
+        yawnSpeed = (static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f))) - 2.5f;
+
         struct SceneNode tetrahedronBack = {
-            new Tetrahedron(0.1f, simpleMaterialWhite, glm::vec3(0, 0, -0.3), 1, 1 ,1),
+            new Tetrahedron(0.1f, tetrahedronMaterial, glm::vec3(0, 0, -0.3), 1, 1 ,1),
         };
         doorChildren.push_back(tetrahedronBack);
         
         struct SceneNode door = {
-            new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, glm::vec3(1, 0, 0), 0, 0, 0, 0.2, 2),
+            new Cube(glm::vec3(1, 2, 0.2), doorMaterial, glm::vec3(1, 0, 0), 0, 0, 0, 0.2, 2),
             doorChildren,
         };
         children.push_back(door);
 
         struct SceneNode wall = {
-            new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, glm::vec3(2, 0, 0)),
+            new Cube(glm::vec3(1, 2, 0.2), wallMaterial, glm::vec3(2, 0, 0)),
         };
         children.push_back(wall);
 
@@ -211,7 +241,7 @@ namespace Graphics3D {
         position.x -= cos(yawn);
         position.z += sin(yawn);
         struct SceneNode sceneNode = {
-            new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, position, yawn),
+            new Cube(glm::vec3(1, 2, 0.2), wallMaterial, position, yawn),
             children,
         };
 
@@ -238,7 +268,7 @@ namespace Graphics3D {
         for (int i = 0; i < 2; i++) {
 
             std::vector<SceneNode> planetChildren;
-            int numMoons = rand()%2 + 1;
+            int numMoons = rand()%3;
             for (int j = 0; j < numMoons; j++) {
 
                 int index = rand() % colors.size();

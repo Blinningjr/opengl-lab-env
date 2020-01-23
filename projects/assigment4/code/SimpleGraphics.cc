@@ -67,7 +67,7 @@ namespace Graphics3D {
             this->lightIntensityID = this->shaderProgram->getUniformId("lightIntensity");
             this->cameraPosID = this->shaderProgram->getUniformId("cameraPos");
 
-            this->scene = Scene::genScene(shaderProgram, 0, 1);
+            this->scene = Scene::genScene(shaderProgram, 75, 25);
             
             return true;
         }
@@ -100,6 +100,9 @@ namespace Graphics3D {
             glm::vec3 lightColor = this->lightSource->getColor();
             glUniform3f(this->lightColorID, lightColor[0], lightColor[1], lightColor[2]);
             glUniform1f(this->lightIntensityID, this->lightSource->getIntensity());
+
+            glm::vec3 cameraPos = this->camera->getCameraPos();
+            glUniform3f(this->cameraPosID, cameraPos[0], cameraPos[1], cameraPos[2]);
 
 
             glEnable(GL_CULL_FACE);  
