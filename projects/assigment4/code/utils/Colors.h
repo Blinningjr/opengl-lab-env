@@ -11,6 +11,6 @@ const glm::vec3 BLUE = glm::vec3(0, 0, 1);
 
 const glm::vec3 YELLOW = glm::vec3(1, 1, 0);
 const glm::vec3 ORANGE = glm::vec3(1, 0.7f, 0.1f);
-const glm::vec3 BROWN = glm::vec3(0.6f, 0.3f, 0);
+const glm::vec3 BROWN = glm::vec3(0.59f, 0.29f, 0);
 
 #endif  /* COLORS_H_ */
