@@ -41,7 +41,7 @@ namespace Graphics3D {
      */
     Scene* Scene::genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs) {
         int totalObj = numStaticObj + numSceneGraphs;
-        int numObjRows =  std::max((int) ceil(sqrt(totalObj) + totalObj/20.0f), 1);
+        int numObjRows =  std::max((int) ceil(sqrt(totalObj)), 1);
         int maxObjSize = 5;
         int floorSize = maxObjSize * numObjRows;
         float startXPos = -floorSize/2.0f;
@@ -167,14 +167,28 @@ namespace Graphics3D {
 
 
     Scene::SceneNode Scene::genDoor(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
-        int numColors = 7;
-        glm::vec3 colors[] = {WHITE, RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
+        int numColors = 6;
+        glm::vec3 colors[] = {RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
         std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, colors[rand() % numColors]));
+        std::shared_ptr<SimpleMaterial> simpleMaterialWhite(new SimpleMaterial(shaderProgram, WHITE));
         
         std::vector<SceneNode> children;
+
+        std::vector<SceneNode> doorChildren;
+
+        struct SceneNode tetrahedronFront = {
+            new Tetrahedron(0.1f, simpleMaterialWhite, glm::vec3(0, 0, 0.3), 1, 1 ,1),
+        };
+        doorChildren.push_back(tetrahedronFront);
+
+        struct SceneNode tetrahedronBack = {
+            new Tetrahedron(0.1f, simpleMaterialWhite, glm::vec3(0, 0, -0.3), 1, 1 ,1),
+        };
+        doorChildren.push_back(tetrahedronBack);
         
         struct SceneNode door = {
             new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, glm::vec3(1, 0, 0), 0, 0, 0, 0.2, 2),
+            doorChildren,
         };
         children.push_back(door);
 
@@ -183,8 +197,9 @@ namespace Graphics3D {
         };
         children.push_back(wall);
 
-        position.x -= 1;
         float yawn = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/3.14f)); 
+        position.x -= cos(yawn);
+        position.z += sin(yawn);
         struct SceneNode sceneNode = {
             new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, position, yawn),
             children,
@@ -194,14 +209,13 @@ namespace Graphics3D {
     }
 
 
-
     /**
      * Renders a scene node and all its children with respect to the parents transform matrix. 
      */
     void Scene::renderSceneNode(SceneNode node, glm::mat4 transformMatrix, float deltaTime) {
         node.graphicsObj->update(deltaTime);
         node.graphicsObj->draw(transformMatrix);
-        glm::mat4 newMatrix = transformMatrix * node.graphicsObj->getM();
+        glm::mat4 newMatrix = node.graphicsObj->getM();
         for (int i = 0; i < node.children.size(); i++) {
             this->renderSceneNode(node.children[i], newMatrix, deltaTime);
         }

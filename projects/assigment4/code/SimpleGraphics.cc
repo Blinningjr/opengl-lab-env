@@ -67,7 +67,7 @@ namespace Graphics3D {
             this->lightIntensityID = this->shaderProgram->getUniformId("lightIntensity");
             this->cameraPosID = this->shaderProgram->getUniformId("cameraPos");
 
-            this->scene = Scene::genScene(shaderProgram, 0, 100);
+            this->scene = Scene::genScene(shaderProgram, 0, 1);
             
             return true;
         }
