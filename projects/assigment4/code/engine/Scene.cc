@@ -15,7 +15,7 @@ namespace Graphics3D {
     }
 
     Scene::~Scene() {
-        
+        delete[] &this->staticScene;
     }
 
 
@@ -24,8 +24,8 @@ namespace Graphics3D {
      */
     void Scene::renderScene(float deltaTime) {
         for (int i = 0; i < this->staticScene.size(); i++) {
-            this->staticScene[i].update(deltaTime);
-            this->staticScene[i].draw();
+            this->staticScene[i]->update(deltaTime);
+            this->staticScene[i]->draw();
         }
         for (int i = 0; i < this->sceneGraphs.size(); i++) {
            this->renderSceneNode(this->sceneGraphs[i], glm::mat4(1), deltaTime);
@@ -53,7 +53,7 @@ namespace Graphics3D {
         
         Scene* scene = new Scene(shaderProgram);
         std::shared_ptr<SimpleMaterial> simpleMaterialBrown(new SimpleMaterial(shaderProgram, BROWN));
-        scene->addStaticObj(Cube(floorSize, 1, floorSize, simpleMaterialBrown, 
+        scene->addStaticObj(new Cube(glm::vec3(floorSize, 1, floorSize), simpleMaterialBrown, 
             glm::vec3(0, -0.5, 0)));
 
         
@@ -69,7 +69,7 @@ namespace Graphics3D {
     }
 
 
-    void Scene::addStaticObj(GraphicsNode graphicsNode) {
+    void Scene::addStaticObj(GraphicsNode* graphicsNode) {
         this->staticScene.push_back(graphicsNode);
     }
 
@@ -79,18 +79,35 @@ namespace Graphics3D {
     }
 
 
-    GraphicsNode Scene::genBox(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
+    GraphicsNode* Scene::genBox(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
         int numColors = 7;
         glm::vec3 colors[] = {WHITE, RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
         std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, colors[rand() % numColors]));
 
-        float width = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
-        float hight = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
-        float depth = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
+        glm::vec3 size(0);
 
-        position.y = hight/2;
+        float pitchSpeed = 0;
+        float rollSpeed = 0;
+        float yawnSpeed = 0;
 
-        return Cube(width, hight, depth, simpleMaterial, position);
+        if (rand() % 100 < 10) {
+            size.x = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2.0f)), 0.2f);
+            size.y = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2.0f)), 0.2f);
+            size.z = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2.0f)), 0.2f);
+            pitchSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
+            rollSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));;
+            yawnSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));;
+
+            position.y = maxObjSize/2.0f;
+        } else {
+            size.x = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
+            size.y = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
+            size.z = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxObjSize)), 0.2f);
+
+            position.y = size.y/2.0f;
+        }
+
+        return new Cube(size, simpleMaterial, position, pitchSpeed, rollSpeed, yawnSpeed);
     }
 
     GraphicsNode Scene::genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {

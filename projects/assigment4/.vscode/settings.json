@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "*.tcc": "cpp"
     },
     "cSpell.words": [
         "Lfloat",

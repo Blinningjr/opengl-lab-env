@@ -24,11 +24,11 @@ namespace Graphics3D {
 
             static Scene* genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs);
 
-            void addStaticObj(GraphicsNode graphicsNode);
+            void addStaticObj(GraphicsNode* graphicsNode);
 
             void addScreenGraph(SceneNode sceneNode);
 
-            static GraphicsNode genBox(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
+            static GraphicsNode* genBox(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
 
             static GraphicsNode genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
             
@@ -36,7 +36,7 @@ namespace Graphics3D {
 
             std::shared_ptr<ShaderProgram> shaderProgram;
 
-            std::vector<GraphicsNode> staticScene;
+            std::vector<GraphicsNode*> staticScene;
             std::vector<SceneNode> sceneGraphs;
 
             void renderSceneNode(SceneNode node, glm::mat4 transformMatrix, float deltaTime);

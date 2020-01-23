@@ -4,18 +4,27 @@
 namespace Graphics3D {
 
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position):
-        GraphicsNode(this->genMesh(size.x, size.y, size.z), material, position, glm::vec3(1,1,1), 0, 0, 0) {
-
+        GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), 0, 0, 0) {
+        
+        this->pitchSpeed = 0;
+        this->rollSpeed = 0;
+        this->yawnSpeed = 0;
     }
 
-    Cube::Cube(float width, float hight, float depth, std::shared_ptr<Material> material,  glm::vec3 position):
-        GraphicsNode(this->genMesh(width, hight, depth), material, position, glm::vec3(1,1,1), 0, 0, 0) {
-
+    Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position,
+        float pitchSpeed, float rollSpeed, float yawnSpeed): GraphicsNode(this->genMesh(size), material, position,
+            glm::vec3(1,1,1), 0, 0, 0) {
+        this->pitchSpeed = pitchSpeed;
+        this->rollSpeed = rollSpeed;
+        this->yawnSpeed = yawnSpeed;
     }
 
-    Cube::Cube(float width, float hight, float depth, std::shared_ptr<Material> material,  glm::vec3 position,
-        glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn): 
-        GraphicsNode(this->genMesh(width, hight, depth), material, position, scale, pitch, roll, yawn) {
+    Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material, glm::vec3 position, GLfloat pitch, GLfloat roll,
+        GLfloat yawn, float pitchSpeed, float rollSpeed, float yawnSpeed): 
+            GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), pitch, roll, yawn) {
+        this->pitchSpeed = pitchSpeed;
+        this->rollSpeed = rollSpeed;
+        this->yawnSpeed = yawnSpeed;
     }
 
     Cube::~Cube() {
@@ -23,13 +32,20 @@ namespace Graphics3D {
     }
 
 
+    void Cube::update(float deltaTime) {
+        this->pitch += this->pitchSpeed * deltaTime;
+        this->roll += this->rollSpeed * deltaTime;
+        this->yawn += this->yawnSpeed * deltaTime;
+    }
+
+
     /**
      *  Generates a cube mesh. 
      **/
-    std::shared_ptr<Mesh> Cube::genMesh(float width, float hight, float depth) {
-        float halfWidth = width/2;
-        float halfHight = hight/2;
-        float halfDepth = depth/2;
+    std::shared_ptr<Mesh> Cube::genMesh(glm::vec3 size) {
+        float halfWidth = size.x/2;
+        float halfHight = size.y/2;
+        float halfDepth = size.z/2;
 
         glm::vec3 vertex0(-halfWidth, -halfHight, -halfDepth);
         glm::vec3 vertex1(halfWidth, -halfHight, -halfDepth);
