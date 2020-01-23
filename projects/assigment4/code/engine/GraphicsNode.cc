@@ -61,6 +61,16 @@ namespace Graphics3D {
     }
 
 
+    glm::vec3 GraphicsNode::crossProduct(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
+        glm::vec3 v = b - a;
+        glm::vec3 u = c - a;
+        glm::vec3 normal = {v.y * u.z - v.z * u.y,
+                            -(v.x * u.z - v.z * u.x),
+                            v.x * u.y - v.y * u.x};
+        return normal;
+    }
+
+
     glm::mat4 GraphicsNode::getM() {
         return this->M;
     }

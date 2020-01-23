@@ -57,12 +57,12 @@ namespace Graphics3D {
         glm::vec3 vertex6(halfWidth, halfHight, halfDepth);
         glm::vec3 vertex7(-halfWidth, halfHight, halfDepth);
 
-        glm::vec3 normal0(1, 0, 0);
-        glm::vec3 normal1(-1, 0, 0);
-        glm::vec3 normal2(0, 1, 0);
-        glm::vec3 normal3(0, -1, 0);
-        glm::vec3 normal4(0, 0, 1);
-        glm::vec3 normal5(0, 0, -1);
+        glm::vec3 normal0 = GraphicsNode::crossProduct(vertex2, vertex5, vertex1);
+        glm::vec3 normal1 = GraphicsNode::crossProduct(vertex0, vertex7, vertex3);
+        glm::vec3 normal2 = GraphicsNode::crossProduct(vertex3, vertex6, vertex2);
+        glm::vec3 normal3 = GraphicsNode::crossProduct(vertex0, vertex1, vertex5);
+        glm::vec3 normal4 = GraphicsNode::crossProduct(vertex4, vertex5, vertex6);
+        glm::vec3 normal5 = GraphicsNode::crossProduct(vertex0, vertex2, vertex1);
 
 
         std::vector<Vertex> vertices;

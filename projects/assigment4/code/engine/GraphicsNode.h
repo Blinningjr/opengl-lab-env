@@ -24,6 +24,8 @@ namespace Graphics3D {
 
             void update(float deltaTime) override {}
 
+            static glm::vec3 crossProduct(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+
             glm::mat4 getM();
             glm::vec3 getPosition();
             glm::vec3 getScale();

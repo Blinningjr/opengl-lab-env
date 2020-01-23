@@ -41,16 +41,6 @@ namespace Graphics3D {
     }
 
 
-    glm::vec3 Tetrahedron::crossProduct(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
-        glm::vec3 v = b - a;
-        glm::vec3 u = c - a;
-        glm::vec3 normal = {v.y * u.z - v.z * u.y,
-                            -(v.x * u.z - v.z * u.x),
-                            v.x * u.y - v.y * u.x};
-        return normal;
-    }
-
-
     /**
      *  Generates a Tetrahedron mesh. 
      **/
@@ -62,10 +52,10 @@ namespace Graphics3D {
         glm::vec3 vertexC(0, -r, size);
         glm::vec3 vertexD(0, size, 0);
 
-        glm::vec3 normal0 = this->crossProduct(vertexA, vertexB, vertexC);
-        glm::vec3 normal1 = this->crossProduct(vertexA, vertexD, vertexB);
-        glm::vec3 normal2 = this->crossProduct(vertexB, vertexD, vertexC);
-        glm::vec3 normal3 = this->crossProduct(vertexC, vertexD, vertexA);
+        glm::vec3 normal0 = GraphicsNode::crossProduct(vertexA, vertexB, vertexC);
+        glm::vec3 normal1 = GraphicsNode::crossProduct(vertexA, vertexD, vertexB);
+        glm::vec3 normal2 = GraphicsNode::crossProduct(vertexB, vertexD, vertexC);
+        glm::vec3 normal3 = GraphicsNode::crossProduct(vertexC, vertexD, vertexA);
 
 
         std::vector<Vertex> vertices;
