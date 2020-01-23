@@ -37,7 +37,8 @@ namespace Graphics3D {
      * Generates a random scene. 
      */
     Scene* Scene::genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs) {
-        int numObjRows =  std::max((int) ceil(sqrt(numStaticObj + numSceneGraphs)), 1);
+        int totalObj = numStaticObj + numSceneGraphs;
+        int numObjRows =  std::max((int) ceil(sqrt(totalObj) + totalObj/20.0f), 1);
         int maxObjSize = 5;
         int floorSize = maxObjSize * numObjRows;
         float startXPos = -floorSize/2.0f;

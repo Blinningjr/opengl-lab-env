@@ -45,7 +45,7 @@ namespace Graphics3D {
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
             this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-            this->lightSource = new LightSource(glm::vec3(0, 2, 0), WHITE, 0.5f);
+            this->lightSource = new LightSource(glm::vec3(0, 10, 0), WHITE, 0.4f);
 
 
             Reader reader;
