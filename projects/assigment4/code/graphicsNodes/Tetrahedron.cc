@@ -5,19 +5,39 @@ namespace Graphics3D {
 
 
     Tetrahedron::Tetrahedron(float size, std::shared_ptr<Material> material,  glm::vec3 position):
-        GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), 0, 0, 0) {
+            GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), 0, 0, 0) {
+        this->pitchSpeed = 0;
+        this->rollSpeed = 0;
+        this->yawnSpeed = 0;
+    }
 
+    Tetrahedron::Tetrahedron(float size, std::shared_ptr<Material> material,  glm::vec3 position, float pitchSpeed,
+                float rollSpeed, float yawnSpeed): GraphicsNode(this->genMesh(size), 
+                    material, position, glm::vec3(1,1,1), 0, 0, 0) {
+        this->pitchSpeed = pitchSpeed;
+        this->rollSpeed = rollSpeed;
+        this->yawnSpeed = yawnSpeed;
     }
 
 
     Tetrahedron::Tetrahedron(float size, std::shared_ptr<Material> material,  glm::vec3 position,
-        glm::vec3 scale, GLfloat pitch, GLfloat roll, GLfloat yawn): 
-        GraphicsNode(this->genMesh(size), material, position, scale, pitch, roll, yawn) {
+        GLfloat pitch, GLfloat roll, GLfloat yawn, float pitchSpeed, float rollSpeed, float yawnSpeed): 
+            GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), pitch, roll, yawn) {
+        this->pitchSpeed = pitchSpeed;
+        this->rollSpeed = rollSpeed;
+        this->yawnSpeed = yawnSpeed;
     }
 
 
     Tetrahedron::~Tetrahedron() {
         
+    }
+
+
+    void Tetrahedron::update(float deltaTime) {
+        this->pitch += this->pitchSpeed * deltaTime;
+        this->roll += this->rollSpeed * deltaTime;
+        this->yawn += this->yawnSpeed * deltaTime;
     }
 
 

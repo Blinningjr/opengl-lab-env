@@ -16,6 +16,7 @@ namespace Graphics3D {
 
     Scene::~Scene() {
         delete[] &this->staticScene;
+        delete[] &this->sceneGraphs;
     }
 
 
@@ -62,9 +63,13 @@ namespace Graphics3D {
             int index = rand() % emptyTiles.size();
             glm::vec3 position = emptyTiles[index];
             emptyTiles.erase(emptyTiles.begin() + index);
-            scene->addStaticObj(genBox(shaderProgram, position, maxObjSize));
+            if (rand() % 100 < 50) {
+                scene->addStaticObj(genBox(shaderProgram, position, maxObjSize));
+            } else {
+                scene->addStaticObj(genTetrahedron(shaderProgram, position, maxObjSize));
+            }
+            
         }
-
 
         return scene;
     }
@@ -91,13 +96,17 @@ namespace Graphics3D {
         float rollSpeed = 0;
         float yawnSpeed = 0;
 
+        float pitch = 0;
+        float roll = 0;
+        float yawn = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/3.14f));
+
         if (rand() % 100 < 10) {
             size.x = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2.0f)), 0.2f);
             size.y = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2.0f)), 0.2f);
             size.z = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/2.0f)), 0.2f);
-            pitchSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));
-            rollSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));;
-            yawnSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX));;
+            pitchSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f));
+            rollSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f));;
+            yawnSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f));;
 
             position.y = maxObjSize/2.0f;
         } else {
@@ -108,21 +117,41 @@ namespace Graphics3D {
             position.y = size.y/2.0f;
         }
 
-        return new Cube(size, simpleMaterial, position, pitchSpeed, rollSpeed, yawnSpeed);
+        return new Cube(size, simpleMaterial, position, pitch, roll, yawn, pitchSpeed, rollSpeed, yawnSpeed);
     }
 
-    GraphicsNode Scene::genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
+    GraphicsNode* Scene::genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
         int numColors = 7;
         glm::vec3 colors[] = {WHITE, RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
         std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, colors[rand() % numColors]));
 
         float maxSize = maxObjSize/2;
 
-        float size = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxSize)), 0.1f);
+        float size = 0;
 
-        position.y = size/2;
+        float pitchSpeed = 0;
+        float rollSpeed = 0;
+        float yawnSpeed = 0;
 
-        return Tetrahedron(size, simpleMaterial, position);
+        float pitch = 0;
+        float roll = 0;
+        float yawn = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/3.14f));
+
+        if (rand() % 100 < 10) {
+
+            size = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX)), 0.1f); 
+
+            pitchSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f));
+            rollSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f));;
+            yawnSpeed = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/5.0f));;
+
+            position.y = maxObjSize/2.0f;
+        } else {
+            size = std::max(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxSize)), 0.1f); 
+            position.y = size/2.0f;
+        }
+
+        return new Tetrahedron(size, simpleMaterial, position, pitch, roll, yawn, pitchSpeed, rollSpeed, yawnSpeed);
     }
 
 
@@ -130,9 +159,9 @@ namespace Graphics3D {
      * Renders a scene node and all its children with respect to the parents transform matrix. 
      */
     void Scene::renderSceneNode(SceneNode node, glm::mat4 transformMatrix, float deltaTime) {
-        node.graphicsObj.update(deltaTime);
-        node.graphicsObj.draw(transformMatrix);
-        glm::mat4 newMatrix = transformMatrix * node.graphicsObj.getM();
+        node.graphicsObj->update(deltaTime);
+        node.graphicsObj->draw(transformMatrix);
+        glm::mat4 newMatrix = transformMatrix * node.graphicsObj->getM();
         for (int i = 0; i < node.children.size(); i++) {
             this->renderSceneNode(node.children[i], newMatrix, deltaTime);
         }

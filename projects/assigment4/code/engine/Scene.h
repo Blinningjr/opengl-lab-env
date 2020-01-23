@@ -13,7 +13,7 @@ namespace Graphics3D {
 		public:
 
             struct SceneNode {
-                GraphicsNode graphicsObj;
+                GraphicsNode* graphicsObj;
                 std::vector<SceneNode> children;
             };
 
@@ -30,7 +30,7 @@ namespace Graphics3D {
 
             static GraphicsNode* genBox(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
 
-            static GraphicsNode genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
+            static GraphicsNode* genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
             
         private:
 
