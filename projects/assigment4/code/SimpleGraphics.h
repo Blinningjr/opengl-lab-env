@@ -4,10 +4,9 @@
 #include "render/window.h"
 #include <vector>
 
-#include "GraphicsNode.h"
-#include "Camera.h"
-#include "LightSource.h"
-#include "Scene.h"
+#include "engine/Camera.h"
+#include "engine/LightSource.h"
+#include "engine/Scene.h"
 
 
 namespace Graphics3D {

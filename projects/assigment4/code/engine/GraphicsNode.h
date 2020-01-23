@@ -22,7 +22,7 @@ namespace Graphics3D {
 
             void draw(glm::mat4x4 transformMatrix);
 
-            void update() override {}
+            void update(float deltaTime) override {}
 
             glm::mat4 getM();
             glm::vec3 getPosition();

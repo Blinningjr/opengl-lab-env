@@ -20,7 +20,7 @@ namespace Graphics3D {
             Scene(std::shared_ptr<ShaderProgram> shaderProgram);
             ~Scene();
 
-            void renderScene();
+            void renderScene(float deltaTime);
 
             static Scene* genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs);
 
@@ -39,7 +39,7 @@ namespace Graphics3D {
             std::vector<GraphicsNode> staticScene;
             std::vector<SceneNode> sceneGraphs;
 
-            void renderSceneNode(SceneNode node, glm::mat4 transformMatrix);
+            void renderSceneNode(SceneNode node, glm::mat4 transformMatrix, float deltaTime);
 
     };
 } 

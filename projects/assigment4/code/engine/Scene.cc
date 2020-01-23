@@ -1,8 +1,8 @@
 #include "Scene.h"
-#include "Cube.h"
-#include "Tetrahedron.h"
-#include "Colors.h"
-#include "SimpleMaterial.h"
+#include "../graphicsNodes/Cube.h"
+#include "../graphicsNodes/Tetrahedron.h"
+#include "../utils/Colors.h"
+#include "../materials/SimpleMaterial.h"
 #include <math.h>
 #include <algorithm> 
 #include <stdlib.h>
@@ -22,13 +22,13 @@ namespace Graphics3D {
     /**
      * Renders all scene objects on the screen. 
      */
-    void Scene::renderScene() {
+    void Scene::renderScene(float deltaTime) {
         for (int i = 0; i < this->staticScene.size(); i++) {
-            this->staticScene[i].update();
+            this->staticScene[i].update(deltaTime);
             this->staticScene[i].draw();
         }
         for (int i = 0; i < this->sceneGraphs.size(); i++) {
-           this->renderSceneNode(this->sceneGraphs[i], glm::mat4(1));
+           this->renderSceneNode(this->sceneGraphs[i], glm::mat4(1), deltaTime);
         }
     }
 
@@ -111,12 +111,12 @@ namespace Graphics3D {
     /**
      * Renders a scene node and all its children with respect to the parents transform matrix. 
      */
-    void Scene::renderSceneNode(SceneNode node, glm::mat4 transformMatrix) {
-        node.graphicsObj.update();
+    void Scene::renderSceneNode(SceneNode node, glm::mat4 transformMatrix, float deltaTime) {
+        node.graphicsObj.update(deltaTime);
         node.graphicsObj.draw(transformMatrix);
         glm::mat4 newMatrix = transformMatrix * node.graphicsObj.getM();
         for (int i = 0; i < node.children.size(); i++) {
-            this->renderSceneNode(node.children[i], newMatrix);
+            this->renderSceneNode(node.children[i], newMatrix, deltaTime);
         }
     }
 }

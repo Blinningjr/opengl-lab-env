@@ -2,7 +2,7 @@
 
 #include <GL/glew.h>
 
-#include "ShaderType.h"
+#include "../utils/ShaderType.h"
 
 
 namespace Graphics3D {

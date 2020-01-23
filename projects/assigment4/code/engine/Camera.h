@@ -14,7 +14,7 @@ namespace Graphics3D {
             Camera(Display::Window* window, glm::vec3 cameraPos, glm::vec3 cameraDirection);
             ~Camera();
 
-            void update() override {}
+            void update(float deltaTime) override {}
 
             glm::mat4 getCameraMatrix();
             glm::vec3 getCameraPos();

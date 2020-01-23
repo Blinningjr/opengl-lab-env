@@ -12,7 +12,7 @@ namespace Graphics3D {
             LightSource(glm::vec3 lightSourcePos, glm::vec3 color, GLfloat intensity);
             ~LightSource();
 
-            void update() override {}
+            void update(float deltaTime) override {}
 
             glm::mat4 getLightSourceMatrix();
             glm::vec3 getLightSourcePos();
