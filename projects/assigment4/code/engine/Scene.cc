@@ -6,12 +6,14 @@
 #include <math.h>
 #include <algorithm> 
 #include <stdlib.h>
+#include <time.h> 
 
 
 namespace Graphics3D {
 
     Scene::Scene(std::shared_ptr<ShaderProgram> shaderProgram) {
         this->shaderProgram = shaderProgram;
+        srand(time(0));
     }
 
     Scene::~Scene() {
@@ -69,6 +71,15 @@ namespace Graphics3D {
                 scene->addStaticObj(genTetrahedron(shaderProgram, position, maxObjSize));
             }
             
+        }
+
+        std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, WHITE));
+        for (int i = 0; i < numSceneGraphs; i++) {
+            int index = rand() % emptyTiles.size();
+            glm::vec3 position = emptyTiles[index];
+            emptyTiles.erase(emptyTiles.begin() + index);
+            position.y = 1;
+            scene->addScreenGraph(genDoor(shaderProgram, position, maxObjSize));
         }
 
         return scene;
@@ -153,6 +164,35 @@ namespace Graphics3D {
 
         return new Tetrahedron(size, simpleMaterial, position, pitch, roll, yawn, pitchSpeed, rollSpeed, yawnSpeed);
     }
+
+
+    Scene::SceneNode Scene::genDoor(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize) {
+        int numColors = 7;
+        glm::vec3 colors[] = {WHITE, RED, GREEN, BLUE, YELLOW, ORANGE, BROWN};
+        std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, colors[rand() % numColors]));
+        
+        std::vector<SceneNode> children;
+        
+        struct SceneNode door = {
+            new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, glm::vec3(1, 0, 0), 0, 0, 0, 0.2, 2),
+        };
+        children.push_back(door);
+
+        struct SceneNode wall = {
+            new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, glm::vec3(2, 0, 0)),
+        };
+        children.push_back(wall);
+
+        position.x -= 1;
+        float yawn = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/3.14f)); 
+        struct SceneNode sceneNode = {
+            new Cube(glm::vec3(1, 2, 0.2), simpleMaterial, position, yawn),
+            children,
+        };
+
+        return sceneNode;
+    }
+
 
 
     /**

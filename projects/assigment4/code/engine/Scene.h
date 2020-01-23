@@ -32,6 +32,9 @@ namespace Graphics3D {
 
             static GraphicsNode* genTetrahedron(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
             
+            static SceneNode genDoor(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position, float maxObjSize);
+
+
         private:
 
             std::shared_ptr<ShaderProgram> shaderProgram;

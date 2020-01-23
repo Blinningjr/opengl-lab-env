@@ -15,13 +15,20 @@ namespace Graphics3D {
 		public:
 
             Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position);
+            Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, GLfloat yawn);
             Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, 
                 float pitchSpeed, float rollSpeed, float yawnSpeed);
             Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, GLfloat pitch, GLfloat roll,
                     GLfloat yawn, float pitchSpeed, float rollSpeed, float yawnSpeed);
+
+            Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, GLfloat pitch, GLfloat roll,
+                GLfloat yawn, float moveSpeed, float moveDistance);
+        
             ~Cube();
 
             void update(float deltaTime) override;
+
+            static std::shared_ptr<Mesh> genMesh(glm::vec3 size);
 
         private:
 
@@ -29,7 +36,10 @@ namespace Graphics3D {
             float rollSpeed;
             float yawnSpeed;
 
-            std::shared_ptr<Mesh> genMesh(glm::vec3 size);
+            float moveSpeed;
+            float moveDistance;
+            float angle;
+            float originalY;
         
     };
 } 

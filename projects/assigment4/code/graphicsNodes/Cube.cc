@@ -9,6 +9,22 @@ namespace Graphics3D {
         this->pitchSpeed = 0;
         this->rollSpeed = 0;
         this->yawnSpeed = 0;
+        this->moveSpeed = 0;
+        this->moveDistance = 0;
+        this->originalY = position.y;
+        this->angle = 0;
+    }
+
+    Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, GLfloat yawn):
+        GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), 0, 0, yawn) {
+        
+        this->pitchSpeed = 0;
+        this->rollSpeed = 0;
+        this->yawnSpeed = 0;
+        this->moveSpeed = 0;
+        this->moveDistance = 0;
+        this->originalY = position.y;
+        this->angle = 0;
     }
 
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position,
@@ -17,6 +33,10 @@ namespace Graphics3D {
         this->pitchSpeed = pitchSpeed;
         this->rollSpeed = rollSpeed;
         this->yawnSpeed = yawnSpeed;
+        this->moveSpeed = 0;
+        this->moveDistance = 0;
+        this->originalY = position.y;
+        this->angle = 0;
     }
 
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material, glm::vec3 position, GLfloat pitch, GLfloat roll,
@@ -25,6 +45,22 @@ namespace Graphics3D {
         this->pitchSpeed = pitchSpeed;
         this->rollSpeed = rollSpeed;
         this->yawnSpeed = yawnSpeed;
+        this->moveSpeed = 0;
+        this->moveDistance = 0;
+        this->originalY = position.y;
+        this->angle = 0;
+    }
+
+    Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, GLfloat pitch, GLfloat roll,
+        GLfloat yawn, float moveSpeed, float moveDistance): GraphicsNode(this->genMesh(size), material, position,
+            glm::vec3(1,1,1), pitch, roll, yawn) {
+        this->pitchSpeed = 0;
+        this->rollSpeed = 0;
+        this->yawnSpeed = 0;
+        this->moveSpeed = moveSpeed;
+        this->moveDistance = moveDistance;
+        this->originalY = position.y;
+        this->angle = 0;
     }
 
     Cube::~Cube() {
@@ -36,6 +72,8 @@ namespace Graphics3D {
         this->pitch += this->pitchSpeed * deltaTime;
         this->roll += this->rollSpeed * deltaTime;
         this->yawn += this->yawnSpeed * deltaTime;
+        this->angle += this->moveSpeed * deltaTime * 3.14;
+        this->position.y = this->originalY + this->moveDistance * abs(sin(this->angle));
     }
 
 

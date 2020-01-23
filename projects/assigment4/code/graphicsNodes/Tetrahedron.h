@@ -24,7 +24,7 @@ namespace Graphics3D {
 
             void update(float deltaTime) override;
 
-            glm::vec3 crossProduct(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+            static std::shared_ptr<Mesh> genMesh(float size);
 
         private:
 
@@ -32,7 +32,7 @@ namespace Graphics3D {
             float rollSpeed;
             float yawnSpeed;
 
-            std::shared_ptr<Mesh> genMesh(float size);
+            
         
     };
 } 
