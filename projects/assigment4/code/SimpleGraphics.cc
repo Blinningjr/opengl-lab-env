@@ -35,7 +35,7 @@ namespace Graphics3D {
     bool SimpleGraphics::Open() {
         App::Open();
         this->window = new Display::Window;
-        // this->window->SetInputMode(GLFW_CURSOR_DISABLED, GLFW_TRUE);
+        
 
         if (this->window->Open()) {
 

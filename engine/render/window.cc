@@ -245,6 +245,7 @@ Window::Open()
 	glfwSetCursorEnterCallback(this->window, Window::StaticMouseEnterLeaveCallback);
 	glfwSetScrollCallback(this->window, Window::StaticMouseScrollCallback);
     glfwSetWindowSizeCallback(this->window, Window::StaticWindowResizeCallback);
+	glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
 	// setup imgui implementation
