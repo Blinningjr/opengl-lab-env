@@ -57,10 +57,10 @@ namespace Graphics3D {
             this->cameraPos -= cameraSpeed * this->cameraDirection;
 
         if (this->isAPressed)
-            this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+            this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed/2.0f;
 
         if (this->isDPressed)
-            this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+            this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed/2.0f;
 
         if (this->isFlyOn)
             this->cameraPos.y = 2.5;
