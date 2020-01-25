@@ -17,12 +17,13 @@ namespace Graphics3D {
                 std::vector<SceneNode> children;
             };
 
-            Scene(std::shared_ptr<ShaderProgram> shaderProgram);
+            Scene(std::shared_ptr<ShaderProgram> shaderProgram, float pov, float minViewDist, float maxViewDist);
             ~Scene();
 
             void renderScene(float deltaTime);
 
-            static Scene* genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs);
+            static Scene* genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs,
+                float pov, float minViewDist, float maxViewDist);
 
             void addStaticObj(GraphicsNode* graphicsNode);
 
@@ -42,6 +43,10 @@ namespace Graphics3D {
 
             std::vector<GraphicsNode*> staticScene;
             std::vector<SceneNode> sceneGraphs;
+
+            float pov;
+            float minViewDist;
+            float maxViewDist;
 
             void renderSceneNode(SceneNode node, glm::mat4 transformMatrix, float deltaTime);
 

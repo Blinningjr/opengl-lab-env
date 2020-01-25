@@ -18,7 +18,7 @@ namespace Graphics3D {
         this->isSPressed = false;
         this->isDPressed = false;
         
-        this->isFlyOn = true;
+        this->isFlyOn = false;
 
         this->mouseXPos = 512;
         this->mouseYPos = 384;
@@ -62,7 +62,7 @@ namespace Graphics3D {
         if (this->isDPressed)
             this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed/2.0f;
 
-        if (this->isFlyOn)
+        if (!this->isFlyOn)
             this->cameraPos.y = 2.5;
     }
 

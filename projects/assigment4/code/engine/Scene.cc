@@ -11,8 +11,11 @@
 
 namespace Graphics3D {
 
-    Scene::Scene(std::shared_ptr<ShaderProgram> shaderProgram) {
+    Scene::Scene(std::shared_ptr<ShaderProgram> shaderProgram, float pov, float minViewDist, float maxViewDist) {
         this->shaderProgram = shaderProgram;
+        this->pov = pov;
+        this->minViewDist = minViewDist;
+        this->maxViewDist = maxViewDist;
         srand(time(0));
     }
 
@@ -39,7 +42,8 @@ namespace Graphics3D {
     /**
      * Generates a random scene. 
      */
-    Scene* Scene::genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs) {
+    Scene* Scene::genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs,
+            float pov, float minViewDist, float maxViewDist) {
         int totalObj = numStaticObj + numSceneGraphs;
         int numObjRows =  std::max((int) ceil(sqrt(totalObj) + totalObj/50.0f), 1);
         int maxObjSize = 5;
@@ -55,7 +59,7 @@ namespace Graphics3D {
             emptyTiles.push_back(glm::vec3( xPos, startYPos, zPos));
         }
         
-        Scene* scene = new Scene(shaderProgram);
+        Scene* scene = new Scene(shaderProgram, pov, minViewDist, maxViewDist);
         std::shared_ptr<SimpleMaterial> simpleMaterialBrown(new SimpleMaterial(shaderProgram, BROWN));
         scene->addStaticObj(new Cube(glm::vec3(floorSize, 1, floorSize), simpleMaterialBrown, 
             glm::vec3(0, -0.5, 0)));

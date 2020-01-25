@@ -35,7 +35,6 @@ namespace Graphics3D {
     bool SimpleGraphics::Open() {
         App::Open();
         this->window = new Display::Window;
-        
 
         if (this->window->Open()) {
 
@@ -44,7 +43,7 @@ namespace Graphics3D {
             // set clear color to gray
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             
-            this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
+            this->projection = glm::perspective(this->pov, (GLfloat) 200 / (GLfloat) 200, this->minViewDist, this->maxViewDist);
 
             this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -72,7 +71,7 @@ namespace Graphics3D {
             this->lightIntensityID = this->shaderProgram->getUniformId("lightIntensity");
             this->cameraPosID = this->shaderProgram->getUniformId("cameraPos");
 
-            this->scene = Scene::genScene(shaderProgram, 750, 250);
+            this->scene = Scene::genScene(shaderProgram, 750, 250, pov, minViewDist, maxViewDist);
             
             return true;
         }
