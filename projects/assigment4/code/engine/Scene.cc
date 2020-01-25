@@ -227,21 +227,22 @@ namespace Graphics3D {
         doorChildren.push_back(tetrahedronBack);
         
         struct SceneNode door = {
-            new Cube(glm::vec3(1, 2, 0.2), doorMaterial, glm::vec3(1, 0, 0), 0, 0, 0, 0.2, 2),
+            new Cube(glm::vec3(1, 2.5f, 0.2), doorMaterial, glm::vec3(1, 0, 0), 0, 0, 0, 0.2, 2.5f),
             doorChildren,
         };
         children.push_back(door);
 
         struct SceneNode wall = {
-            new Cube(glm::vec3(1, 2, 0.2), wallMaterial, glm::vec3(2, 0, 0)),
+            new Cube(glm::vec3(1, 2.5f, 0.2), wallMaterial, glm::vec3(2, 0, 0)),
         };
         children.push_back(wall);
 
         float yawn = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/3.14f)); 
         position.x -= cos(yawn);
+        position.y = 1.25f;
         position.z += sin(yawn);
         struct SceneNode sceneNode = {
-            new Cube(glm::vec3(1, 2, 0.2), wallMaterial, position, yawn),
+            new Cube(glm::vec3(1, 2.5f, 0.2), wallMaterial, position, yawn),
             children,
         };
 

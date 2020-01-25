@@ -38,6 +38,10 @@ namespace Graphics3D {
             } else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
                 this->wasd->setDPressed(false);
             }
+
+            if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+                this->wasd->toggleFly();
+            }
         });
 
         window->SetMouseMoveFunction([this](float64 xPos, float64 yPos) {

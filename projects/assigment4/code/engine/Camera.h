@@ -21,8 +21,6 @@ namespace Graphics3D {
             glm::mat4 getCameraMatrix();
             glm::vec3 getCameraPos();
 
-            void setDeltaTime(float deltaTime);
-
 
             void updateMove(float deltaTime) override;
 
@@ -32,6 +30,7 @@ namespace Graphics3D {
             void setAPressed(bool isAPressed) override;
             void setSPressed(bool isSPressed) override;
             void setDPressed(bool isDPressed) override;
+            void toggleFly() override;
 
             void setMousePos(float64 xPos, float64 yPos) override;
 
@@ -44,13 +43,12 @@ namespace Graphics3D {
 
             glm::vec3 cameraUp = glm::vec3(0,1,0);
 
-            float deltaTime;
-
-
             bool isWPressed;
             bool isAPressed;
             bool isSPressed;
             bool isDPressed;
+
+            bool isFlyOn;
 
             float64 mouseXPos;
             float64 mouseYPos;

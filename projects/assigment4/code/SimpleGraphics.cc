@@ -35,6 +35,7 @@ namespace Graphics3D {
     bool SimpleGraphics::Open() {
         App::Open();
         this->window = new Display::Window;
+        // this->window->SetInputMode(GLFW_CURSOR_DISABLED, GLFW_TRUE);
 
         if (this->window->Open()) {
 
@@ -89,7 +90,6 @@ namespace Graphics3D {
             this->deltaTime = currentFrame - this->lastFrame;
             this->lastFrame = currentFrame;
 
-            this->camera->setDeltaTime(this->deltaTime);
             this->control->update(this->deltaTime);
 
             this->shaderProgram->use();

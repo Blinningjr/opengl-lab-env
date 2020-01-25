@@ -12,12 +12,13 @@ namespace Graphics3D {
         this->cameraPos = cameraPos;
         this->cameraDirection = cameraDirection;
         this->window = window;
-        this->deltaTime = 0;
 
-        bool isWPressed = false;
-        bool isAPressed = false;
-        bool isSPressed = false;
-        bool isDPressed = false;
+        this->isWPressed = false;
+        this->isAPressed = false;
+        this->isSPressed = false;
+        this->isDPressed = false;
+        
+        this->isFlyOn = true;
 
         this->mouseXPos = 512;
         this->mouseYPos = 384;
@@ -28,35 +29,6 @@ namespace Graphics3D {
         this->yaw = 0;
         this->pitch = 0;
         this->firstMouse = true;
-
-        // window->SetMouseMoveFunction([this](float64 xPos, float64 yPos) {
-        //     if(this->firstMouse) {
-        //         this->lastX = xPos;
-        //         this->lastY = yPos;
-        //         this->firstMouse = false;
-        //     }
-        //     float xoffset = xPos - lastX;
-        //     float yoffset = lastY - yPos;
-        //     lastX = xPos;
-        //     lastY = yPos;
-
-        //     const float sensitivity = 0.25f;
-        //     xoffset *= sensitivity;
-        //     yoffset *= sensitivity;
-
-        //     this->yaw   += xoffset;
-        //     this->pitch += yoffset;
-
-        //     if(this->pitch  > 89.0f)
-        //         this->pitch  =  89.0f;
-        //     if(this->pitch  < -89.0f) 
-        //         this->pitch  = -89.0f;
-        //     glm::vec3 direction;
-        //     direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-        //     direction.y = sin(glm::radians(pitch));
-        //     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-        //     this->cameraDirection = glm::normalize(direction);
-        // });
     }
 
 
@@ -75,24 +47,23 @@ namespace Graphics3D {
         return this->cameraPos;
     }
 
-    void Camera::setDeltaTime(float deltaTime) {
-        this->deltaTime = deltaTime;
-    }
-
 
     void Camera::updateMove(float deltaTime) {
-        float cameraSpeed = 50.0f * deltaTime;
-            if (this->isWPressed)
-                this->cameraPos += cameraSpeed * this->cameraDirection;
+        float cameraSpeed = 25.0f * deltaTime;
+        if (this->isWPressed)
+            this->cameraPos += cameraSpeed * this->cameraDirection;
 
-            if (this->isSPressed)
-                this->cameraPos -= cameraSpeed * this->cameraDirection;
+        if (this->isSPressed)
+            this->cameraPos -= cameraSpeed * this->cameraDirection;
 
-            if (this->isAPressed)
-                this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+        if (this->isAPressed)
+            this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
 
-            if (this->isDPressed)
-                this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+        if (this->isDPressed)
+            this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+
+        if (this->isFlyOn)
+            this->cameraPos.y = 2.5;
     }
 
 
@@ -137,6 +108,11 @@ namespace Graphics3D {
     void Camera::setDPressed(bool isDPressed) {
         this->isDPressed = isDPressed;
     }
+
+    void Camera::toggleFly() {
+        this->isFlyOn = !this->isFlyOn;
+    }
+
 
     void Camera::setMousePos(float64 xPos, float64 yPos) {
         if (this->firstMouse) {

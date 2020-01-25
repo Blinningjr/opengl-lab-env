@@ -12,5 +12,7 @@ namespace Graphics3D {
             virtual void setSPressed(bool isSPressed) = 0;
             virtual void setDPressed(bool isDPressed) = 0;
 
+            virtual void toggleFly() = 0;
+
     };
 }
