@@ -74,6 +74,8 @@
         "bit": "cpp"
     },
     "cSpell.words": [
+        "GLFW",
+        "IWASD",
         "g",
         "lfloat",
         "luint"

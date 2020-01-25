@@ -28,6 +28,7 @@ namespace Graphics3D {
         delete[] this->camera;
         delete[] this->lightSource;
         delete[] this->scene;
+        delete[] this->control;
     }
 
 
@@ -45,6 +46,9 @@ namespace Graphics3D {
             this->projection = glm::perspective(45.0f, (GLfloat) 200 / (GLfloat) 200, 0.1f, 10000.0f);
 
             this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+            this->control = new Control(this->window, this->camera);
+
             this->lightSource = new LightSource(glm::vec3(0, 10, 0), WHITE, 0.4f);
 
 
@@ -83,8 +87,10 @@ namespace Graphics3D {
 
             float currentFrame = glfwGetTime();
             this->deltaTime = currentFrame - this->lastFrame;
-            this->camera->setDeltaTime(this->deltaTime);
             this->lastFrame = currentFrame;
+
+            this->camera->setDeltaTime(this->deltaTime);
+            this->control->update(this->deltaTime);
 
             this->shaderProgram->use();
 

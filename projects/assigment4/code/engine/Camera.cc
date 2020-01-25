@@ -21,20 +21,25 @@ namespace Graphics3D {
         this->pitch = 0;
         this->firstMouse = true;
 
-        window->SetKeyPressFunction([this](int32 key, int32 scancode, int32 action, int32 mods) {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-                this->window->Close();
-            }
-            float cameraSpeed = 50.0f * deltaTime;
-            if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
-                this->cameraPos += cameraSpeed * this->cameraDirection;
-            if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))
-                this->cameraPos -= cameraSpeed * this->cameraDirection;
-            if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
-                this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
-            if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
-                this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
-        });
+        bool isWPressed = false;
+        bool isAPressed = false;
+        bool isSPressed = false;
+        bool isDPressed = false;
+
+        // window->SetKeyPressFunction([this](int32 key, int32 scancode, int32 action, int32 mods) {
+        //     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        //         this->window->Close();
+        //     }
+        //     float cameraSpeed = 50.0f * deltaTime;
+        //     if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
+        //         this->cameraPos += cameraSpeed * this->cameraDirection;
+        //     if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))
+        //         this->cameraPos -= cameraSpeed * this->cameraDirection;
+        //     if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
+        //         this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+        //     if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
+        //         this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+        // });
 
         window->SetMouseMoveFunction([this](float64 xPos, float64 yPos) {
             if(this->firstMouse) {
@@ -85,6 +90,36 @@ namespace Graphics3D {
     void Camera::setDeltaTime(float deltaTime) {
         this->deltaTime = deltaTime;
     }
+
+
+    void Camera::updateMove(float deltaTime) {
+        float cameraSpeed = 50.0f * deltaTime;
+            if (this->isWPressed)
+                this->cameraPos += cameraSpeed * this->cameraDirection;
+
+            if (this->isSPressed)
+                this->cameraPos -= cameraSpeed * this->cameraDirection;
+
+            if (this->isAPressed)
+                this->cameraPos -= glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+
+            if (this->isDPressed)
+                this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed;
+    }
+
+    void Camera::setWPressed(bool isWPressed) {
+        this->isWPressed = isWPressed;
+    }
+    void Camera::setAPressed(bool isAPressed) {
+        this->isAPressed = isAPressed;
+    }
+    void Camera::setSPressed(bool isSPressed) {
+        this->isSPressed = isSPressed;
+    }
+    void Camera::setDPressed(bool isDPressed) {
+        this->isDPressed = isDPressed;
+    }
+
 
     void Camera::updateM() { 
         this->M = glm::lookAt(this->cameraPos, 

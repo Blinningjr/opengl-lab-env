@@ -7,6 +7,7 @@
 #include "engine/Camera.h"
 #include "engine/LightSource.h"
 #include "engine/Scene.h"
+#include "engine/Control.h"
 
 
 namespace Graphics3D {
@@ -32,6 +33,8 @@ namespace Graphics3D {
 			std::shared_ptr<ShaderProgram> shaderProgram;
 
 			Display::Window* window;
+
+			Control* control;
 
 			float deltaTime;
 			float lastFrame;
