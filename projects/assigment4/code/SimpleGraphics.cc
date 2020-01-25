@@ -47,7 +47,7 @@ namespace Graphics3D {
 
             this->camera = new Camera(this->window, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-            this->control = new Control(this->window, this->camera);
+            this->control = new Control(this->window, this->camera, this->camera);
 
             this->lightSource = new LightSource(glm::vec3(0, 10, 0), WHITE, 0.4f);
 

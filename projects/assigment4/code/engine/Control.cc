@@ -5,9 +5,10 @@
 namespace Graphics3D {
 
 
-    Control::Control(Display::Window* window, IWASD* iwasd) {
+    Control::Control(Display::Window* window, IWASD* wasd, IMouse* mouse) {
         this->window = window;
-        this->iwasd = iwasd;
+        this->wasd = wasd;
+        this->mouse = mouse;
 
         window->SetKeyPressFunction([this](int32 key, int32 scancode, int32 action, int32 mods) {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -15,40 +16,46 @@ namespace Graphics3D {
             }
 
             if (key == GLFW_KEY_W && action == GLFW_PRESS){
-                this->iwasd->setWPressed(true);
+                this->wasd->setWPressed(true);
             } else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-                this->iwasd->setWPressed(false);
+                this->wasd->setWPressed(false);
             }
 
             if (key == GLFW_KEY_A && action == GLFW_PRESS){
-                this->iwasd->setAPressed(true);
+                this->wasd->setAPressed(true);
             } else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-                this->iwasd->setAPressed(false);
+                this->wasd->setAPressed(false);
             }
 
             if (key == GLFW_KEY_S && action == GLFW_PRESS){
-                this->iwasd->setSPressed(true);
+                this->wasd->setSPressed(true);
             } else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-                this->iwasd->setSPressed(false);
+                this->wasd->setSPressed(false);
             }
 
             if (key == GLFW_KEY_D && action == GLFW_PRESS){
-                this->iwasd->setDPressed(true);
+                this->wasd->setDPressed(true);
             } else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-                this->iwasd->setDPressed(false);
+                this->wasd->setDPressed(false);
             }
+        });
+
+        window->SetMouseMoveFunction([this](float64 xPos, float64 yPos) {
+            this->mouse->setMousePos(xPos, yPos);
         });
     }
 
 
     void Control::update(float deltaTime) {
-        this->iwasd->updateMove(deltaTime);
+        this->wasd->updateMove(deltaTime);
+        this->mouse->updateLook(deltaTime);
     }
 
 
     Control::~Control() {
         delete this->window;
-        delete this->iwasd;
+        delete this->wasd;
+        delete this->mouse;
     }
 
 }

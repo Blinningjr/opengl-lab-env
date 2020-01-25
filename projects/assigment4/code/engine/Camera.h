@@ -6,10 +6,11 @@
 #include "render/window.h"
 #include "Node.h"
 #include "IWASD.h"
+#include "IMouse.h"
 
 
 namespace Graphics3D {
-	class Camera : public Node, public IWASD {
+	class Camera : public Node, public IWASD, public IMouse {
 		public:
 
             Camera(Display::Window* window, glm::vec3 cameraPos, glm::vec3 cameraDirection);
@@ -25,10 +26,14 @@ namespace Graphics3D {
 
             void updateMove(float deltaTime) override;
 
+            void updateLook(float deltaTime) override;
+
             void setWPressed(bool isWPressed) override;
             void setAPressed(bool isAPressed) override;
             void setSPressed(bool isSPressed) override;
             void setDPressed(bool isDPressed) override;
+
+            void setMousePos(float64 xPos, float64 yPos) override;
 
         private:
 
@@ -41,17 +46,21 @@ namespace Graphics3D {
 
             float deltaTime;
 
-            float lastX;
-            float lastY;
-            float yaw;
-            float pitch;
-
-            bool firstMouse;
 
             bool isWPressed;
             bool isAPressed;
             bool isSPressed;
             bool isDPressed;
+
+            float64 mouseXPos;
+            float64 mouseYPos;
+
+            float64 mouseLastX;
+            float64 mouseLastY;
+            float yaw;
+            float pitch;
+
+            bool firstMouse;
 
 
             void updateM();

@@ -3,13 +3,14 @@
 
 #include "render/window.h"
 #include "IWASD.h"
+#include "IMouse.h"
 
 
 namespace Graphics3D {
 	class Control {
 		public:
 
-            Control(Display::Window* window, IWASD* iwasd);
+            Control(Display::Window* window, IWASD* wasd, IMouse* mouse);
             ~Control();
 
             void update(float deltaTime);
@@ -18,7 +19,8 @@ namespace Graphics3D {
 
             Display::Window* window;
 
-            IWASD* iwasd;
+            IWASD* wasd;
+            IMouse* mouse;
 
     };
 } 
