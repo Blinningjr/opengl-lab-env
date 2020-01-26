@@ -95,12 +95,12 @@ namespace Graphics3D {
         glm::vec3 vertex6(halfWidth, halfHight, halfDepth);
         glm::vec3 vertex7(-halfWidth, halfHight, halfDepth);
 
-        glm::vec3 normal0 = glm::normalize(GraphicsNode::crossProduct(vertex2, vertex5, vertex1));
-        glm::vec3 normal1 = glm::normalize(GraphicsNode::crossProduct(vertex0, vertex7, vertex3));
-        glm::vec3 normal2 = glm::normalize(GraphicsNode::crossProduct(vertex3, vertex6, vertex2));
-        glm::vec3 normal3 = glm::normalize(GraphicsNode::crossProduct(vertex0, vertex1, vertex5));
-        glm::vec3 normal4 = glm::normalize(GraphicsNode::crossProduct(vertex4, vertex5, vertex6));
-        glm::vec3 normal5 = glm::normalize(GraphicsNode::crossProduct(vertex0, vertex2, vertex1));
+        glm::vec3 normal0 = glm::normalize(glm::cross(vertex5 - vertex2, vertex1 - vertex2));
+        glm::vec3 normal1 = glm::normalize(glm::cross(vertex7 - vertex0, vertex3 - vertex0));
+        glm::vec3 normal2 = glm::normalize(glm::cross(vertex6 - vertex3, vertex2 - vertex3));
+        glm::vec3 normal3 = glm::normalize(glm::cross(vertex1 - vertex0, vertex5 - vertex0));
+        glm::vec3 normal4 = glm::normalize(glm::cross(vertex5 - vertex4, vertex6 - vertex4));
+        glm::vec3 normal5 = glm::normalize(glm::cross(vertex2 - vertex0, vertex1 - vertex0));
 
 
         std::vector<Vertex> vertices;

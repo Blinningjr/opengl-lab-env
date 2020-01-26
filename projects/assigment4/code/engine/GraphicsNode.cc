@@ -20,6 +20,8 @@ namespace Graphics3D {
         this->pitch = pitch;
         this->roll = roll;
         this->yawn = yawn;
+
+        this->frame = 0;
     }
 
 
@@ -59,17 +61,6 @@ namespace Graphics3D {
 
         glBindVertexArray(0);
     }
-
-
-    glm::vec3 GraphicsNode::crossProduct(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
-        glm::vec3 v = b - a;
-        glm::vec3 u = c - a;
-        glm::vec3 normal = {v.y * u.z - v.z * u.y,
-                            -(v.x * u.z - v.z * u.x),
-                            v.x * u.y - v.y * u.x};
-        return normal;
-    }
-
 
     glm::mat4 GraphicsNode::getM() {
         return this->M;
@@ -123,5 +114,18 @@ namespace Graphics3D {
 
     void GraphicsNode::setYawn(GLfloat yawn) {
         this->yawn = yawn;
+    }
+
+    uint GraphicsNode::getFrame() {
+        return this->frame;
+    }
+    
+    void GraphicsNode::setFrame(uint frame) {
+        this->frame = frame;
+    }
+
+
+    std::vector<Vertex> GraphicsNode::getVertices() {
+        return this->mesh->getVertices();
     }
 }

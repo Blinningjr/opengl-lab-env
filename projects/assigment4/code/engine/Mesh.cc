@@ -46,4 +46,9 @@ namespace Graphics3D {
         return this->vertices.size();
     }
 
+
+    std::vector<Vertex> Mesh::getVertices() {
+        return this->vertices;
+    }
+
 }

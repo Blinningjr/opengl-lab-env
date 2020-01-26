@@ -23,6 +23,80 @@ namespace Graphics3D {
     }
 
 
+    void QuadTreeNode::drawNodes(glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
+                glm::vec2 pFarLeft, glm::vec2 pFarRight, uint frame) {
+
+        float halfSize = size/2;
+
+        if (this->topLeft != nullptr) {
+            std::vector<glm::vec3> points;
+            points.push_back(glm::vec3(this->center.x - halfSize, 0, this->center.y -halfSize));
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y - halfSize));
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y));
+            points.push_back(glm::vec3(this->center.x - halfSize, 0, this->center.y));
+            if (QuadTree::wholeShapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->topLeft->drawAll(frame);
+            } else if (QuadTree::shapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->topLeft->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
+            }
+        }
+
+        if (this->topRight != nullptr) {
+            std::vector<glm::vec3> points;
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y - halfSize));
+            points.push_back(glm::vec3(this->center.x + halfSize, 0, this->center.y - halfSize));
+            points.push_back(glm::vec3(this->center.x + halfSize, 0, this->center.y));
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y));
+            if (QuadTree::wholeShapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->topRight->drawAll(frame);
+            } else if (QuadTree::shapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->topRight->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
+            }
+        }
+
+        if (this->bottomLeft != nullptr) {
+            std::vector<glm::vec3> points;
+            points.push_back(glm::vec3(this->center.x - halfSize, 0, this->center.y));
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y));
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y + halfSize));
+            points.push_back(glm::vec3(this->center.x - halfSize, 0, this->center.y + halfSize));
+            if (QuadTree::wholeShapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->bottomLeft->drawAll(frame);
+            } else if (QuadTree::shapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->bottomLeft->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
+            }
+        }
+
+        if (this->bottomRight != nullptr) {
+            std::vector<glm::vec3> points;
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y));
+            points.push_back(glm::vec3(this->center.x + halfSize, 0, this->center.y));
+            points.push_back(glm::vec3(this->center.x + halfSize, 0, this->center.y + halfSize));
+            points.push_back(glm::vec3(this->center.x, 0, this->center.y + halfSize));
+            if (QuadTree::wholeShapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->bottomRight->drawAll(frame);
+            } else if (QuadTree::shapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
+                this->bottomRight->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
+            }
+        }
+        
+    }
+
+
+    void QuadTreeNode::drawAll(uint frame) {
+        if (this->topLeft != nullptr)
+            this->topLeft->drawAll(frame);
+
+        if (this->topRight != nullptr)
+            this->topRight->drawAll(frame);
+
+        if (this->bottomLeft != nullptr)
+            this->bottomLeft->drawAll(frame);
+
+        if (this->bottomRight != nullptr)
+            this->bottomRight->drawAll(frame);
+    }
+       
 
     bool QuadTreeNode::isLeaf() {
         return false;
@@ -35,7 +109,7 @@ namespace Graphics3D {
         float childeSize = this->size/2.0f;
         
         if (insideQuads[0]) {
-            if (this->topLeft != NULL) {
+            if (this->topLeft != nullptr) {
                 if (this->topLeft->isLeaf()) {
                     GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->topLeft)->getGraphicsNode();
                     this->topLeft = new QuadTreeNode(this->calcTopLeftCenter(), childeSize);
@@ -48,7 +122,7 @@ namespace Graphics3D {
         }
 
         if (insideQuads[1]) {
-            if (this->topRight != NULL) {
+            if (this->topRight != nullptr) {
                 if (this->topRight->isLeaf()) {
                     GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->topRight)->getGraphicsNode();
                     this->topRight = new QuadTreeNode(this->calcTopRightCenter(), childeSize);
@@ -61,7 +135,7 @@ namespace Graphics3D {
         }
 
         if (insideQuads[2]) {
-            if (this->bottomLeft != NULL) {
+            if (this->bottomLeft != nullptr) {
                 if (this->bottomLeft->isLeaf()) {
                     GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->bottomLeft)->getGraphicsNode();
                     this->bottomLeft = new QuadTreeNode(this->calcBottomLeftCenter(), childeSize);
@@ -74,7 +148,7 @@ namespace Graphics3D {
         }
 
         if (insideQuads[3]) {
-            if (this->bottomRight != NULL) {
+            if (this->bottomRight != nullptr) {
                 if (this->bottomRight->isLeaf()) {
                     GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->bottomRight)->getGraphicsNode();
                     this->bottomRight = new QuadTreeNode(this->calcBottomRightCenter(), childeSize);

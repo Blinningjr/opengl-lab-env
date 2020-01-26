@@ -17,6 +17,8 @@ namespace Graphics3D {
 
             unsigned int getSize();
 
+            std::vector<Vertex> getVertices();
+
         private:
 
             GLuint vao; // Vertex array object

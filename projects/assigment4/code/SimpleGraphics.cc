@@ -21,6 +21,7 @@ namespace Graphics3D {
     SimpleGraphics::SimpleGraphics() {
         this->deltaTime = 0;
         this->lastFrame = 0;
+        this->frame = 0;
     }
 
 
@@ -115,6 +116,7 @@ namespace Graphics3D {
             this->scene->renderScene(deltaTime);
 
             this->window->SwapBuffers();
+            this->frame += 1;
         }
     }
 }

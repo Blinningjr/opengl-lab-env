@@ -49,6 +49,8 @@ namespace Graphics3D {
 			const float pov = 45.0f;
             const float minViewDist = 0.1f;
             const float maxViewDist = 1000.0f;
+
+			uint frame;
 			
 	};
 }

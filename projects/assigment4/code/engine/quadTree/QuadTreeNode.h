@@ -15,7 +15,10 @@ namespace Graphics3D {
             QuadTreeNode(glm::vec2 center, float size, GraphicsNode* gNode);
             ~QuadTreeNode();
 
-            std::vector<GraphicsNode*> getGraphicsNodes() override;
+            void drawNodes(glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
+                glm::vec2 pFarLeft, glm::vec2 pFarRight, uint frame) override;
+            void drawAll(uint frame) override;
+       
 
             bool isLeaf() override; 
 

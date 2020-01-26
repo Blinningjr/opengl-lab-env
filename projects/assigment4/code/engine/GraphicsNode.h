@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "Node.h"
+#include "../utils/Vertex.h"
 
 
 namespace Graphics3D {
@@ -24,8 +25,6 @@ namespace Graphics3D {
 
             void update(float deltaTime) override {}
 
-            static glm::vec3 crossProduct(glm::vec3 a, glm::vec3 b, glm::vec3 c);
-
             glm::mat4 getM();
             glm::vec3 getPosition();
             glm::vec3 getScale();
@@ -39,7 +38,14 @@ namespace Graphics3D {
             void setRoll(GLfloat roll);
             void setYawn(GLfloat yawn);
 
+            uint getFrame();
+            void setFrame(uint frame);
+
+            std::vector<Vertex> getVertices();
+
         protected:
+
+            uint frame;
 
             glm::vec3 position;
             glm::vec3 scale;
