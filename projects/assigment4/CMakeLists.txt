@@ -4,8 +4,8 @@
 
 cmake_minimum_required(VERSION 3.13)
 
-FILE(GLOB graphics3d_headers code/*.h code/engine/*.h code/graphicsNodes/*.h code/materials/*.h code/utils/*.h)
-FILE(GLOB graphics3d_sources code/*.cc code/engine/*.cc code/graphicsNodes/*.cc code/materials/*.cc code/utils/*.cc)
+FILE(GLOB graphics3d_headers code/*.h code/engine/*.h code/engine/quadTree/*.h code/graphicsNodes/*.h code/materials/*.h code/utils/*.h)
+FILE(GLOB graphics3d_sources code/*.cc code/engine/*.cc code/engine/quadTree/*.cc code/graphicsNodes/*.cc code/materials/*.cc code/utils/*.cc)
 
 
 SET(files_graphics3d ${graphics3d_headers} ${graphics3d_sources})

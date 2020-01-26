@@ -63,7 +63,7 @@ namespace Graphics3D {
             this->cameraPos += glm::normalize(glm::cross(this->cameraDirection, this->cameraUp)) * cameraSpeed/2.0f;
 
         if (!this->isFlyOn)
-            this->cameraPos.y = 2.5;
+            this->cameraPos.y = 2.0f;
     }
 
 
@@ -130,4 +130,8 @@ namespace Graphics3D {
             this->cameraPos + this->cameraDirection, this->cameraUp);
     }   
 
+
+    glm::vec3 Camera::getCameraDirection() {
+        return this->cameraDirection;
+    }
 }

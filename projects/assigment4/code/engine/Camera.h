@@ -34,6 +34,8 @@ namespace Graphics3D {
 
             void setMousePos(float64 xPos, float64 yPos) override;
 
+            glm::vec3 getCameraDirection();
+
         private:
 
             Display::Window* window;

@@ -67,12 +67,7 @@ namespace Graphics3D {
             std::shared_ptr<ShaderProgram> shaderProgram(new ShaderProgram(shaders));
             this->shaderProgram = shaderProgram;
 
-            this->lightPosID = this->shaderProgram->getUniformId("lightPos");
-            this->lightColorID = this->shaderProgram->getUniformId("lightColor");
-            this->lightIntensityID = this->shaderProgram->getUniformId("lightIntensity");
-            this->cameraPosID = this->shaderProgram->getUniformId("cameraPos");
-
-            this->scene = Scene::genScene(shaderProgram, 750, 250, pov, minViewDist, maxViewDist);
+            this->scene = Scene::genScene(shaderProgram, 9, 1, pov, minViewDist, maxViewDist);
             
             return true;
         }
@@ -94,6 +89,11 @@ namespace Graphics3D {
 
             this->shaderProgram->use();
 
+            this->lightPosID = this->shaderProgram->getUniformId("lightPos");
+            this->lightColorID = this->shaderProgram->getUniformId("lightColor");
+            this->lightIntensityID = this->shaderProgram->getUniformId("lightIntensity");
+            this->cameraPosID = this->shaderProgram->getUniformId("cameraPos");
+
             GLint projectionID = this->shaderProgram->getUniformId("projection");
             glUniformMatrix4fv(projectionID, 1, GL_FALSE, glm::value_ptr(this->projection));
 
@@ -113,7 +113,8 @@ namespace Graphics3D {
 
             glEnable(GL_CULL_FACE);  
             
-            this->scene->renderScene(deltaTime);
+            this->scene->renderScene(this->camera->getCameraDirection(), this->camera->getCameraPos(),
+                this->deltaTime, this->frame);
 
             this->window->SwapBuffers();
             this->frame += 1;

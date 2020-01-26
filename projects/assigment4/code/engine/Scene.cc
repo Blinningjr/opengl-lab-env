@@ -7,15 +7,21 @@
 #include <algorithm> 
 #include <stdlib.h>
 #include <time.h> 
+#include "iostream"
 
 
 namespace Graphics3D {
 
-    Scene::Scene(std::shared_ptr<ShaderProgram> shaderProgram, float pov, float minViewDist, float maxViewDist) {
+    Scene::Scene(std::shared_ptr<ShaderProgram> shaderProgram, float pov, float minViewDist, float maxViewDist,
+            float size) {
         this->shaderProgram = shaderProgram;
         this->pov = pov;
         this->minViewDist = minViewDist;
         this->maxViewDist = maxViewDist;
+
+        std::shared_ptr<QuadTreeNode> root(new QuadTreeNode(glm::vec2(0, 0), size,(uint) 0));
+        this->quadTreeRoot = root;
+
         srand(time(0));
     }
 
@@ -28,14 +34,17 @@ namespace Graphics3D {
     /**
      * Renders all scene objects on the screen. 
      */
-    void Scene::renderScene(float deltaTime) {
+    void Scene::renderScene(glm::vec3 cameraDirection, glm::vec3 cameraPos, float deltaTime, uint frame) {
         for (int i = 0; i < this->staticScene.size(); i++) {
             this->staticScene[i]->update(deltaTime);
-            this->staticScene[i]->draw();
+            // this->staticScene[i]->draw();
         }
         for (int i = 0; i < this->sceneGraphs.size(); i++) {
            this->renderSceneNode(this->sceneGraphs[i], glm::mat4(1), deltaTime);
         }
+
+        this->quadTreeRoot->drawAll(frame);
+        // this->renderQuadTree(cameraDirection, cameraPos, frame);
     }
 
 
@@ -59,7 +68,7 @@ namespace Graphics3D {
             emptyTiles.push_back(glm::vec3( xPos, startYPos, zPos));
         }
         
-        Scene* scene = new Scene(shaderProgram, pov, minViewDist, maxViewDist);
+        Scene* scene = new Scene(shaderProgram, pov, minViewDist, maxViewDist, floorSize);
         std::shared_ptr<SimpleMaterial> simpleMaterialBrown(new SimpleMaterial(shaderProgram, BROWN));
         scene->addStaticObj(new Cube(glm::vec3(floorSize, 1, floorSize), simpleMaterialBrown, 
             glm::vec3(0, -0.5, 0)));
@@ -97,6 +106,12 @@ namespace Graphics3D {
 
     void Scene::addStaticObj(GraphicsNode* graphicsNode) {
         this->staticScene.push_back(graphicsNode);
+        // if (this->staticScene.size() != 1)
+            this->quadTreeRoot->insertGraphicsNode(graphicsNode);
+        
+        // this->quadTreeRoot->drawAll(this->staticScene.size());
+        // std::cout << "\n";
+        // std::cout << "\n";
     }
 
 
@@ -330,5 +345,28 @@ namespace Graphics3D {
         for (int i = 0; i < node.children.size(); i++) {
             this->renderSceneNode(node.children[i], newMatrix, deltaTime);
         }
+    }
+
+
+    void Scene::renderQuadTree(glm::vec3 cameraDirection, glm::vec3 cameraPos, uint frame) {
+        glm::vec3 direction = glm::normalize(glm::vec3(cameraDirection.x, 0, cameraDirection.z));
+        float distFactor = glm::dot(cameraDirection, direction);
+        float farDistance = this->maxViewDist * distFactor;
+        float farSize = tan(this->pov) * farDistance;
+        float closeDistance = this->minViewDist * distFactor;
+        float closeSize = tan(this->pov) * closeDistance;
+        glm::vec3 rightDirection = glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
+        
+        glm::vec3 closeLeft(direction * closeDistance - rightDirection * closeSize);
+        glm::vec3 closeRight(direction * closeDistance + rightDirection * closeSize);
+
+        glm::vec3 farLeft(direction * farDistance - rightDirection * farSize);
+        glm::vec3 farRight(direction * farDistance + rightDirection * farSize);
+
+        this->quadTreeRoot->drawNodes(glm::vec2(closeLeft.x, closeLeft.z),
+                                        glm::vec2(closeRight.x, closeRight.z),
+                                        glm::vec2(farLeft.x, farLeft.z),
+                                        glm::vec2(farRight.x, farRight.z),
+                                        frame);
     }
 }

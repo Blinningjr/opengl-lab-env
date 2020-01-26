@@ -11,7 +11,7 @@ namespace Graphics3D {
 	class QuadTreeNode : public QuadTree {
 		public:
 
-            QuadTreeNode(glm::vec2 center, float size);
+            QuadTreeNode(glm::vec2 center, float size, uint depth);
             QuadTreeNode(glm::vec2 center, float size, GraphicsNode* gNode);
             ~QuadTreeNode();
 
@@ -34,13 +34,14 @@ namespace Graphics3D {
             QuadTree* bottomLeft;
             QuadTree* bottomRight;
 
-            bool* checkInsideWhichQuads(GraphicsNode* gNode);
+            bool* checkInsideWhichQuads(bool* insideQuads, GraphicsNode* gNode);
 
             glm::vec2 calcTopLeftCenter();
             glm::vec2 calcTopRightCenter();
             glm::vec2 calcBottomLeftCenter();
             glm::vec2 calcBottomRightCenter();
-   
+
+            uint depth;
             
     };
 } 

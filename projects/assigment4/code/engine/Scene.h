@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "GraphicsNode.h"
+#include "quadTree/QuadTreeNode.h"
 
 
 namespace Graphics3D {
@@ -17,10 +18,11 @@ namespace Graphics3D {
                 std::vector<SceneNode> children;
             };
 
-            Scene(std::shared_ptr<ShaderProgram> shaderProgram, float pov, float minViewDist, float maxViewDist);
+            Scene(std::shared_ptr<ShaderProgram> shaderProgram, float pov, float minViewDist, float maxViewDist,
+                float size);
             ~Scene();
 
-            void renderScene(float deltaTime);
+            void renderScene(glm::vec3 cameraDirection, glm::vec3 cameraPos, float deltaTime, uint frame);
 
             static Scene* genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs,
                 float pov, float minViewDist, float maxViewDist);
@@ -48,7 +50,11 @@ namespace Graphics3D {
             float minViewDist;
             float maxViewDist;
 
+            std::shared_ptr<QuadTreeNode> quadTreeRoot;
+
             void renderSceneNode(SceneNode node, glm::mat4 transformMatrix, float deltaTime);
+
+            void renderQuadTree(glm::vec3 cameraDirection, glm::vec3 cameraPos, uint frame);
 
     };
 } 
