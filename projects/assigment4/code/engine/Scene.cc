@@ -39,6 +39,8 @@ namespace Graphics3D {
             this->staticScene[i]->update(deltaTime);
             // this->staticScene[i]->draw();
         }
+        this->staticScene[0]->draw();
+
         for (int i = 0; i < this->sceneGraphs.size(); i++) {
            this->renderSceneNode(this->sceneGraphs[i], glm::mat4(1), deltaTime);
         }
@@ -106,12 +108,8 @@ namespace Graphics3D {
 
     void Scene::addStaticObj(GraphicsNode* graphicsNode) {
         this->staticScene.push_back(graphicsNode);
-        // if (this->staticScene.size() != 1)
+        if (this->staticScene.size() != 1)
             this->quadTreeRoot->insertGraphicsNode(graphicsNode);
-        
-        // this->quadTreeRoot->drawAll(this->staticScene.size());
-        // std::cout << "\n";
-        // std::cout << "\n";
     }
 
 

@@ -47,7 +47,6 @@ namespace Graphics3D {
                 glm::vec2 pos(gNodePos.x, gNodePos.z);
 
                 return (toTheRightOfLine(pCloseLeft - pFarLeft, pos - pFarLeft)
-                        && toTheRightOfLine(pFarLeft - pFarRight, pos - pFarRight)
                         && toTheRightOfLine(pFarRight - pCloseRight, pos - pCloseRight)
                         && toTheRightOfLine(pCloseRight - pCloseLeft, pos - pCloseLeft));
             }
