@@ -67,7 +67,7 @@ namespace Graphics3D {
             std::shared_ptr<ShaderProgram> shaderProgram(new ShaderProgram(shaders));
             this->shaderProgram = shaderProgram;
 
-            this->scene = Scene::genScene(shaderProgram, 9, 1, pov, minViewDist, maxViewDist);
+            this->scene = Scene::genScene(shaderProgram, 10000, 0, pov, minViewDist, maxViewDist);
             
             return true;
         }

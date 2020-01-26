@@ -43,8 +43,8 @@ namespace Graphics3D {
            this->renderSceneNode(this->sceneGraphs[i], glm::mat4(1), deltaTime);
         }
 
-        this->quadTreeRoot->drawAll(frame);
-        // this->renderQuadTree(cameraDirection, cameraPos, frame);
+        // this->quadTreeRoot->drawAll(frame);
+        this->renderQuadTree(cameraDirection, cameraPos, frame);
     }
 
 
@@ -350,18 +350,39 @@ namespace Graphics3D {
 
     void Scene::renderQuadTree(glm::vec3 cameraDirection, glm::vec3 cameraPos, uint frame) {
         glm::vec3 direction = glm::normalize(glm::vec3(cameraDirection.x, 0, cameraDirection.z));
-        float distFactor = glm::dot(cameraDirection, direction);
-        float farDistance = this->maxViewDist * distFactor;
+        float farDistance = this->maxViewDist;
         float farSize = tan(this->pov) * farDistance;
-        float closeDistance = this->minViewDist * distFactor;
+        float closeDistance = this->minViewDist;
         float closeSize = tan(this->pov) * closeDistance;
         glm::vec3 rightDirection = glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
         
-        glm::vec3 closeLeft(direction * closeDistance - rightDirection * closeSize);
-        glm::vec3 closeRight(direction * closeDistance + rightDirection * closeSize);
+        glm::vec3 closeLeft(cameraPos + direction * closeDistance - rightDirection * closeSize);
+        glm::vec3 closeRight(cameraPos + direction * closeDistance + rightDirection * closeSize);
+        glm::vec3 farLeft(cameraPos + direction * farDistance - rightDirection * farSize);
+        glm::vec3 farRight(cameraPos + direction * farDistance + rightDirection * farSize);
 
-        glm::vec3 farLeft(direction * farDistance - rightDirection * farSize);
-        glm::vec3 farRight(direction * farDistance + rightDirection * farSize);
+        // std::cout << "\n";
+        // std::cout << cameraPos.x;
+        // std::cout << ":";
+        // std::cout << cameraPos.z;
+        // std::cout << "\n";
+        // std::cout << closeLeft.x;
+        // std::cout << ":";
+        // std::cout << closeLeft.z;
+        // std::cout << "\n";
+        // std::cout << closeRight.x;
+        // std::cout << ":";
+        // std::cout << closeRight.z;
+        // std::cout << "\n";
+        // std::cout << farLeft.x;
+        // std::cout << ":";
+        // std::cout << farLeft.z;
+        // std::cout << "\n";
+        // std::cout << farRight.x;
+        // std::cout << ":";
+        // std::cout << farRight.z;
+        // std::cout << "\n";
+
 
         this->quadTreeRoot->drawNodes(glm::vec2(closeLeft.x, closeLeft.z),
                                         glm::vec2(closeRight.x, closeRight.z),

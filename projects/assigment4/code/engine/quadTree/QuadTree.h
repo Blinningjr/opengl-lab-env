@@ -4,6 +4,7 @@
 #include "../GraphicsNode.h"
 #include <vector>
 #include <glm/glm.hpp>
+#include "iostream"
 
 
 namespace Graphics3D {
@@ -17,31 +18,35 @@ namespace Graphics3D {
             
             virtual bool isLeaf() = 0;
 
-            static bool wholeShapeInsideView(std::vector<glm::vec3> points, glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
-                    glm::vec2 pFarLeft, glm::vec2 pFarRight) {
-                for (int i = 0; i < points.size(); i++) {
-                    if (!insideView(points[i], pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
 
-            static bool shapeInsideView(std::vector<glm::vec3> points, glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
+            /**
+             *  0 = Not inside.
+             *  1 = Partly inside.
+             *  2 = Whole shape inside.
+            */
+            static int shapeInsideView(std::vector<glm::vec3> points, glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
                     glm::vec2 pFarLeft, glm::vec2 pFarRight) {
+                uint numInside = 0;
                 for (int i = 0; i < points.size(); i++) {
                     if (insideView(points[i], pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
-                        return true;
+                        numInside += 1;
                     }
                 }
-                return false;
+                if (numInside == points.size()) {
+                    return 2;
+                } else if (numInside > 0) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }
 
             static bool insideView(glm::vec3 gNodePos, glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
                     glm::vec2 pFarLeft, glm::vec2 pFarRight) {
 
                 glm::vec2 pos(gNodePos.x, gNodePos.z);
-                return (toTheRightOfLine(pCloseLeft - pFarLeft, pos - pFarLeft) 
+
+                return (toTheRightOfLine(pCloseLeft - pFarLeft, pos - pFarLeft)
                         && toTheRightOfLine(pFarLeft - pFarRight, pos - pFarRight)
                         && toTheRightOfLine(pFarRight - pCloseRight, pos - pCloseRight)
                         && toTheRightOfLine(pCloseRight - pCloseLeft, pos - pCloseLeft));
