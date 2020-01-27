@@ -89,7 +89,7 @@ namespace Graphics3D {
                         glm::vec2(this->center.x + this->size, this->center.y - this->size),
                         glm::vec2(this->center.x + this->size, this->center.y),
                         glm::vec2(this->center.x, this->center.y)) > 0) {
-                    this->topLeft->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
+                    this->topRight->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace Graphics3D {
                         glm::vec2(this->center.x, this->center.y),
                         glm::vec2(this->center.x, this->center.y + this->size),
                         glm::vec2(this->center.x - this->size, this->center.y + this->size)) > 0) {
-                    this->topLeft->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
+                    this->bottomLeft->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
                 }
             }
         }
@@ -137,7 +137,7 @@ namespace Graphics3D {
                         glm::vec2(this->center.x + this->size, this->center.y),
                         glm::vec2(this->center.x + this->size, this->center.y + this->size),
                         glm::vec2(this->center.x, this->center.y + this->size)) > 0) {
-                    this->topLeft->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
+                    this->bottomRight->drawNodes(pCloseLeft, pCloseRight, pFarLeft, pFarRight, frame);
                 }
             }
         }

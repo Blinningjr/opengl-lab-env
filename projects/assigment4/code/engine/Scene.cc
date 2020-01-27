@@ -56,7 +56,7 @@ namespace Graphics3D {
     Scene* Scene::genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs,
             float pov, float minViewDist, float maxViewDist) {
         int totalObj = numStaticObj + numSceneGraphs;
-        int numObjRows =  std::max((int) ceil(sqrt(totalObj) + totalObj/50.0f), 1);
+        int numObjRows =  std::max((int) ceil(sqrt(totalObj)), 1);
         int maxObjSize = 5;
         int floorSize = maxObjSize * numObjRows;
         float startXPos = -floorSize/2.0f;
@@ -353,16 +353,31 @@ namespace Graphics3D {
         float closeDistance = this->minViewDist;
         float closeSize = tan(this->pov) * closeDistance;
         glm::vec3 rightDirection = glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
+
+        // cameraPos.x = 0;
+        // cameraPos.y = 0;
+        // cameraPos.z = 0;
         
         glm::vec3 closeLeft(cameraPos + direction * closeDistance - rightDirection * closeSize);
         glm::vec3 closeRight(cameraPos + direction * closeDistance + rightDirection * closeSize);
         glm::vec3 farLeft(cameraPos + direction * farDistance - rightDirection * farSize);
         glm::vec3 farRight(cameraPos + direction * farDistance + rightDirection * farSize);
 
+        // glm::vec3 closeLeft(-1, 0 , -1);
+        // glm::vec3 closeRight(-1, 0 , 1);
+        // glm::vec3 farLeft(50, 0 , -50);
+        // glm::vec3 farRight(50, 0 , 50);
+
         // std::cout << "\n";
         // std::cout << cameraPos.x;
         // std::cout << ":";
         // std::cout << cameraPos.z;
+        // std::cout << "\n";
+        // std::cout << cameraDirection.x;
+        // std::cout << ":";
+        // std::cout << cameraDirection.y;
+        // std::cout << ":";
+        // std::cout << cameraDirection.z;
         // std::cout << "\n";
         // std::cout << closeLeft.x;
         // std::cout << ":";

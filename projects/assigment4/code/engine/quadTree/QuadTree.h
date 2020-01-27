@@ -45,15 +45,26 @@ namespace Graphics3D {
                     glm::vec2 pFarLeft, glm::vec2 pFarRight) {
 
                 glm::vec2 pos(gNodePos.x, gNodePos.z);
-
                 return (toTheRightOfLine(pCloseLeft - pFarLeft, pos - pFarLeft)
-                        && toTheRightOfLine(pFarRight - pCloseRight, pos - pCloseRight)
-                        && toTheRightOfLine(pCloseRight - pCloseLeft, pos - pCloseLeft));
+                        && toTheRightOfLine(pFarLeft - pFarRight, pos - pFarRight)
+                        && toTheRightOfLine(pFarRight - pCloseRight, pos - pCloseRight));
             }
 
             static bool toTheRightOfLine(glm::vec2 line, glm::vec2 point) {
                 glm::vec3 v(line.x, 0, line.y);
                 glm::vec3 u(point.x, 0, point.y);
+                // std::cout << "\n";
+                // std::cout << "start \n";
+                // std::cout << line.x;
+                // std::cout << " : ";
+                // std::cout << line.y;
+                // std::cout << "\n";
+                // std::cout << point.x;
+                // std::cout << " : ";
+                // std::cout << point.y;
+                // std::cout << "\n";
+                // std::cout << glm::cross(v, u).y;
+                // std::cout << "\n";
                 return glm::cross(v, u).y >= 0;
             }
             
