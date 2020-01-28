@@ -50,6 +50,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Calls the update function of the wsad and mouse objects.
+    */
     void Control::update(float deltaTime) {
         this->wasd->updateMove(deltaTime);
         this->mouse->updateLook(deltaTime);

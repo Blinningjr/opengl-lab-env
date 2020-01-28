@@ -42,11 +42,17 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Gets the number of vertices in mesh.
+    */
     unsigned int Mesh::getSize() {
         return this->vertices.size();
     }
 
 
+    /**
+     *  Gets the meshes vertices.
+    */
     std::vector<Vertex> Mesh::getVertices() {
         return this->vertices;
     }

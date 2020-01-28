@@ -12,6 +12,7 @@
 
 namespace Graphics3D {
 
+
     Scene::Scene(std::shared_ptr<ShaderProgram> shaderProgram, float pov, float minViewDist, float maxViewDist,
             float size) {
         this->shaderProgram = shaderProgram;
@@ -25,6 +26,7 @@ namespace Graphics3D {
         srand(time(0));
     }
 
+
     Scene::~Scene() {
         delete[] &this->staticScene;
         delete[] &this->sceneGraphs;
@@ -32,7 +34,7 @@ namespace Graphics3D {
 
 
     /**
-     * Renders all scene objects on the screen. 
+     * Renders all visable scene objects. 
      */
     void Scene::renderScene(glm::vec3 cameraDirection, glm::vec3 cameraPos, float deltaTime, uint frame) {
         for (int i = 0; i < this->staticScene.size(); i++) {
@@ -106,6 +108,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     * Adds a static object to the scene.
+    */
     void Scene::addStaticObj(GraphicsNode* graphicsNode) {
         this->staticScene.push_back(graphicsNode);
         if (this->staticScene.size() != 1)
@@ -113,6 +118,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Adds a scene graph to the scene
+    */
     void Scene::addScreenGraph(SceneNode sceneNode) {
         this->sceneGraphs.push_back(sceneNode);
     }
@@ -196,7 +204,7 @@ namespace Graphics3D {
 
 
     /**
-     * Generates a door SceneNode.
+     * Generates a door scene graph.
     */
     Scene::SceneNode Scene::genDoor(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position) {
         std::vector<glm::vec3> colors;
@@ -267,7 +275,9 @@ namespace Graphics3D {
     }
 
 
-
+    /**
+     *  Generates a solarsystem scene object.
+    */
     Scene::SceneNode Scene::genSolarSystem(std::shared_ptr<ShaderProgram> shaderProgram, glm::vec3 position) {
         std::vector<glm::vec3> colors;
         colors.push_back(RED);
@@ -346,6 +356,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Renders the object visable in the quadtree.
+    */
     void Scene::renderQuadTree(glm::vec3 cameraDirection, glm::vec3 cameraPos, uint frame) {
         glm::vec3 direction = glm::normalize(glm::vec3(cameraDirection.x, 0, cameraDirection.z));
         float farDistance = this->maxViewDist;

@@ -56,75 +56,122 @@ namespace Graphics3D {
         GLint objTransformID = this->material->getUniformId("object_transform");
         glUniformMatrix4fv(objTransformID, 1, GL_FALSE, glm::value_ptr(this->M));
         
-        // glDrawElements(GL_TRIANGLES, mesh->getIndicesSize(),  GL_UNSIGNED_INT, 0);
         glDrawArrays(GL_TRIANGLES, 0, this->mesh->getSize());
 
         glBindVertexArray(0);
     }
 
+
+    /**
+     * Gets the GraphicsNodes transform matrix.
+     * Note: The matrix is only updated on draw calls. 
+    */
     glm::mat4 GraphicsNode::getM() {
         return this->M;
     }
 
 
+    /**
+     *  Gets the GraphicsNodes position.
+    */
     glm::vec3 GraphicsNode::getPosition() {
         return this->position;
     }
 
 
+    /**
+     *  Gets the GraphicsNodes scale.
+    */
     glm::vec3 GraphicsNode::getScale() {
         return this->scale;
     }
 
 
+    /**
+     *  Gets the GraphicsNodes pitch.
+    */
     GLfloat GraphicsNode::getPitch() {
         return this->pitch;
     }
 
 
+    /**
+     *  Gets the GraphicsNodes roll.
+    */
     GLfloat GraphicsNode::getRoll() {
         return this->roll;
     }
 
 
+    /**
+     *  Gets the GraphicsNodes yawn.
+    */
     GLfloat GraphicsNode::getYawn() {
         return this->yawn;
     }
 
 
+    /**
+     *  Sets the GraphicsNodes position.
+    */
     void GraphicsNode::setPosition(glm::vec3 position) {
         this->position = position;
     }
 
 
+    /**
+     *  Sets the GraphicsNodes scale.
+    */
     void GraphicsNode::setScale(glm::vec3 scale) {
         this->scale = scale;
     }
 
 
+    /**
+     *  Sets the GraphicsNodes pitch.
+    */
     void GraphicsNode::setPitch(GLfloat pitch) {
         this->pitch = pitch;
     }
 
 
+    /**
+     *  Sets the GraphicsNodes roll.
+    */
     void GraphicsNode::setRoll(GLfloat roll) {
         this->roll = roll;
     }
 
 
+    /**
+     *  Sets the GraphicsNodes yawn.
+    */
     void GraphicsNode::setYawn(GLfloat yawn) {
         this->yawn = yawn;
     }
 
+
+    /**
+     *  Get the GraphicsNodes frame.
+     *  Frame is the last frame the GraphicsNode whs drawn.
+    */
     uint GraphicsNode::getFrame() {
         return this->frame;
     }
     
+
+    /**
+     *  Sets the GraphicsNodes frame.
+     *  Frame is the last frame the GraphicsNode whs drawn.
+    */
     void GraphicsNode::setFrame(uint frame) {
         this->frame = frame;
     }
 
 
+    /**
+     *  Get the GraphicsNodes mesh vertices.
+    */
     std::vector<Vertex> GraphicsNode::getVertices() {
         return this->mesh->getVertices();
     }

@@ -37,17 +37,26 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Gets the camera transform matrix.
+    */
     glm::mat4 Camera::getCameraMatrix() {
         this->updateM();
         return this->M;;
     }
 
 
+    /**
+     *  Gets the camera world position.
+    */
     glm::vec3 Camera::getCameraPos() {
         return this->cameraPos;
     }
 
 
+    /**
+     *  Updates the camera position.
+    */
     void Camera::updateMove(float deltaTime) {
         float cameraSpeed = 25.0f * deltaTime;
         if (this->isWPressed)
@@ -67,6 +76,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Updates the direction of the camera. 
+    */
     void Camera::updateLook(float deltaTime) {
         
         float64 xoffset = this->mouseXPos - this->mouseLastX;
@@ -93,27 +105,49 @@ namespace Graphics3D {
     }
 
 
+    /**
+     * Sets the isWPressed class variable.
+    */
     void Camera::setWPressed(bool isWPressed) {
         this->isWPressed = isWPressed;
     }
     
+
+    /**
+     * Sets the isAPressed class variable.
+    */
     void Camera::setAPressed(bool isAPressed) {
         this->isAPressed = isAPressed;
     }
 
+
+    /**
+     * Sets the isSPressed class variable.
+    */
     void Camera::setSPressed(bool isSPressed) {
         this->isSPressed = isSPressed;
     }
 
+
+    /**
+     * Sets the isDPressed class variable.
+    */
     void Camera::setDPressed(bool isDPressed) {
         this->isDPressed = isDPressed;
     }
 
+
+    /**
+     * Sets the isFlyOn class variable.
+    */
     void Camera::toggleFly() {
         this->isFlyOn = !this->isFlyOn;
     }
 
 
+    /**
+     *  Sets the mouse position variables.
+    */
     void Camera::setMousePos(float64 xPos, float64 yPos) {
         if (this->firstMouse) {
             this->firstMouse = false;
@@ -125,12 +159,18 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Updates the camera transform matrix.
+    */
     void Camera::updateM() { 
         this->M = glm::lookAt(this->cameraPos, 
             this->cameraPos + this->cameraDirection, this->cameraUp);
     }   
 
 
+    /**
+     *  Gets the camera direction.
+    */
     glm::vec3 Camera::getCameraDirection() {
         return this->cameraDirection;
     }
