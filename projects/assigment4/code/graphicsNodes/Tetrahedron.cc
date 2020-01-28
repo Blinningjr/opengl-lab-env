@@ -11,6 +11,7 @@ namespace Graphics3D {
         this->yawnSpeed = 0;
     }
 
+
     Tetrahedron::Tetrahedron(float size, std::shared_ptr<Material> material,  glm::vec3 position, float pitchSpeed,
                 float rollSpeed, float yawnSpeed): GraphicsNode(this->genMesh(size), 
                     material, position, glm::vec3(1,1,1), 0, 0, 0) {
@@ -34,6 +35,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     * Updates the rotaion of tetrahedron.
+    */
     void Tetrahedron::update(float deltaTime) {
         this->pitch += this->pitchSpeed * deltaTime;
         this->roll += this->rollSpeed * deltaTime;

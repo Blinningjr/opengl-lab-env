@@ -33,6 +33,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Initializes the program.
+    */
     bool SimpleGraphics::Open() {
         App::Open();
         this->window = new Display::Window;
@@ -76,6 +79,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Program loop.
+    */
     void SimpleGraphics::Run() {
         while (this->window->IsOpen()) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

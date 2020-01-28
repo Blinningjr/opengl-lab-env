@@ -3,6 +3,7 @@
 
 namespace Graphics3D {
 
+
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position):
         GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), 0, 0, 0) {
         
@@ -14,6 +15,7 @@ namespace Graphics3D {
         this->originalY = position.y;
         this->angle = 0;
     }
+
 
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, GLfloat yawn):
         GraphicsNode(this->genMesh(size), material, position, glm::vec3(1,1,1), 0, 0, yawn) {
@@ -27,6 +29,7 @@ namespace Graphics3D {
         this->angle = 0;
     }
 
+
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position,
         float pitchSpeed, float rollSpeed, float yawnSpeed): GraphicsNode(this->genMesh(size), material, position,
             glm::vec3(1,1,1), 0, 0, 0) {
@@ -38,6 +41,7 @@ namespace Graphics3D {
         this->originalY = position.y;
         this->angle = 0;
     }
+
 
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material, glm::vec3 position, GLfloat pitch, GLfloat roll,
         GLfloat yawn, float pitchSpeed, float rollSpeed, float yawnSpeed): 
@@ -51,6 +55,7 @@ namespace Graphics3D {
         this->angle = 0;
     }
 
+
     Cube::Cube(glm::vec3 size, std::shared_ptr<Material> material,  glm::vec3 position, GLfloat pitch, GLfloat roll,
         GLfloat yawn, float moveSpeed, float moveDistance): GraphicsNode(this->genMesh(size), material, position,
             glm::vec3(1,1,1), pitch, roll, yawn) {
@@ -63,11 +68,15 @@ namespace Graphics3D {
         this->angle = 0;
     }
 
+
     Cube::~Cube() {
         
     }
 
 
+    /**
+     * Updates the position and rotation of cube.
+    */
     void Cube::update(float deltaTime) {
         this->pitch += this->pitchSpeed * deltaTime;
         this->roll += this->rollSpeed * deltaTime;
