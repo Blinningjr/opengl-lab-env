@@ -20,28 +20,54 @@ namespace Graphics3D {
 
 
             /**
-             *  Cheacks if points are all inside or partl inside and if it is not inside the box formed by the 
-             *  other points.
-             * 
-             *  0 = Not inside.
-             *  1 = Partly inside.
-             *  2 = Whole shape inside.
+             *  Checks if all points are in the quad formed by the ohter points
             */
-            static int shapeInsideView(std::vector<glm::vec3> points, glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
+            static bool wholeShapeInsideView(std::vector<glm::vec3> points, glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
                     glm::vec2 pFarLeft, glm::vec2 pFarRight) {
-                uint numInside = 0;
                 for (int i = 0; i < points.size(); i++) {
-                    if (insideView(points[i], pCloseLeft, pCloseRight, pFarLeft, pFarRight)) {
-                        numInside += 1;
+                    if (!insideView(points[i], pCloseLeft, pCloseRight, pFarLeft, pFarRight))
+                        return false;
+                }
+                return true;
+            }
+
+
+            /**
+             *  Checks if at least one point of points is in the quad formed by the ohter points
+            */
+            static bool shapePartlyInsideView(std::vector<glm::vec3> points, glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
+                    glm::vec2 pFarLeft, glm::vec2 pFarRight) {
+                for (int i = 0; i < points.size(); i++) {
+                    if (insideView(points[i], pCloseLeft, pCloseRight, pFarLeft, pFarRight))
+                        return true;
+                }
+                return false;
+            }
+
+
+            /**
+             *  Checks if at least one point of points is in the quad formed by the ohter points
+            */
+            static bool shapeInstersectsView(std::vector<glm::vec3> points, std::vector<glm::vec2> viewPoints) {
+                for (int i = 0; i < viewPoints.size(); i++) {
+                    for (int j = 0; j < points.size(); j++) {
+                        glm::vec3 point1 = points[j];
+                        glm::vec3 point2 = points[(j + 1)%points.size()];
+                        if (linesIntersects(viewPoints[i], viewPoints[(i + 1)%viewPoints.size()],
+                            glm::vec2(point1.x, point1.z), glm::vec2(point2.x, point2.z)))
+                            return true;
                     }
                 }
-                if (numInside == points.size()) {
-                    return 2;
-                } else if (numInside > 0) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+                return false;
+            }
+
+
+            /**
+             *  Check if lines intersect.
+            */
+            static bool linesIntersects(glm::vec2 l1p1, glm::vec2 l1p2, glm::vec2 l2p1, glm::vec2 l2p2) {
+                return (toTheRightOfLine(l1p2 - l1p1, l2p1 - l1p1) != toTheRightOfLine(l1p2 - l1p1, l2p2 - l1p1))
+                    && (toTheRightOfLine(l2p2 - l2p1, l1p1 - l2p1) != toTheRightOfLine(l2p2 - l2p1, l1p2 - l2p1));
             }
 
 

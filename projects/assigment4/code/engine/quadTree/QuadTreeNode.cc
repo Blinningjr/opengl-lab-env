@@ -41,7 +41,7 @@ namespace Graphics3D {
         viewPoints.push_back(pCloseRight);
         viewPoints.push_back(pFarLeft);
         viewPoints.push_back(pFarRight);
-        viewPoints.push_back(pFarLeft + (pFarRight - pFarLeft)/2.0f + (pFarRight - pFarLeft)/2.0f);
+        // viewPoints.push_back(pFarLeft + (pFarRight - pFarLeft)/2.0f + (pFarRight - pFarLeft)/2.0f);
 
         float halfSize = this->size/2.0f;
 
@@ -124,7 +124,7 @@ namespace Graphics3D {
 
 
     /**
-     *  Cheacks which subtree GraphicsNode position is inside.
+     *  Checks which subtree GraphicsNode position is inside.
      *  Returns a pointer to a list of four booles, representing the four subtrees.
     */
     bool* QuadTreeNode::checkInsideWhichQuads(bool* insideQuads, GraphicsNode* gNode) {
@@ -180,7 +180,7 @@ namespace Graphics3D {
 
 
     /**
-     *  Cheacks if the view is inside the quad this node represents.
+     *  Checks if the view is inside the quad this node represents.
     */
     bool QuadTreeNode::checkViewInside(glm::vec2 childeCenter, std::vector<glm::vec2> view) {
         float left = childeCenter.x - this->size/2.0f;
@@ -220,17 +220,14 @@ namespace Graphics3D {
      *  Helper function for checking is subtree is suppose to be drawn or not.
     */
     void QuadTreeNode::drawNode(QuadTree** quadTreeNode, std::vector<glm::vec3> points, std::vector<glm::vec2> viewPoints,
-            glm::vec2 childeCenter, uint frame) {   
-        int isInside = QuadTree::shapeInsideView(points, viewPoints[0], viewPoints[1], viewPoints[2], viewPoints[3]);
-        if (isInside == 2) {
+            glm::vec2 childeCenter, uint frame) {
+        if (QuadTree::wholeShapeInsideView(points, viewPoints[0], viewPoints[1], viewPoints[2], viewPoints[3])) {
             (*quadTreeNode)->drawAll(frame);
-        } else if (isInside == 1) {
-            (*quadTreeNode)->drawNodes( viewPoints[0], viewPoints[1], viewPoints[2], viewPoints[3], frame);
-        } else {
-            if (this->checkViewInside(childeCenter, viewPoints)) {
-                (*quadTreeNode)->drawNodes(viewPoints[0], viewPoints[1], viewPoints[2], viewPoints[3], frame);
-            }
-        }  
+        } else if (QuadTree::shapeInstersectsView(points, viewPoints)) {
+            (*quadTreeNode)->drawNodes(viewPoints[0], viewPoints[1], viewPoints[2], viewPoints[3], frame);
+        } else if (this->checkViewInside(childeCenter, viewPoints)) {
+            (*quadTreeNode)->drawNodes(viewPoints[0], viewPoints[1], viewPoints[2], viewPoints[3], frame);
+        }
     }
 
 
@@ -247,29 +244,29 @@ namespace Graphics3D {
         this->topLeftPoints.push_back(glm::vec3(this->center.x, 0, this->center.y - this->size));
         this->topLeftPoints.push_back(glm::vec3(this->center.x, 0, this->center.y));
         this->topLeftPoints.push_back(glm::vec3(this->center.x - this->size, 0, this->center.y));
-        glm::vec2 topLeftCenter = this->calcTopLeftCenter();
-        this->topLeftPoints.push_back(glm::vec3(topLeftCenter.x, 0, topLeftCenter.y));
+        // glm::vec2 topLeftCenter = this->calcTopLeftCenter();
+        // this->topLeftPoints.push_back(glm::vec3(topLeftCenter.x, 0, topLeftCenter.y));
 
         this->topRightPoints.push_back(glm::vec3(this->center.x, 0, this->center.y - this->size));
         this->topRightPoints.push_back(glm::vec3(this->center.x + this->size, 0, this->center.y - this->size));
         this->topRightPoints.push_back(glm::vec3(this->center.x + this->size, 0, this->center.y));
         this->topRightPoints.push_back(glm::vec3(this->center.x, 0, this->center.y));
-        glm::vec2 topRightCenter = this->calcTopRightCenter();
-        this->topRightPoints.push_back(glm::vec3(topRightCenter.x, 0, topRightCenter.y));
+        // glm::vec2 topRightCenter = this->calcTopRightCenter();
+        // this->topRightPoints.push_back(glm::vec3(topRightCenter.x, 0, topRightCenter.y));
 
         this->bottomLeftPoints.push_back(glm::vec3(this->center.x - this->size, 0, this->center.y));
         this->bottomLeftPoints.push_back(glm::vec3(this->center.x, 0, this->center.y));
         this->bottomLeftPoints.push_back(glm::vec3(this->center.x, 0, this->center.y + this->size));
         this->bottomLeftPoints.push_back(glm::vec3(this->center.x - this->size, 0, this->center.y + this->size));
-        glm::vec2 bottomLeftCenter = this->calcBottomLeftCenter();
-        this->bottomLeftPoints.push_back(glm::vec3(bottomLeftCenter.x, 0, bottomLeftCenter.y));
+        // glm::vec2 bottomLeftCenter = this->calcBottomLeftCenter();
+        // this->bottomLeftPoints.push_back(glm::vec3(bottomLeftCenter.x, 0, bottomLeftCenter.y));
 
         this->bottomRightPoints.push_back(glm::vec3(this->center.x, 0, this->center.y));
         this->bottomRightPoints.push_back(glm::vec3(this->center.x + this->size, 0, this->center.y));
         this->bottomRightPoints.push_back(glm::vec3(this->center.x + this->size, 0, this->center.y + this->size));
         this->bottomRightPoints.push_back(glm::vec3(this->center.x, 0, this->center.y + this->size));
-        glm::vec2 bottomRightCenter = this->calcBottomRightCenter();
-        this->bottomRightPoints.push_back(glm::vec3(bottomRightCenter.x, 0, bottomRightCenter.y));
+        // glm::vec2 bottomRightCenter = this->calcBottomRightCenter();
+        // this->bottomRightPoints.push_back(glm::vec3(bottomRightCenter.x, 0, bottomRightCenter.y));
     }
 
 

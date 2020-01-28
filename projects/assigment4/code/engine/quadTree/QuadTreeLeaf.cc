@@ -26,7 +26,7 @@ namespace Graphics3D {
             for (int i = 0; i < vertices.size(); i++) {
                 points.push_back(vertices[i].pos + pos);
             }
-            if (QuadTree::shapeInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight) > 0) {
+            if (QuadTree::shapePartlyInsideView(points, pCloseLeft, pCloseRight, pFarLeft, pFarRight) > 0) {
                 this->gNode->draw();
                 this->gNode->setFrame(frame);
             }
