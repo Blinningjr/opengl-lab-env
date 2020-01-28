@@ -348,7 +348,7 @@ namespace Graphics3D {
 
     void Scene::renderQuadTree(glm::vec3 cameraDirection, glm::vec3 cameraPos, uint frame) {
         glm::vec3 direction = glm::normalize(glm::vec3(cameraDirection.x, 0, cameraDirection.z));
-        float farDistance = 50.0f;//this->maxViewDist;
+        float farDistance = this->maxViewDist;
         float farSize = tan(this->pov) * farDistance;
         float closeDistance = this->minViewDist;
         float closeSize = tan(this->pov) * closeDistance;

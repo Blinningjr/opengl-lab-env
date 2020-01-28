@@ -35,6 +35,7 @@ namespace Graphics3D {
             QuadTree* bottomRight;
 
             bool* checkInsideWhichQuads(bool* insideQuads, GraphicsNode* gNode);
+            bool checkViewInside(glm::vec2 childeCenter, std::vector<glm::vec2> view);
 
             glm::vec2 calcTopLeftCenter();
             glm::vec2 calcTopRightCenter();
