@@ -30,6 +30,9 @@ namespace Graphics3D {
     }
 
     
+    /**
+     *  Draws all objects in the subtree that are inside the view.
+    */
     void QuadTreeNode::drawNodes(glm::vec2 pCloseLeft, glm::vec2 pCloseRight,
                 glm::vec2 pFarLeft, glm::vec2 pFarRight, uint frame) {
 
@@ -56,6 +59,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Draws all objects in this subtree.
+    */
     void QuadTreeNode::drawAll(uint frame) {
         // std::cout << "\n";
         // std::cout << this->depth;
@@ -78,11 +84,17 @@ namespace Graphics3D {
     }
        
 
+    /**
+     *  Returns true if this is a leaf.
+    */
     bool QuadTreeNode::isLeaf() {
         return false;
     }
 
 
+    /**
+     *  Inserts a GraphicsNode into this subtree.
+    */
     void QuadTreeNode::insertGraphicsNode(GraphicsNode* gNode) {
         bool iQuads[4] = {false, false, false, false};
         bool* insideQuads = this->checkInsideWhichQuads(iQuads, gNode);
@@ -111,6 +123,10 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Cheacks which subtree GraphicsNode position is inside.
+     *  Returns a pointer to a list of four booles, representing the four subtrees.
+    */
     bool* QuadTreeNode::checkInsideWhichQuads(bool* insideQuads, GraphicsNode* gNode) {
         glm::vec3 nodePosition = gNode->getPosition();
         glm::vec2 position(nodePosition.x, nodePosition.z);
@@ -163,6 +179,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Cheacks if the view is inside the quad this node represents.
+    */
     bool QuadTreeNode::checkViewInside(glm::vec2 childeCenter, std::vector<glm::vec2> view) {
         float left = childeCenter.x - this->size/2.0f;
         float right = childeCenter.x + this->size/2.0f;
@@ -177,6 +196,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Helper function for inserting a GraphicsNode into a subtree.
+    */
     void QuadTreeNode::insertGNode(QuadTree** quadTree, GraphicsNode* gNode, glm::vec2 childeCenter) {
         if (*quadTree != NULL) {
             if ((*quadTree)->isLeaf()) {
@@ -194,6 +216,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Helper function for checking is subtree is suppose to be drawn or not.
+    */
     void QuadTreeNode::drawNode(QuadTree** quadTreeNode, std::vector<glm::vec3> points, std::vector<glm::vec2> viewPoints,
             glm::vec2 childeCenter, uint frame) {   
         int isInside = QuadTree::shapeInsideView(points, viewPoints[0], viewPoints[1], viewPoints[2], viewPoints[3]);
@@ -209,6 +234,9 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Helpter function for initializing class variables.
+    */
     void QuadTreeNode::init() {
         this->topLeft = NULL;
         this->topRight = NULL;
@@ -245,21 +273,33 @@ namespace Graphics3D {
     }
 
 
+    /**
+     *  Calculates the center of the top left quad.
+    */
     glm::vec2 QuadTreeNode::calcTopLeftCenter() {
         return glm::vec2(this->center.x - this->size/2.0f, this->center.y - this->size/2.0f);
     }
 
 
+    /**
+     *  Calculates the center of the top right quad.
+    */
     glm::vec2 QuadTreeNode::calcTopRightCenter() {
         return glm::vec2(this->center.x + this->size/2.0f, this->center.y - this->size/2.0f);
     }
 
 
+    /**
+     *  Calculates the center of the bottom left quad.
+    */
     glm::vec2 QuadTreeNode::calcBottomLeftCenter() {
         return glm::vec2(this->center.x - this->size/2.0f, this->center.y + this->size/2.0f);
     }
 
 
+    /**
+     *  Calculates the center of the bottom right quad.
+    */
     glm::vec2 QuadTreeNode::calcBottomRightCenter() {
         return glm::vec2(this->center.x + this->size/2.0f, this->center.y + this->size/2.0f);
     }
