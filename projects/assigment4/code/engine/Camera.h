@@ -5,8 +5,8 @@
 #include "core/app.h"
 #include "render/window.h"
 #include "Node.h"
-#include "IWASD.h"
-#include "IMouse.h"
+#include "io/IWASD.h"
+#include "io/IMouse.h"
 
 
 namespace Graphics3D {

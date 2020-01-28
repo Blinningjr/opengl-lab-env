@@ -7,7 +7,7 @@
 #include "engine/Camera.h"
 #include "engine/LightSource.h"
 #include "engine/Scene.h"
-#include "engine/Control.h"
+#include "engine/io/Control.h"
 
 
 namespace Graphics3D {
