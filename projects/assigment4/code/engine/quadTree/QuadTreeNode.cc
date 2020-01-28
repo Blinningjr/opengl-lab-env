@@ -166,7 +166,6 @@ namespace Graphics3D {
     void QuadTreeNode::insertGraphicsNode(GraphicsNode* gNode) {
         bool iQuads[4] = {false, false, false, false};
         bool* insideQuads = this->checkInsideWhichQuads(iQuads, gNode);
-        float childeSize = this->size/2.0f;
 
         // std::cout << "\n";
         // std::cout << insideQuads[0];
@@ -177,70 +176,18 @@ namespace Graphics3D {
         // std::cout << ":";
         // std::cout << insideQuads[3];
         // std::cout << "\n";
-        
-        if (insideQuads[0]) {
-            if (this->topLeft != NULL) {
-                if (this->topLeft->isLeaf()) {
-                    GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->topLeft)->getGraphicsNode();
-                    delete this->topLeft;
-                    this->topLeft = new QuadTreeNode(this->calcTopLeftCenter(), childeSize, this->depth + 1);
-                    ((QuadTreeNode*)this->topLeft)->insertGraphicsNode(oldGNode);
-                     ((QuadTreeNode*)this->topLeft)->insertGraphicsNode(gNode); 
-                } else {
-                    ((QuadTreeNode*)this->topLeft)->insertGraphicsNode(gNode);   
-                }
-            } else {
-                this->topLeft = new QuadTreeLeaf(gNode);
-            }
-        }
 
-        if (insideQuads[1]) {
-            if (this->topRight != NULL) {
-                if (this->topRight->isLeaf()) {
-                    GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->topRight)->getGraphicsNode();
-                    delete this->topRight;
-                    this->topRight = new QuadTreeNode(this->calcTopRightCenter(), childeSize, this->depth + 1);
-                    ((QuadTreeNode*)this->topRight)->insertGraphicsNode(oldGNode);
-                    ((QuadTreeNode*)this->topRight)->insertGraphicsNode(gNode);
-                } else {
-                    ((QuadTreeNode*)this->topRight)->insertGraphicsNode(gNode);
-                }
-            } else {
-                this->topRight = new QuadTreeLeaf(gNode);
-            }
-        }
+        if (insideQuads[0])
+            this->insertGNode(&this->topLeft, gNode, this->calcTopLeftCenter());
 
-        if (insideQuads[2]) {
-            if (this->bottomLeft != NULL) {
-                if (this->bottomLeft->isLeaf()) {
-                    GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->bottomLeft)->getGraphicsNode();
-                    delete this->bottomLeft;
-                    this->bottomLeft = new QuadTreeNode(this->calcBottomLeftCenter(), childeSize, this->depth + 1);
-                    ((QuadTreeNode*)this->bottomLeft)->insertGraphicsNode(oldGNode);
-                    ((QuadTreeNode*)this->bottomLeft)->insertGraphicsNode(gNode); 
-                } else {
-                    ((QuadTreeNode*)this->bottomLeft)->insertGraphicsNode(gNode);   
-                }
-            } else {
-                this->bottomLeft = new QuadTreeLeaf(gNode);
-            }
-        }
+        if (insideQuads[1])
+            this->insertGNode(&this->topRight, gNode, this->calcTopRightCenter());
 
-        if (insideQuads[3]) {
-            if (this->bottomRight != NULL) {
-                if (this->bottomRight->isLeaf()) {
-                    GraphicsNode* oldGNode = ((QuadTreeLeaf*)this->bottomRight)->getGraphicsNode();
-                    delete this->bottomRight;
-                    this->bottomRight = new QuadTreeNode(this->calcBottomRightCenter(), childeSize, this->depth + 1);
-                    ((QuadTreeNode*)this->bottomRight)->insertGraphicsNode(oldGNode);
-                    ((QuadTreeNode*)this->bottomRight)->insertGraphicsNode(gNode);  
-                } else {
-                    ((QuadTreeNode*)this->bottomRight)->insertGraphicsNode(gNode);  
-                } 
-            } else {
-                this->bottomRight = new QuadTreeLeaf(gNode);
-            }
-        }
+        if (insideQuads[2])
+            this->insertGNode(&this->bottomLeft, gNode, this->calcBottomLeftCenter());
+
+        if (insideQuads[3])
+            this->insertGNode(&this->bottomRight, gNode, this->calcBottomRightCenter());
     }
 
 
@@ -307,6 +254,24 @@ namespace Graphics3D {
         }
         return false;
     }
+
+
+    void QuadTreeNode::insertGNode(QuadTree** quadTreeNode, GraphicsNode* gNode, glm::vec2 childeCenter) {
+        if (*quadTreeNode != NULL) {
+            if ((*quadTreeNode)->isLeaf()) {
+                GraphicsNode* oldGNode = ((QuadTreeLeaf*)(*quadTreeNode))->getGraphicsNode();
+                (*quadTreeNode)->~QuadTree();
+                (*quadTreeNode) = new QuadTreeNode(childeCenter, this->size/2.0f, this->depth + 1);
+                ((QuadTreeNode*)(*quadTreeNode))->insertGraphicsNode(oldGNode);
+                ((QuadTreeNode*)(*quadTreeNode))->insertGraphicsNode(gNode); 
+            } else {
+                ((QuadTreeNode*)(*quadTreeNode))->insertGraphicsNode(gNode);   
+            }
+        } else {
+            (*quadTreeNode) = new QuadTreeLeaf(gNode);
+        }
+    }
+
 
     glm::vec2 QuadTreeNode::calcTopLeftCenter() {
         return glm::vec2(this->center.x - this->size/2.0f, this->center.y - this->size/2.0f);
