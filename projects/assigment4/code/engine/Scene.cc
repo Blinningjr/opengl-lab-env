@@ -77,7 +77,9 @@ namespace Graphics3D {
         scene->addStaticObj(new Cube(glm::vec3(floorSize, 1, floorSize), simpleMaterialBrown, 
             glm::vec3(0, -0.5, 0)));
 
-        
+        std::cout << "\nBuilding quadtree\n";
+        float progress = 0.0f;
+        int barWidth = 70;
         for (int i = 0; i < numStaticObj; i++) {
             int index = rand() % emptyTiles.size();
             glm::vec3 position = emptyTiles[index];
@@ -87,8 +89,19 @@ namespace Graphics3D {
             } else {
                 scene->addStaticObj(genTetrahedron(shaderProgram, position, maxObjSize));
             }
-            
+
+            std::cout << "[";
+            int pos = barWidth * progress;
+            for (int i = 0; i < barWidth; ++i) {
+                if (i < pos) std::cout << "=";
+                else if (i == pos) std::cout << ">";
+                else std::cout << " ";
+            }
+            std::cout << "] " << int(progress * 100.0) << " %\r";
+            std::cout.flush();
+            progress = (i + 1.0f)/numStaticObj;
         }
+        std::cout << "\nDone\n";
 
         std::shared_ptr<SimpleMaterial> simpleMaterial(new SimpleMaterial(shaderProgram, WHITE));
         for (int i = 0; i < numSceneGraphs; i++) {
