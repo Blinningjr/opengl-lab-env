@@ -56,7 +56,7 @@ namespace Graphics3D {
     Scene* Scene::genScene(std::shared_ptr<ShaderProgram> shaderProgram, int numStaticObj, int numSceneGraphs,
             float pov, float minViewDist, float maxViewDist) {
         int totalObj = numStaticObj + numSceneGraphs;
-        int numObjRows =  std::max((int) ceil(sqrt(totalObj)), 1);
+        int numObjRows =  std::max((int) ceil(sqrt(totalObj) + totalObj/50.0f), 1);
         int maxObjSize = 5;
         int floorSize = maxObjSize * numObjRows;
         float startXPos = -floorSize/2.0f;
@@ -70,7 +70,7 @@ namespace Graphics3D {
             emptyTiles.push_back(glm::vec3( xPos, startYPos, zPos));
         }
         
-        Scene* scene = new Scene(shaderProgram, pov, minViewDist, maxViewDist, floorSize);
+        Scene* scene = new Scene(shaderProgram, pov, minViewDist, maxViewDist, floorSize/2.0f);
         std::shared_ptr<SimpleMaterial> simpleMaterialBrown(new SimpleMaterial(shaderProgram, BROWN));
         scene->addStaticObj(new Cube(glm::vec3(floorSize, 1, floorSize), simpleMaterialBrown, 
             glm::vec3(0, -0.5, 0)));
@@ -348,7 +348,7 @@ namespace Graphics3D {
 
     void Scene::renderQuadTree(glm::vec3 cameraDirection, glm::vec3 cameraPos, uint frame) {
         glm::vec3 direction = glm::normalize(glm::vec3(cameraDirection.x, 0, cameraDirection.z));
-        float farDistance = this->maxViewDist;
+        float farDistance = 50.0f;//this->maxViewDist;
         float farSize = tan(this->pov) * farDistance;
         float closeDistance = this->minViewDist;
         float closeSize = tan(this->pov) * closeDistance;
