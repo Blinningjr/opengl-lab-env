@@ -2,7 +2,7 @@
 
 
 #include "QuadTree.h"
-#include "../GraphicsNode.h"
+#include "../node/GraphicsNode.h"
 
 
 namespace Graphics3D {

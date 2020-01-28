@@ -5,7 +5,7 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <memory>
 
-#include "GraphicsNode.h"
+#include "node/GraphicsNode.h"
 #include "quadTree/QuadTreeNode.h"
 
 

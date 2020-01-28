@@ -4,8 +4,8 @@
 #include "render/window.h"
 #include <vector>
 
-#include "engine/Camera.h"
-#include "engine/LightSource.h"
+#include "engine/node/Camera.h"
+#include "engine/node/LightSource.h"
 #include "engine/Scene.h"
 #include "engine/io/Control.h"
 

@@ -1,13 +1,13 @@
 #include "config.h"
 #include "SimpleGraphics.h"
 #include "engine/Mesh.h"
-#include "materials/SimpleMaterial.h"
-#include "engine/ShaderProgram.h"
-#include "engine/Shader.h"
-#include "utils/ShaderType.h"
-#include "utils/Reader.h"
-#include "engine/Camera.h"
-#include "utils/Colors.h"
+#include "engine/material/SimpleMaterial.h"
+#include "engine/shader/ShaderProgram.h"
+#include "engine/shader/Shader.h"
+#include "engine/utils/ShaderType.h"
+#include "engine/utils/Reader.h"
+#include "engine/node/Camera.h"
+#include "engine/utils/Colors.h"
 
 
 #include <glm/gtc/type_ptr.hpp>
@@ -57,8 +57,8 @@ namespace Graphics3D {
 
 
             Reader reader;
-            GLchar* vst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment4/code/shaders/SimpleShader.vert");
-            GLchar* fst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment4/code/shaders/SimpleShader.frag");
+            GLchar* vst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment4/code/engine/shader/shaders/SimpleShader.vert");
+            GLchar* fst = (GLchar*) reader.readFile("/home/niklas/Desktop/D7045E/assigments/opengl-lab-env/projects/assigment4/code/engine/shader/shaders/SimpleShader.frag");
 
             std::shared_ptr<Shader> vShader(new Shader(vst, vertexShader));
             std::shared_ptr<Shader> fShader(new Shader(fst, fragmentShader));

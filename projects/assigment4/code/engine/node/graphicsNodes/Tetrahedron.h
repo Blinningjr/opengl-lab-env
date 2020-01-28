@@ -5,9 +5,9 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <memory>
 
-#include "../engine/Material.h"
-#include "../engine/Mesh.h"
-#include "../engine/GraphicsNode.h"
+#include "../../material/Material.h"
+#include "../../Mesh.h"
+#include "../GraphicsNode.h"
 
 
 namespace Graphics3D {

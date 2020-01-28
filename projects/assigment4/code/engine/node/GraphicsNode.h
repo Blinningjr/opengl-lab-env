@@ -5,8 +5,8 @@
 #include <glm/mat4x4.hpp> // glm::mat4
 #include <memory>
 
-#include "Material.h"
-#include "Mesh.h"
+#include "../material/Material.h"
+#include "../Mesh.h"
 #include "Node.h"
 #include "../utils/Vertex.h"
 

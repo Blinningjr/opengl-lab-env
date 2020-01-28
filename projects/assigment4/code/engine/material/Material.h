@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "ShaderProgram.h"
+#include "../shader/ShaderProgram.h"
 
 
 namespace Graphics3D {

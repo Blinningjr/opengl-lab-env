@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <glm/vec3.hpp> 
 
-#include "../engine/Material.h"
+#include "Material.h"
 
 
 namespace Graphics3D {

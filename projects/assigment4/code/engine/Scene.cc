@@ -1,8 +1,8 @@
 #include "Scene.h"
-#include "../graphicsNodes/Cube.h"
-#include "../graphicsNodes/Tetrahedron.h"
-#include "../utils/Colors.h"
-#include "../materials/SimpleMaterial.h"
+#include "node/graphicsNodes/Cube.h"
+#include "node/graphicsNodes/Tetrahedron.h"
+#include "utils/Colors.h"
+#include "material/SimpleMaterial.h"
 #include <math.h>
 #include <algorithm> 
 #include <stdlib.h>

@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "../GraphicsNode.h"
+#include "../node/GraphicsNode.h"
 #include <vector>
 #include <glm/glm.hpp>
 #include "iostream"

@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <vector>
 
-#include "../utils/Vertex.h"
+#include "utils/Vertex.h"
 
 
 namespace Graphics3D {

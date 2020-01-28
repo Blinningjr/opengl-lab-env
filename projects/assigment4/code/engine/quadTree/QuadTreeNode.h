@@ -2,7 +2,7 @@
 
 
 #include "QuadTree.h"
-#include "../GraphicsNode.h"
+#include "../node/GraphicsNode.h"
 #include "glm/vec2.hpp"
 #include <memory>
 
